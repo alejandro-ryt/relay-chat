@@ -1,0 +1,29 @@
+{
+  "name": "relay-chat",
+  "version": "1.0.0",
+  "description": "Relay Because messages relay in real-time.",
+  "main": "index.js",
+  "scripts": {
+   "backend": "npm run dev -w backend",
+    "frontend": "npm run dev -w frontend",
+    "start": "concurrently \"npm run backend\" \"npm run frontend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alejandro-ryt/relay-chat.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "workspaces": [
+  "backend",
+  "frontend"
+],
+  "bugs": {
+    "url": "https://github.com/alejandro-ryt/relay-chat/issues"
+  },
+  "homepage": "https://github.com/alejandro-ryt/relay-chat#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
