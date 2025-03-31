@@ -1,8 +1,6 @@
 import express, { Express } from "express";
 
-
-
-import connectDB from "@/db/dbConfig"
+import connectDB from "@/db/dbConfig";
 const app: Express = express();
 const PORT: Number = 5000;
 
@@ -17,4 +15,3 @@ app.use(express.json());
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-

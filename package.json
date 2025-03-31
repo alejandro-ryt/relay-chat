@@ -4,7 +4,8 @@
   "description": "Relay Because messages relay in real-time.",
   "main": "index.js",
   "scripts": {
-   "backend": "npm run dev -w backend",
+    "lint": "eslint .",
+    "backend": "npm run dev -w backend",
     "frontend": "npm run dev -w frontend",
     "start": "concurrently \"npm run backend\" \"npm run frontend\""
   },
@@ -13,17 +14,28 @@
     "url": "git+https://github.com/alejandro-ryt/relay-chat.git"
   },
   "keywords": [],
+  "type": "module",
   "author": "",
   "license": "ISC",
   "workspaces": [
-  "backend",
-  "frontend"
-],
+    "backend",
+    "frontend"
+  ],
   "bugs": {
     "url": "https://github.com/alejandro-ryt/relay-chat/issues"
   },
   "homepage": "https://github.com/alejandro-ryt/relay-chat#readme",
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "concurrently": "^9.1.2",
+    "eslint": "^9.23.0",
+    "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-prettier": "^5.2.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "prettier": "^3.5.3",
+    "typescript-eslint": "^8.24.1"
   }
 }
