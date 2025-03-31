@@ -1,3 +1,5 @@
+import DATA from "@/constants/notFound";
+
 const NotFound = () => {
   return (
     <section className="flex flex-col justify-center items-center m-60 text-center">
@@ -77,16 +79,10 @@ const NotFound = () => {
           className="status status-error animate-ping m-2"
         ></div>
         <div role="contentinfo" className="status status-error m-2"></div>
-        <p className="ml-6">404 Page Not Found</p>
+        <p className="ml-6">{DATA.ERROR}</p>
       </section>
 
-      <p>
-        Our servers are currently experiencing an existential crisis. They seem
-        to have misplaced this page, and frankly, they're not taking it well.
-        We've tried offering them a virtual hug, but they're just sending back
-        sad emojis. Try again later, when they've finished their digital therapy
-        session.
-      </p>
+      <p>{DATA.MESSAGE}</p>
     </section>
   );
 };
