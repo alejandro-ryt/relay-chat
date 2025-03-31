@@ -1,0 +1,20 @@
+const DATA = {
+  TITLE: "Create an account",
+  LOGIN_LINK_PREV: "Already have an account? ",
+  LOGIN_LINK: "Sign in",
+  USERNAME: "User Name",
+  USERNAME_PLACEHOLDER: "alpha2025",
+  FIRST_NAME: "First Name",
+  FIRST_NAME_PLACEHOLDER: "Your first name",
+  LAST_NAME: "Last Name",
+  LAST_NAME_PLACEHOLDER: "Your last name",
+  EMAIL: "Email",
+  EMAIL_PLACEHOLDER: "user@domain.com",
+  PASSWORD: "Password",
+  PASSWORD_PLACEHOLDER: "•••••••••••••••",
+  CONFIRM_PASSWORD: "Confirm Password",
+  CHECK_AGREE: "I agree to the ",
+  TERMS_CONDITION: "Terms & Conditions",
+  CREATE_BTN: "Create Account",
+} as const;
+export default DATA;
