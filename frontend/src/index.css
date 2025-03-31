@@ -5,3 +5,7 @@
     nord --default,
     sunset --prefersdark;
 }
+
+html {
+  background-color: var(--color-neutral);
+}
