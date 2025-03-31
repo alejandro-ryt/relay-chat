@@ -1,7 +1,7 @@
 const NotFound = () => {
   return (
-    <div className="flex flex-col justify-center items-center m-60 text-center">
-      <div className="w-80 h-80 mb-4">
+    <section className="flex flex-col justify-center items-center m-60 text-center">
+      <figure className="w-80 h-80 mb-4">
         <svg
           width="100%"
           height="100%"
@@ -70,12 +70,15 @@ const NotFound = () => {
             fill="#FEC272"
           />
         </svg>
-      </div>
-      <div className="inline-grid *:[grid-area:1/1] mb-4">
-        <div className="status status-error animate-ping m-2"></div>
-        <div className="status status-error m-2"></div>
+      </figure>
+      <section className="inline-grid *:[grid-area:1/1] mb-4">
+        <div
+          role="contentinfo"
+          className="status status-error animate-ping m-2"
+        ></div>
+        <div role="contentinfo" className="status status-error m-2"></div>
         <p className="ml-6">404 Page Not Found</p>
-      </div>
+      </section>
 
       <p>
         Our servers are currently experiencing an existential crisis. They seem
@@ -84,7 +87,7 @@ const NotFound = () => {
         sad emojis. Try again later, when they've finished their digital therapy
         session.
       </p>
-    </div>
+    </section>
   );
 };
 
