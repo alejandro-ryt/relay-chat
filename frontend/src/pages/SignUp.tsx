@@ -30,7 +30,7 @@ const SignUp = () => {
           src="https://img.freepik.com/free-vector/posts-concept-illustration_114360-204.jpg?t=st=1743457267~exp=1743460867~hmac=c7543514273f7c94f342efb54c7df07c458ea94e2ffce029a8867d4a108ebb3c&w=1380"
         />
       </figure>
-      <section className="xl:p-20 md:p-10 p-5">
+      <section className="xl:p-20 p-8">
         <h1 className="text-3xl mb-4 text-primary">{SIGN_UP_DATA.TITLE}</h1>
         <p className="mb-4">
           {SIGN_UP_DATA.LOGIN_LINK_PREV}
@@ -42,7 +42,7 @@ const SignUp = () => {
           className="grid space-y-4"
           onSubmit={handleSubmit(handleOnSubmit)}
         >
-          <div className="grid gap-2 grid-cols-2">
+          <div className="grid gap-2 md:grid-cols-2 grid-cols-1">
             <fieldset className="fieldset">
               <legend className="fieldset-legend">
                 {SIGN_UP_DATA.USERNAME}
@@ -67,7 +67,7 @@ const SignUp = () => {
               </p>
             </fieldset>
           </div>
-          <div className="grid gap-2 grid-cols-2">
+          <div className="grid gap-2 md:grid-cols-2 grid-cols-1">
             <fieldset className="fieldset">
               <legend className="fieldset-legend">
                 {SIGN_UP_DATA.FIRST_NAME}
@@ -93,7 +93,7 @@ const SignUp = () => {
               </p>
             </fieldset>
           </div>
-          <div className="grid gap-2 grid-cols-2">
+          <div className="grid gap-2 md:grid-cols-2 grid-cols-1">
             <fieldset className="fieldset">
               <legend className="fieldset-legend">
                 {SIGN_UP_DATA.PASSWORD}
