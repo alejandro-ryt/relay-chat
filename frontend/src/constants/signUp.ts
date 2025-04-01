@@ -1,4 +1,4 @@
-const DATA = {
+const SIGN_UP_DATA = {
   TITLE: "Create an account",
   LOGIN_LINK_PREV: "Already have an account? ",
   LOGIN_LINK: "Sign in",
@@ -16,5 +16,12 @@ const DATA = {
   CHECK_AGREE: "I agree to the ",
   TERMS_CONDITION: "Terms & Conditions",
   CREATE_BTN: "Create Account",
+  ERR_LETTER_NUMBER: "Must contain only letters and numbers.",
+  ERR_MIN_LETTER: "Must contain at least one letter.",
+  ERR_MIN_DIGITS: "Must contain at least one number.",
+  ERR_MIN_MAX: "Must be at least 8 characters long.",
+  ERR_PASSWORD_MATH: "Password and Confirm must match.",
+  EER_PASSWORD_CRITERIA: "password not match the requirements",
+  ERR_AGREEMENT: "You must agree to the terms and conditions.",
 } as const;
-export default DATA;
+export default SIGN_UP_DATA;
