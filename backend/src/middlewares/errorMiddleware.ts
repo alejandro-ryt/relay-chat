@@ -9,11 +9,11 @@ export const errorMiddleware = (
     next: NextFunction
 ): void => {
     let statusCode = 500;
-    let message = ERROR.INTERNAL_SERVICE_ERROR;
+    let message = ERROR.INTERNAL_SERVICE_ERROR as string;
 
     if (err instanceof ErrorHandler) {
         statusCode = err.statusCode;
-        message = err.message
+        message = err.message as string
     }
 
     res.status(statusCode).json({

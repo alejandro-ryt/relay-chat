@@ -11,6 +11,7 @@ export const ERROR = {
     ERROR_FETCHING_USER_BY_ID: "Error fetching user by ID",
     USER_NOT_FOUND: "User not found",
     ERROR_CREATING_USER: "Error creating user",
+    ERROR_UPDATING_USER: "Error updating user",
     ERROR_DELETING_USER: "Error deleting user by ID",
     // Authentication Error messages
     ERROR_USER_NOT_EXIST:"We could't find any user with the email provided",
@@ -21,4 +22,4 @@ export const ERROR = {
     // General Error messages
     ERROR_ID_REQUIRED: "ID was not provided",
     INTERNAL_SERVICE_ERROR: "HTTP Error: 500 - Something went wrong in our server. Please try again later."
-};
+} as const;
