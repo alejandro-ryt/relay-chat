@@ -1,5 +1,5 @@
 import mongoose, { Schema, CallbackError } from "mongoose";
-import { IUserDocument } from "../interfaces/user";
+import { IUserDocument } from "@/interfaces/user";
 import { hashPassword } from "@/utils/protectPassword";
 
 const userSchema = new Schema<IUserDocument>(

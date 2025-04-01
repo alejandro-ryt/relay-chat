@@ -1,7 +1,7 @@
 import express, { Express } from "express";
-import routes from "./routes";
+import routes from "@/routes/index";
 import connectDB from "@/db/dbConfig";
-import { errorMiddleware } from "./middlewares/errorMiddleware";
+import { errorMiddleware } from "@/middlewares/errorMiddleware";
 const app: Express = express();
 const PORT: number = 3001;
 
