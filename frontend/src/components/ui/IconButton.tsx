@@ -2,16 +2,18 @@ import { ReactNode } from "react";
 
 interface IconButtonProps {
   icon: ReactNode;
+  title: string;
   action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 }
 
-const IconButton = ({ icon, action }: IconButtonProps) => {
+const IconButton = ({ icon, title, action }: IconButtonProps) => {
   return (
     <button
-      className="btn btn-square w-24 h-24 mx-3 my-0.5 bg-transparent border-none hover:bg-primary"
+      className="flex flex-col btn btn-square w-18 h-18 m-0.5 bg-transparent border-none rounded-[1.2rem] hover:bg-base-300 text-base-content"
       onClick={action}
     >
       {icon}
+      <p> {title}</p>
     </button>
   );
 };

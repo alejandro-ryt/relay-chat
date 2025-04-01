@@ -1,10 +1,15 @@
-const Avatar = () => {
+interface AvatarProps {
+  pic: string;
+  sizeClass: string;
+}
+
+const Avatar = ({ pic, sizeClass }: AvatarProps) => {
   return (
-    <div className="avatar">
-      <div className="mask mask-squircle w-16">
-        <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-      </div>
-    </div>
+    <article className="avatar">
+      <figure className={`mask mask-squircle ${sizeClass}`}>
+        <img src={pic} />
+      </figure>
+    </article>
   );
 };
 

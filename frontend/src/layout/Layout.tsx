@@ -2,8 +2,8 @@ import { Outlet } from "react-router";
 
 const Layout = () => {
   return (
-    <main className="max-w-[65vw] mt-24 m-auto">
-      <section className="grid bg-base-100 rounded-[1.5rem] w-full min-h-[75vh]">
+    <main className="min-h-screen flex items-center justify-center">
+      <section className="grid bg-base-200 rounded-[1.5rem] xl:max-w-[65vw] w-full min-h-[75vh]">
         <Outlet />
       </section>
     </main>
