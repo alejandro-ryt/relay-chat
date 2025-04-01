@@ -1,18 +1,19 @@
 import mongoose, { Schema, CallbackError } from "mongoose";
 import { IUserDocument } from "@/interfaces/user";
 import { hashPassword } from "@/utils/protectPassword";
+import { validateEmailFormat, validatePasswordFormat } from "@/utils/inputValidations";
 
 const userSchema = new Schema<IUserDocument>(
   {
     profilePic: { type: String, required: false },
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
-    username: { type: String, required: true, unique: true }, // Set as unique to create index on this field
+    firstName: { type: String, required: [true, "User first name required"] },
+    lastName: { type: String, required: [true, "User last name required"] },
+    username: { type: String, required: [true, "User username required"], unique: true }, // Set as unique to create index on this field
     email: {
       type: String,
       validate: {
         validator: function (v: string) {
-          return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v);
+          return validateEmailFormat(v);
         },
         message: (props: { value: string }) =>
           `${props.value} is not a valid email!`,
@@ -24,9 +25,7 @@ const userSchema = new Schema<IUserDocument>(
       type: String,
       validate: {
         validator: function (v: string) {
-          return /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+={}[\]|\\:;"<>,.?/-]).{8,20}$/.test(
-            v
-          );
+          return validatePasswordFormat(v);
         },
         message: (props: { value: string }) =>
           `${props.value} is not a valid password!`,
