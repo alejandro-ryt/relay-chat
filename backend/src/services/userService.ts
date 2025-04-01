@@ -1,4 +1,4 @@
-import { IUserService, IUser } from "@/interfaces/user";
+import { IUserService, IUser, IUserDocument } from "@/interfaces/user";
 import User from "@/models/userModel";
 
 export default class UserService implements IUserService {
@@ -8,6 +8,10 @@ export default class UserService implements IUserService {
 
   async getUserByEmail(email: string): Promise<IUser | null> {
     return await User.findOne({email}).exec();
+  }
+
+  async getUserBySocketId(socketId: string): Promise<IUserDocument | null> {
+    return await User.findOne({socketId}).exec();
   }
 
   async createUser(user: IUser): Promise<IUser> {

@@ -33,6 +33,7 @@ const userSchema = new Schema<IUserDocument>(
       },
       required: [true, "User password required"],
     },
+    socketId: { type: String, required: false, unique: true },
   },
   { timestamps: true }
 );
