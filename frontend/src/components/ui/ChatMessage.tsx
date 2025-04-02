@@ -1,5 +1,5 @@
 import Avatar from "@/components/ui/Avatar";
-import { ChatMessageProps } from "@/types/Chat.types";
+import { ChatMessageProps } from "@/types/chat.types";
 
 const ChatMessage = ({ type, pic, name, time, message }: ChatMessageProps) => {
   if (type === "received") {

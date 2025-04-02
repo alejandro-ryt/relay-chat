@@ -1,5 +1,6 @@
 import { REGEX } from "@/constants/regex";
 import SIGN_UP_DATA from "@/constants/signUp";
+import { SignUpForm } from "@/types/auth.types";
 import { z } from "zod";
 
 export const schema = z
@@ -31,8 +32,6 @@ export const schema = z
     message: SIGN_UP_DATA.ERR_PASSWORD_MATH,
     path: ["confirmPassword"],
   });
-
-export type SignUpForm = z.output<typeof schema>;
 
 export const initialSignUpForm = {
   username: "",

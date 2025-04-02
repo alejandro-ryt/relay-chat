@@ -1,5 +1,5 @@
 import Avatar from "@/components/ui/Avatar";
-import { ContactCardProps } from "@/types/Chat.types";
+import { ContactCardProps } from "@/types/chat.types";
 
 const ContactCard = ({ pic, name }: ContactCardProps) => {
   return (

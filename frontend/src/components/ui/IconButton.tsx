@@ -1,4 +1,4 @@
-import { IconButtonProps } from "@/types/Chat.types";
+import { IconButtonProps } from "@/types/chat.types";
 
 const IconButton = ({ icon, shape, title, action }: IconButtonProps) => {
   if (shape === "squircle") {

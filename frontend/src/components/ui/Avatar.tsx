@@ -1,4 +1,4 @@
-import { AvatarProps } from "@/types/Chat.types";
+import { AvatarProps } from "@/types/chat.types";
 
 const Avatar = ({ pic, sizeClass }: AvatarProps) => {
   return (
