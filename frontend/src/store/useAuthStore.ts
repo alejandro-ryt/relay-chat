@@ -6,6 +6,7 @@ import { Socket } from "socket.io-client";
 type TAuthStore = {
   authUser: TAuthUser | null;
   socket: null | Socket;
+  isAuthenticated: boolean;
   signIn: (data: SignInFormData) => void;
   signUp: (data: SignUpFormData) => void;
   logOut: () => void;
@@ -18,6 +19,7 @@ type TAuthUser = {
 export const useAuthStore = create<TAuthStore>((set, get) => ({
   authUser: null,
   socket: null,
+  isAuthenticated: false,
   signIn: async (data) => {
     try {
       console.log(data);
