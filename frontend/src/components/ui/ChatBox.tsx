@@ -4,6 +4,7 @@ import ChatInput from "@/components/ui/ChatInput";
 import VerticalDotsIcon from "@/components/ui/icons/VerticalDotsIcon";
 import ChatMessage from "@/components/ui/ChatMessage";
 import ContactCard from "@/components/ui/ContactCard";
+import IconButton from "./IconButton";
 
 const ChatBox = () => {
   const [showSidebar, setShowSidebar] = useState(false);
@@ -17,12 +18,13 @@ const ChatBox = () => {
             <h1 className="text-2xl font-bold">Design Chat</h1>
             <p className="text-sm">23 members</p>
           </div>
-          <button
-            className="flex justify-center items-center cursor-pointer w-8 h-8 hover:bg-base-300 rounded-full"
-            onClick={() => setShowSidebar(!showSidebar)}
-          >
-            <VerticalDotsIcon />
-          </button>
+
+          <IconButton
+            shape="round"
+            title="Contacts"
+            icon={<VerticalDotsIcon />}
+            action={() => setShowSidebar(!showSidebar)}
+          />
         </section>
         {/* Chat History */}
         <section className="flex-1">
@@ -49,11 +51,14 @@ const ChatBox = () => {
 
       {/* Sidebar */}
       <motion.section
-        className="flex flex-col p-4 ml-4 mr-[-1rem] mt-[-1rem] mb-[-1rem] bg-base-200"
-        initial={{ width: "0rem", opacity: 0 }}
+        className="flex flex-col p-4 mr-[-1rem] mt-[-1rem] mb-[-1rem] bg-base-200"
+        initial={{ width: "0rem", display: "none", opacity: 0 }}
         animate={{
-          width: showSidebar ? "25rem" : "0rem",
+          display: showSidebar ? "flex" : "none",
           opacity: showSidebar ? 100 : 0,
+          width: showSidebar ? "25rem" : "0rem",
+          marginLeft: showSidebar ? "1rem" : "0rem",
+          padding: showSidebar ? "1rem" : "0rem",
         }}
         transition={{ duration: 0.2 }}
       >

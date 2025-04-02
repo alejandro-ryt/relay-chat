@@ -1,10 +1,5 @@
 import Avatar from "@/components/ui/Avatar";
-
-interface ChatPreviewProps {
-  pic: string;
-  title: string;
-  message: string;
-}
+import { ChatPreviewProps } from "@/types/Chat.types";
 
 const ChatPreview = ({ pic, title, message }: ChatPreviewProps) => {
   return (
