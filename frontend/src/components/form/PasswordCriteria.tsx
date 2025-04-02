@@ -4,16 +4,12 @@ import { CheckCircleSuccessIcon } from "@/components/ui/icons/CheckCircleSuccess
 import { CircleErrorIcon } from "@/components/ui/icons/CircleErrorIcon";
 import { passwordMatch } from "@/utils/security";
 import SIGN_UP_DATA from "@/constants/signUp";
-
-type CriteriaProps = {
-  password: string;
-  confirmPassword: string;
-};
+import { TPasswordCriteriaProps } from "@/types/form.types";
 
 export const PasswordCriteria = ({
   password,
   confirmPassword,
-}: CriteriaProps) => {
+}: TPasswordCriteriaProps) => {
   const validation = (password: string) => {
     return {
       hasLetter: () => {

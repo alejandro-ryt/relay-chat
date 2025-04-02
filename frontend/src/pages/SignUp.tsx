@@ -1,5 +1,4 @@
 import { InputField } from "@/components/form/InputField";
-import { InputPassword } from "@/components/form/InputPassword";
 import { PasswordCriteria } from "@/components/form/PasswordCriteria";
 import SIGN_UP_DATA from "@/constants/signUp";
 import { useSignUp } from "@/hooks/useSignUp";
@@ -42,83 +41,51 @@ const SignUp = () => {
           className="grid space-y-4"
           onSubmit={handleSubmit(handleOnSubmit)}
         >
-          <div className="grid gap-2 md:grid-cols-2 grid-cols-1">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">
-                {SIGN_UP_DATA.USERNAME}
-              </legend>
-              <InputField
-                placeholder={SIGN_UP_DATA.USERNAME_PLACEHOLDER}
-                {...register("username")}
-              />
-              <p className="fieldset-label text-error">
-                {errors.username?.message}
-              </p>
-            </fieldset>
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">{SIGN_UP_DATA.EMAIL}</legend>
-              <InputField
-                type="email"
-                placeholder={SIGN_UP_DATA.EMAIL_PLACEHOLDER}
-                {...register("email")}
-              />
-              <p className="fieldset-label text-error">
-                {errors.email?.message}
-              </p>
-            </fieldset>
-          </div>
-          <div className="grid gap-2 md:grid-cols-2 grid-cols-1">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">
-                {SIGN_UP_DATA.FIRST_NAME}
-              </legend>
-              <InputField
-                placeholder={SIGN_UP_DATA.FIRST_NAME_PLACEHOLDER}
-                {...register("firstName")}
-              />
-              <p className="fieldset-label text-error">
-                {errors.firstName?.message}
-              </p>
-            </fieldset>
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">
-                {SIGN_UP_DATA.LAST_NAME}
-              </legend>
-              <InputField
-                placeholder={SIGN_UP_DATA.LAST_NAME_PLACEHOLDER}
-                {...register("lastName")}
-              />
-              <p className="fieldset-label text-error">
-                {errors.lastName?.message}
-              </p>
-            </fieldset>
-          </div>
-          <div className="grid gap-2 md:grid-cols-2 grid-cols-1">
-            <fieldset className="fieldset">
-              <legend className="fieldset-legend">
-                {SIGN_UP_DATA.PASSWORD}
-              </legend>
-              <InputPassword
-                placeholder={SIGN_UP_DATA.PASSWORD_PLACEHOLDER}
-                {...register("password")}
-              />
-              <p className="fieldset-label text-error">
-                {errors.password?.message}
-              </p>
-            </fieldset>
-            <fieldset className="fieldset relative">
-              <legend className="fieldset-legend">
-                {SIGN_UP_DATA.CONFIRM_PASSWORD}
-              </legend>
-              <InputPassword
-                placeholder={SIGN_UP_DATA.PASSWORD_PLACEHOLDER}
-                {...register("confirmPassword")}
-              />
-              <p className="fieldset-label text-error">
-                {errors.confirmPassword?.message}
-              </p>
-            </fieldset>
-          </div>
+          <section className="grid gap-2 md:grid-cols-2 grid-cols-1">
+            <InputField
+              legend={SIGN_UP_DATA.USERNAME}
+              placeholder={SIGN_UP_DATA.USERNAME_PLACEHOLDER}
+              error={errors.username?.message}
+              {...register("username")}
+            />
+            <InputField
+              type="email"
+              placeholder={SIGN_UP_DATA.EMAIL_PLACEHOLDER}
+              legend={SIGN_UP_DATA.EMAIL}
+              error={errors.email?.message}
+              {...register("email")}
+            />
+          </section>
+          <section className="grid gap-2 md:grid-cols-2 grid-cols-1">
+            <InputField
+              placeholder={SIGN_UP_DATA.USERNAME_PLACEHOLDER}
+              legend={SIGN_UP_DATA.FIRST_NAME}
+              error={errors.firstName?.message}
+              {...register("firstName")}
+            />
+            <InputField
+              placeholder={SIGN_UP_DATA.LAST_NAME_PLACEHOLDER}
+              legend={SIGN_UP_DATA.LAST_NAME}
+              error={errors.lastName?.message}
+              {...register("lastName")}
+            />
+          </section>
+          <section className="grid gap-2 md:grid-cols-2 grid-cols-1">
+            <InputField
+              type="password"
+              placeholder={SIGN_UP_DATA.PASSWORD_PLACEHOLDER}
+              legend={SIGN_UP_DATA.PASSWORD}
+              error={errors.password?.message}
+              {...register("password")}
+            />
+            <InputField
+              type="password"
+              placeholder={SIGN_UP_DATA.PASSWORD_PLACEHOLDER}
+              legend={SIGN_UP_DATA.CONFIRM_PASSWORD}
+              error={errors.confirmPassword?.message}
+              {...register("confirmPassword")}
+            />
+          </section>
           <div className="divider "></div>
           {watch("password").length > 0 ||
           watch("confirmPassword").length > 0 ? (
@@ -127,7 +94,7 @@ const SignUp = () => {
               confirmPassword={watch("confirmPassword")}
             />
           ) : null}
-          <div className="flex gap-4 mt-4 mb-6">
+          <section className="flex gap-4 mt-4 mb-6">
             <input
               id="checkbox"
               type="checkbox"
@@ -144,13 +111,13 @@ const SignUp = () => {
                 {SIGN_UP_DATA.TERMS_CONDITION}
               </NavLink>
             </label>
-          </div>
+          </section>
           {errors.agreement && (
             <p className="fieldset-label text-error">
               {errors.agreement.message}
             </p>
           )}
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" role="button" className="btn btn-primary">
             {SIGN_UP_DATA.CREATE_BTN}
           </button>
         </form>
