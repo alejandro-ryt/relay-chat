@@ -15,6 +15,7 @@ const App = () => {
           <Route path="chat" element={<Chat />} />
         </Route>
         <Route path="sign-up" element={<SignUp />} />
+        <Route path="chat" element={<Chat />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
