@@ -1,9 +1,15 @@
 import express, { Express } from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
 import routes from "@/routes/index";
 import connectDB from "@/db/dbConfig";
 import cors from "cors";
 import { errorMiddleware } from "@/middlewares/errorMiddleware";
+import { handleSocketEvents } from "@/sockets/chatSocket";
 const app: Express = express();
+const server = createServer(app);
+// Initialize socket
+const io = new Server(server);
 const PORT: number = 3001;
 
 // Define a CORS options object
@@ -34,11 +40,17 @@ connectDB();
 // Middleware to parse JSON
 app.use(express.json());
 
-// Routes
 app.use("/api", routes);
 
 app.use(errorMiddleware);
 
-app.listen(PORT, () => {
+// Setup socket events
+io.on("connection", (socket) => {
+  console.log(`User connected: ${socket.id}`);
+  // Pass the socket to the handler function
+  handleSocketEvents(io, socket);
+});
+
+server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

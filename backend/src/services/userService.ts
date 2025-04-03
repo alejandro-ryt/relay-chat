@@ -14,6 +14,10 @@ export default class UserService implements IUserService {
     return await User.findOne({username}).exec();
   }
 
+  async getUserBySocketId(socketId: string): Promise<IUserDocument | null> {
+    return await User.findOne({socketId}).exec();
+  }
+
   async createUser(user: IUser): Promise<IUser> {
     const newUser = new User(user);
     return await newUser.save();
