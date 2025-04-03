@@ -1,5 +1,4 @@
 import { Socket } from "socket.io";
-// import User from "@/models/userModel";
 import UserService from "@/services/userService";
 import Chat from "@/models/chatModel";
 import Message from "@/models/messageModel";
