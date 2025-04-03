@@ -13,10 +13,7 @@ export type TAuthStore = {
   authUser: TAuthUser | null;
   socket: null | Socket;
   isAuthenticated: boolean;
-  isSigningUp: boolean;
-  isSigningIn: boolean;
-  signIn: (data: TSignInForm) => Promise<boolean>;
-  signUp: (data: TSignUpFormData) => Promise<boolean>;
+  authenticate: (data: TAuthUser) => void;
   logOut: () => void;
 };
 

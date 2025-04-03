@@ -1,16 +1,16 @@
 import { InputField } from "@/components/form/InputField";
 import { SignInIcon } from "@/components/ui/icons/SignInIcon";
-import { SparkIcon } from "@/components/ui/icons/SparkIcon";
+import { CreateIcon } from "@/components/ui/icons/CreateIcon";
 import { ROUTES } from "@/constants/routes";
 import SIGN_IN_DATA from "@/constants/signIn";
 import { useAuth } from "@/hooks/useAuth";
 import { initialSignInForm, signInSchema } from "@/schemas/signIn";
-import { useAuthStore } from "@/store/useAuthStore";
 import { TSignInForm } from "@/types/auth.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router";
 import { motion } from "motion/react";
+import chatPeople from "@/assets/chat-people.png";
 
 const SignIn = () => {
   const {
@@ -22,14 +22,12 @@ const SignIn = () => {
     defaultValues: initialSignInForm,
   });
 
-  const { sendSignIn } = useAuth();
-  const { isSigningIn } = useAuthStore();
+  const { sendSignIn, isSigningIn } = useAuth();
 
   return (
     <motion.section
-      initial={{ scale: 0.9, opacity: 0 }}
+      initial={{ opacity: 0 }}
       animate={{
-        scale: 1,
         opacity: 1,
         transition: { duration: 0.3, ease: "easeIn" },
       }}
@@ -38,12 +36,12 @@ const SignIn = () => {
         transition: { duration: 0.3, ease: "easeIn" },
       }}
       layout
-      className="grid bg-base-100 rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4"
+      className="grid bg-base-100 max-h-[100%] shadow-2xl rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4"
     >
-      <figure className="h-full w-full">
+      <figure className="h-full bg-[#f9f7f4] rounded-[1.5rem] w-full">
         <img
-          className="object-cover h-full w-full rounded-[1.5rem]"
-          src="https://img.freepik.com/free-vector/posts-concept-illustration_114360-204.jpg?t=st=1743457267~exp=1743460867~hmac=c7543514273f7c94f342efb54c7df07c458ea94e2ffce029a8867d4a108ebb3c&w=1380"
+          className="object-contain h-full w-full rounded-[1.5rem]"
+          src={chatPeople}
         />
       </figure>
       <section className="xl:p-20 p-8 flex flex-col justify-center">
@@ -89,9 +87,8 @@ const SignIn = () => {
         <NavLink
           to={ROUTES.SIGN_UP}
           className="btn mt-4 btn-accent btn-outline"
-          viewTransition
         >
-          <SparkIcon />
+          <CreateIcon />
           {SIGN_IN_DATA.SIGN_UP_BTN}
         </NavLink>
       </section>
