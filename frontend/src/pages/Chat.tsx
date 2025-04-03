@@ -8,9 +8,11 @@ import LogoutIcon from "@/components/ui/icons/LogoutIcon";
 import ChatBox from "@/components/chat/ChatBox";
 import RecentChats from "@/components/chat/RecentChats";
 import { useCurrentChatState } from "@/store/useChat";
+import { useAuth } from "@/hooks/useAuth";
 
 const Chat = () => {
   const [showSidebar, setShowSidebar] = useState(false);
+  const { logout } = useAuth();
   const {
     selectedChatId,
     selectedChatData,
@@ -55,7 +57,7 @@ const Chat = () => {
           shape="squircle"
           title="Logout"
           icon={<LogoutIcon />}
-          action={() => {}}
+          action={logout}
         />
       </aside>
 
