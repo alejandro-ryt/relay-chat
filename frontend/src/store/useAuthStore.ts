@@ -1,39 +1,11 @@
 import { TAuthStore } from "@/types/auth.types";
 import toast from "react-hot-toast";
 import { create } from "zustand";
-import { persist, PersistStorage, StorageValue } from "zustand/middleware";
+import { persist } from "zustand/middleware";
 import { END_POINT } from "@/constants/endpoint";
 import { TApiError } from "@/types/api.types";
 import { getApiError } from "@/utils/errors";
-
-const storage: PersistStorage<TAuthStore> = {
-  getItem: (
-    name: string
-  ):
-    | StorageValue<TAuthStore>
-    | Promise<StorageValue<TAuthStore> | null>
-    | null => {
-    const storedValue = localStorage.getItem(name);
-    if (storedValue) {
-      try {
-        return JSON.parse(storedValue);
-      } catch (error) {
-        console.error("Error parsing stored data:", error);
-        return null;
-      }
-    }
-    return null;
-  },
-  setItem: (
-    name: string,
-    value: StorageValue<TAuthStore>
-  ): void | Promise<void> => {
-    localStorage.setItem(name, JSON.stringify(value));
-  },
-  removeItem: (name: string): void | Promise<void> => {
-    localStorage.removeItem(name);
-  },
-};
+import { storagePersistAuth } from "@/utils/persistStore";
 
 export const useAuthStore = create<TAuthStore>()(
   persist(
@@ -103,7 +75,7 @@ export const useAuthStore = create<TAuthStore>()(
     }),
     {
       name: "auth-store",
-      storage: storage,
+      storage: storagePersistAuth,
     }
   )
 );
