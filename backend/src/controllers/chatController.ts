@@ -133,7 +133,6 @@ export const joinChat = async (
   }
 };
 
-// Send message event
 /**
  *
  * @param socket Socket
