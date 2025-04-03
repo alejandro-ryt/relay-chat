@@ -36,6 +36,7 @@ export const signUp = async (
       username,
       email,
       password,
+      socketId: null,
     };
 
     const createdUser = await userService.createUser(newUser);
@@ -129,7 +130,9 @@ export const signIn = async (
       })
     );
 
-    res.status(StatusCodes.OK).end();
+    res
+      .status(StatusCodes.OK)
+      .json({ userId: user.id, username: user.username });
   } catch (error) {
     // Check if it's a Mongoose validation error
     if (error instanceof mongoose.Error.ValidationError) {
