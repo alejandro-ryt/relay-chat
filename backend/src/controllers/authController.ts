@@ -26,11 +26,11 @@ export const signUp = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { chatPic, firstName, lastName, username, email, password } =
+    const { profilePic, firstName, lastName, username, email, password } =
       req.body;
 
     const newUser: IUser = {
-      chatPic,
+      profilePic,
       firstName,
       lastName,
       username,

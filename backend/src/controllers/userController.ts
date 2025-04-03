@@ -42,11 +42,11 @@ export const updateUser = async (
       throw new ErrorHandler(ERROR.ERROR_ID_REQUIRED, StatusCodes.BAD_REQUEST);
     }
     const currentUser = await userService.getUserById(req.params.id);
-    const { chatPic, firstName, lastName, username, email, password } =
+    const { profilePic, firstName, lastName, username, email, password } =
       req.body;
     const updatedUser: Partial<IUser> = {
       ...currentUser,
-      chatPic,
+      profilePic,
       firstName,
       lastName,
       username,
