@@ -8,7 +8,12 @@ import {
 
 const userSchema = new Schema<IUserDocument>(
   {
-    chatPic: { type: String, required: false },
+    profilePic: {
+      type: String,
+      required: false,
+      default:
+        "https://wallpapers.com/images/high/default-avatar-placeholder-672pawlg85u1erwp.png",
+    },
     firstName: { type: String, required: [true, "User first name required"] },
     lastName: { type: String, required: [true, "User last name required"] },
     username: {
@@ -39,6 +44,7 @@ const userSchema = new Schema<IUserDocument>(
       },
       required: [true, "User password required"],
     },
+    socketId: { type: String, required: false, default: null },
   },
   { timestamps: true }
 );

@@ -1,12 +1,13 @@
-import mongoose, { Schema } from 'mongoose';
-import { IMessageDocument } from '../interfaces/message';
+import { IMessageDocument } from '@/interfaces/message';
+import { Schema, model } from 'mongoose';
 
 
 
 const messageSchema = new Schema<IMessageDocument>({
-    username: { type: String, required: true },
-    message: { type: String, required: true },
-    timestamp: { type: Date, default: Date.now }
-});
+  message: { type: String, required: true },
+  username: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+}, { timestamps: true });
 
-export const Message = mongoose.model<IMessageDocument>('Message', messageSchema);
+const Message = model<IMessageDocument>('Message', messageSchema);
+
+export default Message;
