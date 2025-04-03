@@ -133,7 +133,6 @@ export const joinChat = async (
   }
 };
 
-// Send message event
 /**
  *
  * @param socket Socket
@@ -171,8 +170,14 @@ export const sendMessage = async (
     await chatService.addMessageToChat(chat, newMessage.id);
     // Emit message to the room
     io.to(chatName).emit("sendMessage", {
-      username: user.username,
-      message: newMessage.message,
+      sender: user.username,
+      content: newMessage.message,
+      timestamp: new Date(newMessage.createdAt).toLocaleTimeString("en-US", {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      }),
     });
   } catch (error) {
     console.error("Error joining room:", error);

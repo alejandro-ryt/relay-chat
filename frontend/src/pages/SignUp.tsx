@@ -1,16 +1,16 @@
 import { InputField } from "@/components/form/InputField";
 import { PasswordCriteria } from "@/components/form/PasswordCriteria";
-import { SparkIcon } from "@/components/ui/icons/SparkIcon";
+import { CreateIcon } from "@/components/ui/icons/CreateIcon";
 import SIGN_UP_DATA from "@/constants/signUp";
 import { useAuth } from "@/hooks/useAuth";
 import { signUpSchema, initialSignUpForm } from "@/schemas/signUp";
-import { useAuthStore } from "@/store/useAuthStore";
 import { TSignUpForm } from "@/types/auth.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router";
 import { Link } from "react-router";
 import { motion } from "motion/react";
+import chatPeople from "@/assets/chat-people.png";
 
 const SignUp = () => {
   const {
@@ -22,35 +22,33 @@ const SignUp = () => {
     resolver: zodResolver(signUpSchema),
     defaultValues: initialSignUpForm,
   });
-  const { sendSignUp } = useAuth();
-  const { isSigningUp } = useAuthStore();
+  const { sendSignUp, isSigningUp } = useAuth();
 
   return (
     <motion.section
-      initial={{ scale: 0.9, opacity: 0 }}
+      initial={{ opacity: 0 }}
       animate={{
-        scale: 1,
         opacity: 1,
-        transition: { duration: 0.2, ease: "easeIn" },
+        transition: { duration: 0.3, ease: "easeIn" },
       }}
       whileInView={{
         opacity: 1,
-        transition: { duration: 0.2, ease: "easeIn" },
+        transition: { duration: 0.3, ease: "easeIn" },
       }}
       layout
-      className="grid bg-base-100 shadow-2xl rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4"
+      className="grid bg-base-100 max-h-[100%] shadow-2xl rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4"
     >
       <figure className="h-full bg-[#f9f7f4] rounded-[1.5rem] w-full">
         <img
           className="object-contain h-full w-full rounded-[1.5rem]"
-          src="https://sdmntprsouthcentralus.oaiusercontent.com/files/00000000-5918-51f7-9f65-81f7067a5f80/raw?se=2025-04-03T18%3A39%3A58Z&sp=r&sv=2024-08-04&sr=b&scid=60cc0344-2f4e-5cb1-a45f-c1da559a821a&skoid=365eb242-95ba-4335-a618-2c9f8f766a86&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-04-03T15%3A06%3A28Z&ske=2025-04-04T15%3A06%3A28Z&sks=b&skv=2024-08-04&sig=Mfkp3YW0UzlbPkYaz1dFxM8pxYdyKukVipvjzDfBQjI%3D"
+          src={chatPeople}
         />
       </figure>
       <section className="xl:p-20 p-8 flex flex-col justify-center">
         <h1 className="text-4xl mb-4 text-primary">{SIGN_UP_DATA.TITLE}</h1>
         <p className="mb-10">
           {SIGN_UP_DATA.LOGIN_LINK_PREV}
-          <Link to={"/"} className="btn btn-link" viewTransition>
+          <Link to={"/"} className="btn btn-link">
             {SIGN_UP_DATA.LOGIN_LINK}
           </Link>
         </p>
@@ -140,7 +138,7 @@ const SignUp = () => {
             {isSigningUp ? (
               <span className="loading loading-spinner"></span>
             ) : (
-              <SparkIcon />
+              <CreateIcon />
             )}
             {SIGN_UP_DATA.CREATE_BTN}
           </button>

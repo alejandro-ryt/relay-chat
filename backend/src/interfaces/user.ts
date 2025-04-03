@@ -1,7 +1,7 @@
 import { Document, Types } from "mongoose";
 
 export interface IUser {
-  profilePic: string;
+  profilePic?: string;
   firstName: string;
   lastName: string;
   username: string;
