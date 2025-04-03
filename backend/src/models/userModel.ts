@@ -1,14 +1,26 @@
 import mongoose, { Schema, CallbackError } from "mongoose";
 import { IUserDocument } from "@/interfaces/user";
 import { hashPassword } from "@/utils/protectPassword";
-import { validateEmailFormat, validatePasswordFormat } from "@/utils/inputValidations";
+import {
+  validateEmailFormat,
+  validatePasswordFormat,
+} from "@/utils/inputValidations";
 
 const userSchema = new Schema<IUserDocument>(
   {
-    profilePic: { type: String, required: false },
+    profilePic: {
+      type: String,
+      required: false,
+      default:
+        "https://wallpapers.com/images/high/default-avatar-placeholder-672pawlg85u1erwp.png",
+    },
     firstName: { type: String, required: [true, "User first name required"] },
     lastName: { type: String, required: [true, "User last name required"] },
-    username: { type: String, required: [true, "User username required"], unique: true }, // Set as unique to create index on this field
+    username: {
+      type: String,
+      required: [true, "User username required"],
+      unique: true,
+    }, // Set as unique to create index on this field
     email: {
       type: String,
       validate: {
@@ -32,7 +44,7 @@ const userSchema = new Schema<IUserDocument>(
       },
       required: [true, "User password required"],
     },
-    socketId: { type: String, required: false, unique: true },
+    socketId: { type: String, required: false, default: null },
   },
   { timestamps: true }
 );
