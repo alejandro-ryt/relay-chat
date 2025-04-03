@@ -1,7 +1,7 @@
 import Avatar from "@/components/ui/Avatar";
-import { ChatMessageProps } from "@/types/chat.types";
+import { TChatMessageProps } from "@/types/chat.types";
 
-const ChatMessage = ({ type, pic, name, time, message }: ChatMessageProps) => {
+const ChatMessage = ({ type, pic, name, time, message }: TChatMessageProps) => {
   if (type === "received") {
     return (
       <div className="chat chat-start">

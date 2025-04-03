@@ -13,11 +13,12 @@ type TAuthStore = {
 };
 
 type TAuthUser = {
-  name: string;
+  userId: string;
+  username: string;
 };
 
 export const useAuthStore = create<TAuthStore>((set, get) => ({
-  authUser: null,
+  authUser: { userId: "1234567890", username: "alejandromagno" },
   socket: null,
   isAuthenticated: true,
   signIn: async (data) => {

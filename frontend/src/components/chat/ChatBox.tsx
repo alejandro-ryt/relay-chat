@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import ChatInput from "@/components/ui/ChatInput";
+import ChatInput from "@/components/chat/ChatInput";
 import VerticalDotsIcon from "@/components/ui/icons/VerticalDotsIcon";
-import ChatMessage from "@/components/ui/ChatMessage";
-import ContactCard from "@/components/ui/ContactCard";
-import IconButton from "./IconButton";
+import ChatMessage from "@/components/chat/ChatMessage";
+import ContactCard from "@/components/chat/ContactCard";
+import IconButton from "@/components/ui/IconButton";
+import { useCurrentChatState } from "@/store/useChat";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const ChatBox = () => {
   const [showSidebar, setShowSidebar] = useState(false);
+  const { selectedChatData, selectedChatPreviewData } = useCurrentChatState();
+  const { authUser } = useAuthStore();
 
   return (
     <section className="relative flex flex-row w-full h-auto m-4">
@@ -15,8 +19,12 @@ const ChatBox = () => {
         {/* Header of the ChatBox */}
         <section className="flex flex-row justify-between items-center mb-6">
           <div role="group" className="flex flex-col">
-            <h1 className="text-2xl font-bold">Design Chat</h1>
-            <p className="text-sm">23 members</p>
+            <h1 className="text-2xl font-bold">
+              {selectedChatPreviewData?.chatName}
+            </h1>
+            <p className="text-sm">
+              {selectedChatData?.members.length} members
+            </p>
           </div>
 
           <IconButton
@@ -28,20 +36,25 @@ const ChatBox = () => {
         </section>
         {/* Chat History */}
         <section className="flex-1">
-          <ChatMessage
-            type="received"
-            name="Obi-Wan Kenobi"
-            pic="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-            time="12:45"
-            message="You were the Chosen One!"
-          />
-          <ChatMessage
-            type="sent"
-            name="Anakin"
-            pic="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-            time="12:46"
-            message="I hate you!"
-          />
+          {selectedChatData?.messages
+            ? selectedChatData.messages.map((message) => {
+                const messageType =
+                  authUser && authUser.username === message.username
+                    ? "sent"
+                    : "received";
+
+                return (
+                  <ChatMessage
+                    key={`${message.timestamp}-${Math.random().toString()}`}
+                    type={messageType}
+                    name={message.username}
+                    pic="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                    time="12:45"
+                    message={message.message}
+                  />
+                );
+              })
+            : null}
         </section>
         {/* Message Input */}
         <section className="w-full">
@@ -80,5 +93,3 @@ const ChatBox = () => {
 };
 
 export default ChatBox;
-
-<style></style>;
