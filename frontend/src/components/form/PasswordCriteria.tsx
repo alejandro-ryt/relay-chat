@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { CheckCircleSuccessIcon } from "@/components/ui/icons/CheckCircleSuccessIcon";
 import { CircleErrorIcon } from "@/components/ui/icons/CircleErrorIcon";
 import { passwordMatch } from "@/utils/security";
+import { motion } from "motion/react";
 import SIGN_UP_DATA from "@/constants/signUp";
 import { TPasswordCriteriaProps } from "@/types/form.types";
 
@@ -48,7 +49,11 @@ export const PasswordCriteria = ({
   };
 
   return (
-    <div className="border rounded-2xl shadow-2xl p-4 fade">
+    <motion.section
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      className="border rounded-2xl shadow-2xl p-4"
+    >
       <p className={validation(password).hasLetter()}>
         {REGEX.HAS_LETTER.test(password) ? (
           <CheckCircleSuccessIcon />
@@ -89,6 +94,6 @@ export const PasswordCriteria = ({
         )}
         {SIGN_UP_DATA.ERR_PASSWORD_MATH}
       </p>
-    </div>
+    </motion.section>
   );
 };

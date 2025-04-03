@@ -10,6 +10,7 @@ import { TSignInForm } from "@/types/auth.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router";
+import { motion } from "motion/react";
 
 const SignIn = () => {
   const {
@@ -25,7 +26,20 @@ const SignIn = () => {
   const { isSigningIn } = useAuthStore();
 
   return (
-    <section className="grid bg-base-100 rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4">
+    <motion.section
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{
+        scale: 1,
+        opacity: 1,
+        transition: { duration: 0.3, ease: "easeIn" },
+      }}
+      whileInView={{
+        opacity: 1,
+        transition: { duration: 0.3, ease: "easeIn" },
+      }}
+      layout
+      className="grid bg-base-100 rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4"
+    >
       <figure className="h-full w-full">
         <img
           className="object-cover h-full w-full rounded-[1.5rem]"
@@ -75,12 +89,13 @@ const SignIn = () => {
         <NavLink
           to={ROUTES.SIGN_UP}
           className="btn mt-4 btn-accent btn-outline"
+          viewTransition
         >
           <SparkIcon />
           {SIGN_IN_DATA.SIGN_UP_BTN}
         </NavLink>
       </section>
-    </section>
+    </motion.section>
   );
 };
 export default SignIn;

@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router";
 import { Link } from "react-router";
+import { motion } from "motion/react";
 
 const SignUp = () => {
   const {
@@ -25,7 +26,20 @@ const SignUp = () => {
   const { isSigningUp } = useAuthStore();
 
   return (
-    <section className="grid bg-base-100 rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4">
+    <motion.section
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{
+        scale: 1,
+        opacity: 1,
+        transition: { duration: 0.2, ease: "easeIn" },
+      }}
+      whileInView={{
+        opacity: 1,
+        transition: { duration: 0.2, ease: "easeIn" },
+      }}
+      layout
+      className="grid bg-base-100 rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4"
+    >
       <figure className="h-full w-full">
         <img
           className="object-cover h-full w-full rounded-[1.5rem]"
@@ -36,7 +50,7 @@ const SignUp = () => {
         <h1 className="text-4xl mb-4 text-primary">{SIGN_UP_DATA.TITLE}</h1>
         <p className="mb-10">
           {SIGN_UP_DATA.LOGIN_LINK_PREV}
-          <Link to={"/"} className="btn btn-link">
+          <Link to={"/"} className="btn btn-link" viewTransition>
             {SIGN_UP_DATA.LOGIN_LINK}
           </Link>
         </p>
@@ -132,7 +146,7 @@ const SignUp = () => {
           </button>
         </form>
       </section>
-    </section>
+    </motion.section>
   );
 };
 export default SignUp;
