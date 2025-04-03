@@ -1,12 +1,13 @@
 import { Types, Document } from "mongoose";
-import { Socket } from "socket.io";
-import { IUserDocument } from "./user";
-import { IMessageDocument } from "./message";
+import { IUser } from "@/interfaces/user";
+import { IMessageDocument } from "@/interfaces/message";
 
 export interface IChat {
-  name?: string;
+  chatPic: string;
+  name: string;
   type: "direct" | "group";
   members: Types.ObjectId[];
+  messages: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -14,8 +15,10 @@ export interface IChat {
 export interface IChatDocument extends IChat, Document {}
 
 export interface IChatService {
-  findByChatName(chatName: string): Promise<IChatDocument | null>;
-  saveChat(chatName: string,  user: IUserDocument): Promise<IChatDocument>;
+  findChatsByUserId(userId: string): Promise<IChat[] | []>;
+  saveChat(chatName: string, type: "direct"| "group", userId: string): Promise<IChatDocument>;
   saveMessage(chatId: string, message: string, userId: string): Promise<IMessageDocument>;
-  handleDisconnect(socket: Socket): Promise<void>;
+  handleDisconnect(userId: string, user: Partial<IUser>): Promise<IUser | null>;
 }
+
+

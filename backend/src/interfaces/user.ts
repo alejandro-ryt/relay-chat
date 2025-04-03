@@ -7,10 +7,12 @@ export interface IUser {
   username: string;
   email: string;
   password: string;
-  socketId?: string;
+  socketId: string | null;
 }
 
-export interface IUserDocument extends IUser, Document {}
+export interface IUserDocument extends IUser, Document {
+  _id: Types.ObjectId;
+}
 
 export interface IUserService {
   getUserById(id: string): Promise<IUser | null>;

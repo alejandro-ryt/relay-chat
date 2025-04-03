@@ -1,9 +1,8 @@
 import { Document, Types } from 'mongoose';
 
-interface IMessage {
+export interface IMessage {
     message: string;
     username: Types.ObjectId;
-    chat: Types.ObjectId;
     createdAt: Date;
   }
 
