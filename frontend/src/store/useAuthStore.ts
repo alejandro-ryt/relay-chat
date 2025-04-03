@@ -31,7 +31,8 @@ export const useAuthStore = create<TAuthStore>()(
             throw errorData;
           }
           set({
-            authUser: { userId: "1", username: "test" },
+            // Auth user hardcoded for now
+            authUser: { userId: "1234567890", username: "alejandromagno" },
             isAuthenticated: true,
           });
           return true;

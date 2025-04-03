@@ -16,6 +16,8 @@ const ChatHistory = () => {
     <section className="flex-1">
       {selectedChatData?.messages
         ? selectedChatData.messages.map((message) => {
+            console.log(authUser?.username);
+
             const messageType =
               authUser && authUser.username === message.username
                 ? "sent"
