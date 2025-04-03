@@ -3,6 +3,7 @@ import clsx from "clsx";
 import { CheckCircleSuccessIcon } from "@/components/ui/icons/CheckCircleSuccessIcon";
 import { CircleErrorIcon } from "@/components/ui/icons/CircleErrorIcon";
 import { passwordMatch } from "@/utils/security";
+import { motion } from "motion/react";
 import SIGN_UP_DATA from "@/constants/signUp";
 import { TPasswordCriteriaProps } from "@/types/form.types";
 
@@ -30,6 +31,12 @@ export const PasswordCriteria = ({
           REGEX.HAS_MIN8_MAX20.test(password) ? "text-success" : "text-error"
         );
       },
+      hasAllSecurity: () => {
+        return clsx(
+          "text-base-content flex items-center gap-2 my-2",
+          REGEX.HAS_ALL_SECURITY.test(password) ? "text-success" : "text-error"
+        );
+      },
       equals: () => {
         return clsx(
           "text-base-content flex items-center gap-2 my-2",
@@ -42,7 +49,11 @@ export const PasswordCriteria = ({
   };
 
   return (
-    <div className="border rounded-2xl shadow-2xl p-4 fade">
+    <motion.section
+      initial={{ scale: 0 }}
+      animate={{ scale: 1 }}
+      className="border rounded-2xl shadow-2xl p-4"
+    >
       <p className={validation(password).hasLetter()}>
         {REGEX.HAS_LETTER.test(password) ? (
           <CheckCircleSuccessIcon />
@@ -67,6 +78,14 @@ export const PasswordCriteria = ({
         )}
         {SIGN_UP_DATA.ERR_MIN_MAX}
       </p>
+      <p className={validation(password).hasAllSecurity()}>
+        {REGEX.HAS_ALL_SECURITY.test(password) ? (
+          <CheckCircleSuccessIcon />
+        ) : (
+          <CircleErrorIcon />
+        )}
+        {SIGN_UP_DATA.ERR_ALL_SECURITY}
+      </p>
       <p className={validation(password).equals()}>
         {passwordMatch(password, confirmPassword) ? (
           <CheckCircleSuccessIcon />
@@ -75,6 +94,6 @@ export const PasswordCriteria = ({
         )}
         {SIGN_UP_DATA.ERR_PASSWORD_MATH}
       </p>
-    </div>
+    </motion.section>
   );
 };

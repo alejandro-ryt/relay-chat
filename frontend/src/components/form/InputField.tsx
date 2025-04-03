@@ -5,7 +5,7 @@ import { EyeOpenIcon } from "../ui/icons/EyeOpenIcon";
 
 export const InputField: FC<TInputFieldProps> = ({
   type = "text",
-  className = "input input-bordered input-primary",
+  className = "input input-bordered input-primary w-full",
   legend,
   error,
   ...rest
