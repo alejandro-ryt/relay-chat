@@ -38,12 +38,12 @@ const SignUp = () => {
         transition: { duration: 0.2, ease: "easeIn" },
       }}
       layout
-      className="grid bg-base-100 rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4"
+      className="grid bg-base-100 shadow-2xl rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4"
     >
-      <figure className="h-full w-full">
+      <figure className="h-full bg-[#f9f7f4] rounded-[1.5rem] w-full">
         <img
-          className="object-cover h-full w-full rounded-[1.5rem]"
-          src="https://img.freepik.com/free-vector/posts-concept-illustration_114360-204.jpg?t=st=1743457267~exp=1743460867~hmac=c7543514273f7c94f342efb54c7df07c458ea94e2ffce029a8867d4a108ebb3c&w=1380"
+          className="object-contain h-full w-full rounded-[1.5rem]"
+          src="https://sdmntprsouthcentralus.oaiusercontent.com/files/00000000-5918-51f7-9f65-81f7067a5f80/raw?se=2025-04-03T18%3A39%3A58Z&sp=r&sv=2024-08-04&sr=b&scid=60cc0344-2f4e-5cb1-a45f-c1da559a821a&skoid=365eb242-95ba-4335-a618-2c9f8f766a86&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-04-03T15%3A06%3A28Z&ske=2025-04-04T15%3A06%3A28Z&sks=b&skv=2024-08-04&sig=Mfkp3YW0UzlbPkYaz1dFxM8pxYdyKukVipvjzDfBQjI%3D"
         />
       </figure>
       <section className="xl:p-20 p-8 flex flex-col justify-center">
