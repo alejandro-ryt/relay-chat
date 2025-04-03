@@ -1,6 +1,6 @@
-import { AvatarProps } from "@/types/chat.types";
+import { TAvatarProps } from "@/types/chat.types";
 
-const Avatar = ({ pic, sizeClass }: AvatarProps) => {
+const Avatar = ({ pic, sizeClass }: TAvatarProps) => {
   return (
     <article className="avatar">
       <figure className={`mask mask-squircle ${sizeClass}`}>

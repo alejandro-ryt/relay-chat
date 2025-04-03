@@ -12,7 +12,7 @@ const ChatMessage = ({ type, pic, name, time, message }: TChatMessageProps) => {
           {name}
           <time className="text-xs opacity-50">{time}</time>
         </div>
-        <div className="chat-bubble">{message}</div>
+        <div className="chat-bubble rounded-[0.8rem]">{message}</div>
       </div>
     );
   }
@@ -26,7 +26,9 @@ const ChatMessage = ({ type, pic, name, time, message }: TChatMessageProps) => {
           {name}
           <time className="text-xs opacity-50">{time}</time>
         </div>
-        <div className="chat-bubble">{message}</div>
+        <div className="chat-bubble rounded-[0.8rem] bg-base-200">
+          {message}
+        </div>
       </div>
     );
   }

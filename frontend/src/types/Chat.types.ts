@@ -14,6 +14,7 @@ export type TChatMessageProps = {
 };
 
 export type TChatPreviewProps = {
+  id: string;
   pic: string;
   title: string;
   message: string;
@@ -39,7 +40,7 @@ export type TRecentChatsProps = {
 
 export type TChatMessage = {
   username: string;
-  message: string;
+  content: string;
   timestamp: Date;
 };
 
@@ -47,7 +48,7 @@ export type TChatMember = {
   username: string;
   firstName: string;
   lastName: string;
-  profilePic: string;
+  chatPic: string;
 };
 
 export type TChat = {
@@ -56,10 +57,10 @@ export type TChat = {
 };
 
 export type TPreviewChat = {
-  chatId: string;
+  id: string;
   chatName: string;
-  profilePic: string;
-  lastMessage: string;
+  chatPic: string;
+  lastMessage: TChatMessage;
   timestamp: Date;
 };
 
@@ -71,7 +72,7 @@ export type TChatState = {
 };
 
 export type TChatActions = {
-  setSelectedChatId: (selectedChatId: string | null) => void;
+  setSelectedChatId: (selectedId: string | null) => void;
   setSelectedChatData: () => void;
   setSelectedChatPreviewData: () => void;
 };

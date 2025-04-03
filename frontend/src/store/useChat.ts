@@ -1,48 +1,62 @@
 import { create } from "zustand";
 import { TChatState, TChatActions } from "@/types/chat.types";
 
+// Using mock data while integrating API
 const mockPreviewData = [
   {
-    chatId: "131234124124123",
+    id: "131234124124123",
     chatName: "Julio Merlo",
-    profilePic: "https://picsum.photos/200",
-    lastMessage: "Que mae como va con esa interfaz?",
+    chatPic: "https://picsum.photos/200",
+    lastMessage: {
+      content: "Que mae como va con esa interfaz?",
+      username: "juliocesar",
+      timestamp: new Date(),
+    },
     timestamp: new Date(),
   },
   {
-    chatId: "214114124141242",
+    id: "214114124141242",
     chatName: "Jorge Gomez",
-    profilePic: "https://picsum.photos/300",
-    lastMessage: "Ya termine el backend bro, para cuando el cod?",
+    chatPic: "https://picsum.photos/300",
+    lastMessage: {
+      content: "Ya termine el backend bro, para cuando el cod?",
+      username: "jorgeelcurioso",
+      timestamp: new Date(),
+    },
     timestamp: new Date(),
   },
   {
-    chatId: "214124124214214",
+    id: "214124124214214",
     chatName: "John Smith",
-    profilePic: "https://picsum.photos/400",
-    lastMessage: "Lorem Ipsum, Lorem Ipsum, Lorem Ipsum, Lorem Ipsum!",
+    chatPic: "https://picsum.photos/400",
+    lastMessage: {
+      content: "Lorem Ipsum, Lorem Ipsum, Lorem Ipsum, Lorem Ipsum!",
+      username: "johnsalchichon",
+      timestamp: new Date(),
+    },
     timestamp: new Date(),
   },
 ];
 
+// Using mock data while integrating API
 const mockChatsArray = [
   {
-    chatId: "131234124124123",
+    id: "131234124124123",
     messages: [
       {
+        content: "Que mae como va con esa interfaz?",
         username: "juliocesar",
-        message: "Que mae como va con esa interfaz?",
         timestamp: new Date(),
       },
       {
-        username: "alejandromagno",
-        message:
+        content:
           "Mae ya casi termino de hecho, el responsive va a estar divertido jaja lol xd",
+        username: "alejandromagno",
         timestamp: new Date(),
       },
       {
+        content: "Mae ya termine!",
         username: "alejandromagno",
-        message: "Mae ya termine!",
         timestamp: new Date(),
       },
     ],
@@ -51,27 +65,27 @@ const mockChatsArray = [
         username: "juliocesar",
         firstName: "Julio",
         lastName: "Merlo",
-        profilePic: "https://picsum.photos/200",
+        chatPic: "https://picsum.photos/200",
       },
       {
         username: "alejandromagno",
         firstName: "Alejandro",
         lastName: "Solano",
-        profilePic: "https://picsum.photos/500",
+        chatPic: "https://picsum.photos/500",
       },
     ],
   },
   {
-    chatId: "214114124141242",
+    id: "214114124141242",
     messages: [
       {
+        content: "Ya termine el backend bro, para cuando el cod?",
         username: "jorgeelcurioso",
-        message: "Ya termine el backend bro, para cuando el cod?",
         timestamp: new Date(),
       },
       {
+        content: "Ahorita que termine de implementar esto bro",
         username: "alejandromagno",
-        message: "Ahorita que termine de implementar esto bro",
         timestamp: new Date(),
       },
     ],
@@ -80,27 +94,27 @@ const mockChatsArray = [
         username: "jorgeelcurioso",
         firstName: "Jorge",
         lastName: "Gomez",
-        profilePic: "https://picsum.photos/300",
+        chatPic: "https://picsum.photos/300",
       },
       {
         username: "alejandromagno",
         firstName: "Alejandro",
         lastName: "Solano",
-        profilePic: "https://picsum.photos/500",
+        chatPic: "https://picsum.photos/500",
       },
     ],
   },
   {
-    chatId: "214124124214214",
+    id: "214124124214214",
     messages: [
       {
+        content: "Hello there!",
         username: "johnsalchichon",
-        message: "Hello there!",
         timestamp: new Date(),
       },
       {
+        content: "General Kenobi!",
         username: "alejandromagno",
-        message: "General Kenobi!",
         timestamp: new Date(),
       },
     ],
@@ -109,13 +123,13 @@ const mockChatsArray = [
         username: "johnsalchichon",
         firstName: "John",
         lastName: "S",
-        profilePic: "https://picsum.photos/400",
+        chatPic: "https://picsum.photos/400",
       },
       {
         username: "alejandromagno",
         firstName: "Alejandro",
         lastName: "Solano",
-        profilePic: "https://picsum.photos/500",
+        chatPic: "https://picsum.photos/500",
       },
     ],
   },
@@ -128,7 +142,7 @@ export const useCurrentChatState = create<TChatState & TChatActions>(
     selectedChatPreviewData: null,
     chatPreviewArray: mockPreviewData,
 
-    // Set Chat Id
+    // Set Chat id
     setSelectedChatId: (selectedChatId: string | null) => {
       set({
         selectedChatId,
@@ -138,7 +152,7 @@ export const useCurrentChatState = create<TChatState & TChatActions>(
     // Set Chat Data
     setSelectedChatData: () => {
       const found = mockChatsArray.find(
-        (foundChat) => foundChat.chatId === get().selectedChatId
+        (foundChat) => foundChat.id === get().selectedChatId
       );
 
       set({
@@ -149,7 +163,7 @@ export const useCurrentChatState = create<TChatState & TChatActions>(
     // Set Chat Data
     setSelectedChatPreviewData: () => {
       const found = mockPreviewData.find(
-        (foundChat) => foundChat.chatId === get().selectedChatId
+        (foundChat) => foundChat.id === get().selectedChatId
       );
 
       set({

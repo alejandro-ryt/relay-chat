@@ -9,7 +9,10 @@ import UserService from "@/services/userService";
 import { ERROR } from "@/constants/relayChat";
 import { IUser } from "@/interfaces/user";
 import { ErrorHandler } from "@/utils/errorHandler";
-import { validateEmailFormat, validatePasswordFormat } from "@/utils/inputValidations";
+import {
+  validateEmailFormat,
+  validatePasswordFormat,
+} from "@/utils/inputValidations";
 
 dotenv.config();
 
@@ -23,11 +26,11 @@ export const signUp = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { profilePic, firstName, lastName, username, email, password } =
+    const { chatPic, firstName, lastName, username, email, password } =
       req.body;
 
     const newUser: IUser = {
-      profilePic,
+      chatPic,
       firstName,
       lastName,
       username,
@@ -70,7 +73,10 @@ export const signIn = async (
     const { email, password } = req.body;
 
     if (!email || !password) {
-      throw new ErrorHandler(ERROR.ERROR_EMAIL_PASSWORD_MISSING, StatusCodes.BAD_REQUEST);
+      throw new ErrorHandler(
+        ERROR.ERROR_EMAIL_PASSWORD_MISSING,
+        StatusCodes.BAD_REQUEST
+      );
     }
 
     if (!validateEmailFormat(email)) {
@@ -78,7 +84,10 @@ export const signIn = async (
     }
 
     if (!validatePasswordFormat(password)) {
-      throw new ErrorHandler(ERROR.ERROR_PASSWORD_FORMAT, StatusCodes.BAD_REQUEST);
+      throw new ErrorHandler(
+        ERROR.ERROR_PASSWORD_FORMAT,
+        StatusCodes.BAD_REQUEST
+      );
     }
 
     const user = await userService.getUserByEmail(email);

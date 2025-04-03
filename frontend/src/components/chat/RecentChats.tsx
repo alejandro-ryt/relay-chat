@@ -13,21 +13,23 @@ const RecentChats = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {
     <section className="flex flex-col max-w-72 ">
       <SearchInput />
 
+      {/* Chats Preview */}
       <section className="flex flex-col flex-1">
         {chatPreviewArray?.map((preview) => {
           return (
             <ChatPreview
-              key={preview.timestamp
-                .toISOString()
-                .concat(Math.random().toString())}
-              pic={preview.profilePic}
+              key={preview.id}
+              id={preview.id}
+              pic={preview.chatPic}
               title={preview.chatName}
-              message={preview.lastMessage}
-              action={() => setSelectedChatId(preview.chatId)}
+              message={preview.lastMessage.content}
+              action={() => setSelectedChatId(preview.id)}
             />
           );
         })}
       </section>
+
+      {/* Show / Hide Control Sidebar */}
       <section className="flex m-8 ml-5">
         <motion.div
           role="button"

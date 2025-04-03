@@ -1,22 +1,9 @@
+import SearchInputIcon from "@/components/ui/icons/SearchInputIcon";
+
 const SearchInput = () => {
   return (
     <label className="input rounded-[0.8rem] m-5 w-auto outline-none">
-      <svg
-        className="h-[1rem] opacity-50"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 24 24"
-      >
-        <g
-          strokeLinejoin="round"
-          strokeLinecap="round"
-          strokeWidth="2.5"
-          fill="none"
-          stroke="currentColor"
-        >
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="m21 21-4.3-4.3"></path>
-        </g>
-      </svg>
+      <SearchInputIcon />
       <input type="search" required placeholder="Search" />
     </label>
   );
