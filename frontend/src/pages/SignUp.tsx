@@ -1,9 +1,11 @@
 import { InputField } from "@/components/form/InputField";
 import { PasswordCriteria } from "@/components/form/PasswordCriteria";
+import { SparkIcon } from "@/components/ui/icons/SparkIcon";
 import SIGN_UP_DATA from "@/constants/signUp";
-import { useSignUp } from "@/hooks/useSignUp";
-import { schema, initialSignUpForm } from "@/schemas/signUp";
-import { SignUpForm } from "@/types/auth.types";
+import { useAuth } from "@/hooks/useAuth";
+import { signUpSchema, initialSignUpForm } from "@/schemas/signUp";
+import { useAuthStore } from "@/store/useAuthStore";
+import { TSignUpForm } from "@/types/auth.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router";
@@ -15,12 +17,12 @@ const SignUp = () => {
     register,
     watch,
     formState: { errors },
-  } = useForm<SignUpForm>({
-    resolver: zodResolver(schema),
+  } = useForm<TSignUpForm>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: initialSignUpForm,
   });
-
-  const { handleOnSubmit } = useSignUp();
+  const { sendSignUp } = useAuth();
+  const { isSigningUp } = useAuthStore();
 
   return (
     <section className="grid bg-base-100 rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4">
@@ -30,18 +32,15 @@ const SignUp = () => {
           src="https://img.freepik.com/free-vector/posts-concept-illustration_114360-204.jpg?t=st=1743457267~exp=1743460867~hmac=c7543514273f7c94f342efb54c7df07c458ea94e2ffce029a8867d4a108ebb3c&w=1380"
         />
       </figure>
-      <section className="xl:p-20 p-8">
-        <h1 className="text-3xl mb-4 text-primary">{SIGN_UP_DATA.TITLE}</h1>
-        <p className="mb-4">
+      <section className="xl:p-20 p-8 flex flex-col justify-center">
+        <h1 className="text-4xl mb-4 text-primary">{SIGN_UP_DATA.TITLE}</h1>
+        <p className="mb-10">
           {SIGN_UP_DATA.LOGIN_LINK_PREV}
-          <Link to={"/"} className="underline link-info">
+          <Link to={"/"} className="btn btn-link">
             {SIGN_UP_DATA.LOGIN_LINK}
           </Link>
         </p>
-        <form
-          className="grid space-y-4"
-          onSubmit={handleSubmit(handleOnSubmit)}
-        >
+        <form className="grid space-y-4" onSubmit={handleSubmit(sendSignUp)}>
           <section className="grid gap-2 md:grid-cols-2 grid-cols-1">
             <InputField
               legend={SIGN_UP_DATA.USERNAME}
@@ -118,7 +117,17 @@ const SignUp = () => {
               {errors.agreement.message}
             </p>
           )}
-          <button type="submit" role="button" className="btn btn-primary">
+          <button
+            type="submit"
+            disabled={isSigningUp}
+            role="button"
+            className="btn btn-primary"
+          >
+            {isSigningUp ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              <SparkIcon />
+            )}
             {SIGN_UP_DATA.CREATE_BTN}
           </button>
         </form>

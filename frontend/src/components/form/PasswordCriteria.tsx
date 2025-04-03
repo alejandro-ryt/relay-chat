@@ -30,6 +30,12 @@ export const PasswordCriteria = ({
           REGEX.HAS_MIN8_MAX20.test(password) ? "text-success" : "text-error"
         );
       },
+      hasAllSecurity: () => {
+        return clsx(
+          "text-base-content flex items-center gap-2 my-2",
+          REGEX.HAS_ALL_SECURITY.test(password) ? "text-success" : "text-error"
+        );
+      },
       equals: () => {
         return clsx(
           "text-base-content flex items-center gap-2 my-2",
@@ -66,6 +72,14 @@ export const PasswordCriteria = ({
           <CircleErrorIcon />
         )}
         {SIGN_UP_DATA.ERR_MIN_MAX}
+      </p>
+      <p className={validation(password).hasAllSecurity()}>
+        {REGEX.HAS_ALL_SECURITY.test(password) ? (
+          <CheckCircleSuccessIcon />
+        ) : (
+          <CircleErrorIcon />
+        )}
+        {SIGN_UP_DATA.ERR_ALL_SECURITY}
       </p>
       <p className={validation(password).equals()}>
         {passwordMatch(password, confirmPassword) ? (

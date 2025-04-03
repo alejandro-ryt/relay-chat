@@ -20,6 +20,7 @@ const SIGN_UP_DATA = {
   ERR_MIN_LETTER: "Must contain at least one letter.",
   ERR_MIN_DIGITS: "Must contain at least one number.",
   ERR_MIN_MAX: "Must be at least 8 characters long.",
+  ERR_ALL_SECURITY: "Must contain an special character.",
   ERR_PASSWORD_MATH: "Password and Confirm must match.",
   EER_PASSWORD_CRITERIA: "password not match the requirements",
   ERR_AGREEMENT: "You must agree to the terms and conditions.",
