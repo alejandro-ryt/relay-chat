@@ -50,16 +50,7 @@ export const getChatsByUserId = async (
           ? {
               content: lastMessage.message,
               sender: lastMessage.author,
-              // Get the timestamp when the message was sent
-              timestamp: new Date(lastMessage.createdAt).toLocaleTimeString(
-                "en-US",
-                {
-                  hour12: false,
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                }
-              ),
+              timestamp: lastMessage.createdAt,
             }
           : null,
         timestamp: chat.createdAt.toLocaleDateString(),
@@ -81,7 +72,39 @@ export const getChatsByUserId = async (
 
 /**
  * Chat events methods
+ *
  */
+
+/**
+ * Look up for pending chat invites
+ *
+ */
+export const lookUpForPendingInvites = async (
+  socket: Socket,
+  userId: string
+) => {
+  const invitations = await chatService.getPendingChatInvitesByUserId(userId);
+
+  if (!invitations.length) {
+    return;
+  }
+
+  invitations.forEach(async (invite) => {
+    const chat = await chatService.findByChatName(invite.chatName);
+    if (!chat) {
+      throw new ErrorHandler(ERROR.ERROR_CHAT_NOT_FOUND, StatusCodes.NOT_FOUND);
+    }
+    socket.join(chat.name); // Join the room for the user
+    socket.emit(
+      "notification",
+      `You were invited to join the chat: ${chat.name}`
+    );
+    console.log(`${userId} joined the room ${chat.name}`);
+  });
+
+  // After the user has joined the rooms, clear the invitations
+  await chatService.clearPendingChatInvites(userId);
+};
 
 /**
  *
@@ -96,11 +119,12 @@ export const joinChat = async (
   socket: Socket,
   chatName: string,
   type: "direct" | "group",
-  userId: string
+  currentUserId: string,
+  membersId: string[]
 ): Promise<void> => {
   try {
     // Find the user in the database using the userId
-    const user = await userService.getUserById(userId);
+    const user = await userService.getUserById(currentUserId);
     // If the user doesn't exist, throw a custom error
     if (!user) {
       throw new ErrorHandler(
@@ -108,11 +132,27 @@ export const joinChat = async (
         StatusCodes.NOT_FOUND
       );
     }
-    // Assign socket.id to user
-    await userService.updateUser(userId, { socketId: socket.id });
+
+    // Add each user to the socket room
+    membersId.forEach(async (userId) => {
+      // Here we emit the event to the individual user socket
+      const userSocketId = await userService.getUserSocketIdByUserId(userId);
+      if (!userSocketId) {
+        await chatService.saveChatInvitation(userId, chatName);
+        return;
+      }
+      const memberSocketInstance = io.sockets.sockets.get(userSocketId);
+      if (!memberSocketInstance) {
+        throw new ErrorHandler(
+          ERROR.ERROR_SOCKET_INSTANCE_NOT_FOUND,
+          StatusCodes.NOT_FOUND
+        );
+      }
+      memberSocketInstance.join(chatName); // Add other users/members to the chat
+    });
 
     // Find or create the chat (room) in the database
-    await chatService.saveChat(chatName, type, userId);
+    await chatService.saveChat(chatName, type, [currentUserId, ...membersId]);
 
     // Get chat by name (Populated)
     const chat = await chatService.findByChatNamePopulated(chatName);
@@ -123,8 +163,7 @@ export const joinChat = async (
     console.log("chat", chat);
 
     socket.join(chat.name ?? chatName); // Join the room
-
-    socket.emit("message", `Welcome to room ${chatName}!`);
+    socket.emit("notification", `Welcome to room ${chatName}!`);
     io.to(chatName).emit("chatData", chat);
     console.log(`${user.username} joined room ${chatName}`);
   } catch (error) {
@@ -182,14 +221,10 @@ export const sendMessage = async (
     await chatService.addMessageToChat(chat, newMessage.id);
     // Emit message to the room
     io.to(chatName).emit("sendMessage", {
-      sender: user.username,
-      content: newMessage.message,
-      timestamp: new Date(newMessage.createdAt).toLocaleTimeString("en-US", {
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      }),
+      author: newMessage.author,
+      _id: newMessage.id,
+      message: newMessage.message,
+      createdAt: newMessage.createdAt,
     });
   } catch (error) {
     console.error("Error joining room:", error);
