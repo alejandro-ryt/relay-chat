@@ -1,13 +1,14 @@
-import { IMessageDocument } from '@/interfaces/message';
-import { Schema, model } from 'mongoose';
+import { IMessageDocument } from "@/interfaces/message";
+import { Schema, model } from "mongoose";
 
+const messageSchema = new Schema<IMessageDocument>(
+  {
+    message: { type: String, required: true },
+    author: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  },
+  { timestamps: true }
+);
 
-
-const messageSchema = new Schema<IMessageDocument>({
-  message: { type: String, required: true },
-  username: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-}, { timestamps: true });
-
-const Message = model<IMessageDocument>('Message', messageSchema);
+const Message = model<IMessageDocument>("Message", messageSchema);
 
 export default Message;

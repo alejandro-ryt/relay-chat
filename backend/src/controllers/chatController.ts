@@ -6,6 +6,7 @@ import UserService from "@/services/userService";
 import { ERROR } from "@/constants/relayChat";
 import { ErrorHandler } from "@/utils/errorHandler";
 import { IMessage } from "@/interfaces/message";
+import { IUser } from "@/interfaces/user";
 
 const chatService = new ChatService();
 const userService = new UserService();
@@ -48,7 +49,7 @@ export const getChatsByUserId = async (
         lastMessage: lastMessage
           ? {
               content: lastMessage.message,
-              sender: lastMessage.username,
+              sender: lastMessage.author,
               // Get the timestamp when the message was sent
               timestamp: new Date(lastMessage.createdAt).toLocaleTimeString(
                 "en-US",
@@ -91,6 +92,7 @@ export const getChatsByUserId = async (
  * @description Join to an existing chat (room) or create a new one and assign the user to it
  */
 export const joinChat = async (
+  io: Server,
   socket: Socket,
   chatName: string,
   type: "direct" | "group",
@@ -110,10 +112,20 @@ export const joinChat = async (
     await userService.updateUser(userId, { socketId: socket.id });
 
     // Find or create the chat (room) in the database
-    const chat = await chatService.saveChat(chatName, type, userId);
+    await chatService.saveChat(chatName, type, userId);
+
+    // Get chat by name (Populated)
+    const chat = await chatService.findByChatNamePopulated(chatName);
+    // If the chat doesn't exist, throw a custom error
+    if (!chat) {
+      throw new ErrorHandler(ERROR.ERROR_CHAT_NOT_FOUND, StatusCodes.NOT_FOUND);
+    }
+    console.log("chat", chat);
+
     socket.join(chat.name ?? chatName); // Join the room
 
     socket.emit("message", `Welcome to room ${chatName}!`);
+    io.to(chatName).emit("chatData", chat);
     console.log(`${user.username} joined room ${chatName}`);
   } catch (error) {
     console.error("Error joining room:", error);

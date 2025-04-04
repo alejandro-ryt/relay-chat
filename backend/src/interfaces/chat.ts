@@ -16,9 +16,17 @@ export interface IChatDocument extends IChat, Document {}
 
 export interface IChatService {
   findChatsByUserId(userId: string): Promise<IChat[] | []>;
-  saveChat(chatName: string, type: "direct"| "group", userId: string): Promise<IChatDocument>;
-  saveMessage(chatId: string, message: string, userId: string): Promise<IMessageDocument>;
+  findByChatNamePopulated(chatName: string): Promise<IChat | null>;
+  findByChatName(chatName: string): Promise<IChatDocument | null>;
+  saveChat(
+    chatName: string,
+    type: "direct" | "group",
+    userId: string
+  ): Promise<IChatDocument>;
+  saveMessage(
+    chatId: string,
+    message: string,
+    userId: string
+  ): Promise<IMessageDocument>;
   handleDisconnect(userId: string, user: Partial<IUser>): Promise<IUser | null>;
 }
-
-
