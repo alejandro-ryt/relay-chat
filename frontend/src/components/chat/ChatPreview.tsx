@@ -1,6 +1,6 @@
 import Avatar from "@/components/ui/Avatar";
-import { useCurrentChatState } from "@/store/useChat";
-import { TChatPreviewProps } from "@/types/chat.types";
+import { useCurrentChatState } from "@/store/useChatStore";
+import { TChatPreviewProps } from "@/types/Chat.types";
 
 const ChatPreview = ({
   id,

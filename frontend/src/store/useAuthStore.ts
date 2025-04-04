@@ -7,8 +7,8 @@ export const useAuthStore = create<TAuthStore>()(
   persist(
     (set, _get) => ({
       authUser: null,
-      socket: null,
       isAuthenticated: false,
+      socket: null,
       authenticate: (data) => {
         set({ authUser: data, isAuthenticated: true });
       },

@@ -7,24 +7,43 @@ import FriendsIcon from "@/components/ui/icons/FriendsIcon";
 import LogoutIcon from "@/components/ui/icons/LogoutIcon";
 import ChatBox from "@/components/chat/ChatBox";
 import RecentChats from "@/components/chat/RecentChats";
-import { useCurrentChatState } from "@/store/useChat";
+import { useCurrentChatState } from "@/store/useChatStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserStore } from "@/store/useUserStore";
 import EditProfile from "@/components/chat/EditProfile";
 import { useUser } from "@/hooks/useUser";
+import { useChat } from "@/hooks/useChat";
 
 const Chat = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const { logout } = useAuth();
   const { user } = useUserStore();
   const { showModal, getUserDetails } = useUser();
+  const { authUser } = useAuthStore();
   const { selectedChatId, setSelectedChatData, setSelectedChatPreviewData } =
     useCurrentChatState();
+  const { getChatsByUserId } = useChat();
+
+  useEffect(() => {
+    const fetchSelectedChatPreviewData = async () => {
+      setSelectedChatData();
+      if (authUser?.userId) {
+        try {
+          const chats = await getChatsByUserId(authUser.userId);
+          setSelectedChatPreviewData(authUser.userId, chats);
+        } catch (error) {
+          console.error("Error fetching chats:", error);
+          setSelectedChatPreviewData(authUser.userId, []);
+        }
+      }
+    };
+
+    fetchSelectedChatPreviewData();
+  }, [selectedChatId, authUser?.userId]);
 
   useEffect(() => {
     getUserDetails();
-    setSelectedChatData();
-    setSelectedChatPreviewData();
   }, []);
 
   return (

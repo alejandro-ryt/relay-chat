@@ -1,40 +1,57 @@
 import ChatMessage from "@/components/chat/ChatMessage";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useCurrentChatState } from "@/store/useChat";
+import { useCurrentChatState } from "@/store/useChatStore";
+import { TChatMember } from "@/types/Chat.types";
+import { useEffect } from "react";
 
 const ChatHistory = () => {
-  const { selectedChatData } = useCurrentChatState();
+  const { selectedChatData, getMessage } = useCurrentChatState();
   const { authUser } = useAuthStore();
 
-  const getMemberPic = (username: string): string | undefined => {
-    return selectedChatData?.members.find(
-      (member) => member.username === username
-    )?.chatPic;
+  const getMemberInfo = (userId: string): TChatMember | undefined => {
+    const memberData = selectedChatData?.members.find(
+      (member) => member._id === userId
+    );
+
+    return memberData;
   };
 
+  useEffect(() => {
+    if (selectedChatData) {
+      getMessage(); // Get messages from socket
+    }
+  }, [selectedChatData]);
+
   return (
-    <section className="flex-1">
-      {selectedChatData?.messages
-        ? selectedChatData.messages.map((message) => {
-            console.log(authUser?.username);
+    <section
+      className="flex-1 overflow-x-auto pr-3"
+      ref={(el) => {
+        if (el) {
+          el.scrollTop = el.scrollHeight; // Scroll to bottom on render
+        }
+      }}
+    >
+      {selectedChatData?.messages.map((message) => {
+        const messageType =
+          authUser &&
+          authUser.username === getMemberInfo(message.author)?.username
+            ? "sent"
+            : "received";
 
-            const messageType =
-              authUser && authUser.username === message.username
-                ? "sent"
-                : "received";
-
-            return (
-              <ChatMessage
-                key={`${message.timestamp}-${Math.random().toString()}`}
-                type={messageType}
-                name={message.username}
-                pic={getMemberPic(message.username) || ""}
-                time="12:45"
-                message={message.content}
-              />
-            );
-          })
-        : null}
+        return (
+          <ChatMessage
+            key={message._id}
+            type={messageType}
+            name={getMemberInfo(message.author)?.username || ""}
+            pic={getMemberInfo(message.author)?.profilePic || ""}
+            time={new Date(message.createdAt).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+            message={message.message}
+          />
+        );
+      })}
     </section>
   );
 };

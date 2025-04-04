@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Socket } from "socket.io-client";
 
 export type TAvatarProps = {
   pic: string | undefined;
@@ -39,16 +40,19 @@ export type TRecentChatsProps = {
 };
 
 export type TChatMessage = {
+  _id: string;
+  author: string;
   username: string;
-  content: string;
-  timestamp: Date;
+  message: string;
+  createdAt: Date;
 };
 
 export type TChatMember = {
+  _id: string;
   username: string;
   firstName: string;
   lastName: string;
-  chatPic: string;
+  profilePic: string;
 };
 
 export type TChat = {
@@ -65,6 +69,7 @@ export type TPreviewChat = {
 };
 
 export type TChatState = {
+  socket: null | Socket;
   selectedChatId: string | null;
   selectedChatData: TChat | null;
   selectedChatPreviewData: TPreviewChat | null;
@@ -74,5 +79,11 @@ export type TChatState = {
 export type TChatActions = {
   setSelectedChatId: (selectedId: string | null) => void;
   setSelectedChatData: () => void;
-  setSelectedChatPreviewData: () => void;
+  setSelectedChatPreviewData: (
+    userId: string,
+    data: TPreviewChat[] | null
+  ) => void;
+  connectToChat: (userId: string) => void;
+  sendMessage: (message: string, userId: string) => void;
+  getMessage: () => void;
 };

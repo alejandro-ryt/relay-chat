@@ -3,8 +3,8 @@ import IconButton from "@/components/ui/IconButton";
 import ArrowIcon from "@/components/ui/icons/ArrowIcon";
 import ChatPreview from "@/components/chat/ChatPreview";
 import SearchInput from "@/components/chat/SearchInput";
-import { TRecentChatsProps } from "@/types/chat.types";
-import { useCurrentChatState } from "@/store/useChat";
+import { TRecentChatsProps } from "@/types/Chat.types";
+import { useCurrentChatState } from "@/store/useChatStore";
 
 const RecentChats = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {
   const { setSelectedChatId, chatPreviewArray } = useCurrentChatState();
@@ -22,7 +22,7 @@ const RecentChats = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {
               id={preview.id}
               pic={preview.chatPic}
               title={preview.chatName}
-              message={preview.lastMessage.content}
+              message={preview.lastMessage?.message || ""}
               action={() => setSelectedChatId(preview.id)}
             />
           );

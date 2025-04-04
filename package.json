@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/alejandro-ryt/relay-chat#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "@typescript-eslint/eslint-plugin": "^8.28.0",
     "@typescript-eslint/parser": "^8.28.0",
     "concurrently": "^9.1.2",
@@ -39,6 +40,7 @@
     "typescript-eslint": "^8.24.1"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "motion": "^12.6.3"
   }
 }

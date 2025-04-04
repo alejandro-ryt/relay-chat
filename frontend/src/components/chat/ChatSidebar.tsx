@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import ContactCard from "@/components/chat/ContactCard";
-import { useCurrentChatState } from "@/store/useChat";
-import { TRecentChatsProps } from "@/types/chat.types";
+import { useCurrentChatState } from "@/store/useChatStore";
+import { TRecentChatsProps } from "@/types/Chat.types";
 
 const ChatSidebar = ({ showSidebar }: TRecentChatsProps) => {
   const { selectedChatData } = useCurrentChatState();
@@ -27,7 +27,7 @@ const ChatSidebar = ({ showSidebar }: TRecentChatsProps) => {
             return (
               <ContactCard
                 key={member.username}
-                pic={member.chatPic}
+                pic={member.profilePic}
                 name={`${member.firstName} ${member.lastName}`}
               />
             );
