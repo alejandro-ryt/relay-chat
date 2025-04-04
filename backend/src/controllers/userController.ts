@@ -42,10 +42,12 @@ export const updateUser = async (
       throw new ErrorHandler(ERROR.ERROR_ID_REQUIRED, StatusCodes.BAD_REQUEST);
     }
     const currentUser = await userService.getUserById(req.params.id);
+    if (!currentUser) {
+      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
+    }
     const { profilePic, firstName, lastName, username, email, password } =
       req.body;
     const updatedUser: Partial<IUser> = {
-      ...currentUser,
       profilePic,
       firstName,
       lastName,
@@ -56,7 +58,10 @@ export const updateUser = async (
 
     const result = await userService.updateUser(req.params.id, updatedUser);
     if (!result) {
-      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
+      throw new ErrorHandler(
+        ERROR.ERROR_UPDATING_USER,
+        StatusCodes.BAD_REQUEST
+      );
     }
     res.status(StatusCodes.OK).json(result);
   } catch (error) {
