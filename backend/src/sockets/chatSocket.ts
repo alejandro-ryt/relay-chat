@@ -1,16 +1,37 @@
 import { Server, Socket } from "socket.io";
 import * as chatController from "@/controllers/chatController";
+import { assignSocketIdByUserId } from "@/controllers/userController";
 import { ErrorHandler } from "@/utils/errorHandler";
 import { ERROR } from "@/constants/relayChat";
 import { StatusCodes } from "http-status-codes";
 
 export const handleSocketEvents = (io: Server, socket: Socket) => {
+  /**
+   * Initiate socket connection and assign socket.id to the user
+     and look up for pending chats invites
+   */
+  socket.on("initiateSocket", async (userId: string) => {
+    await assignSocketIdByUserId(userId, socket);
+  });
+
   // Handle 'joinChat' event
   socket.on(
     "joinChat",
-    async (chatName: string, type: "direct" | "group", userId: string) => {
+    async (
+      chatName: string,
+      type: "direct" | "group",
+      currentUserId: string,
+      membersIds: string[]
+    ) => {
       try {
-        await chatController.joinChat(io, socket, chatName, type, userId); // Call your controller's joinChat logic
+        await chatController.joinChat(
+          io,
+          socket,
+          chatName,
+          type,
+          currentUserId,
+          membersIds
+        );
       } catch (error: unknown) {
         // Handle errors by emitting the error message to the client
         if (error instanceof ErrorHandler) {

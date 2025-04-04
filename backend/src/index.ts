@@ -8,29 +8,17 @@ import { errorMiddleware } from "@/middlewares/errorMiddleware";
 import { handleSocketEvents } from "@/sockets/chatSocket";
 const app: Express = express();
 const server = createServer(app);
-// Initialize socket
-const io = new Server(server);
 const PORT: number = 3001;
 
 // Define a CORS options object
 const corsOptions = {
-  origin: (
-    origin: string | undefined,
-    callback: (err: Error | null, allow?: boolean) => void
-  ) => {
-    const allowedOrigins = ["http://localhost:5173"];
-
-    if (allowedOrigins.indexOf(origin as string) !== -1 || !origin) {
-      // If the origin is in the allowedOrigins list or there's no origin (like from a same-origin request), allow it
-      callback(null, true);
-    } else {
-      // If the origin is not in the allowed list, block it
-      callback(new Error("Not allowed by CORS"), false);
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE"], // List allowed HTTP methods
-  allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+  origin: "http://localhost:5173", // Allow requests from your client origin
+  methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
+  headers: ["Content-Type", "Authorization"], // Specify allowed headers
 };
+
+// Initialize socket
+const io = new Server(server, { cors: corsOptions });
 
 app.use(cors(corsOptions));
 

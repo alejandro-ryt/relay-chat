@@ -6,10 +6,19 @@ import { IUser, IUserDocument } from "@/interfaces/user";
 import { IChat, IChatService, IChatDocument } from "@/interfaces/chat";
 import { IMessage, IMessageDocument } from "@/interfaces/message";
 import { Types } from "mongoose";
+import { IPendingInvites } from "@/interfaces/pendingChatInvites";
+import PendingChatInvites from "@/models/pendingChatInvites";
 
 const userService = new UserService();
 
 class ChatService implements IChatService {
+  // Get pending chat invites by user id
+  public async getPendingChatInvitesByUserId(
+    userId: string
+  ): Promise<IPendingInvites[]> {
+    return await PendingChatInvites.find({ userId }).exec();
+  }
+
   // Get all chats with last message by user id
   public async findChatsByUserId(userId: string) {
     // Return the populated type directly
@@ -43,34 +52,77 @@ class ChatService implements IChatService {
   public async saveChat(
     chatName: string,
     type: "direct" | "group",
-    userId: string
+    userIds: string[] // Array of userIds
   ): Promise<IChatDocument> {
     // Find chat by name
     let chat = await Chat.findOne({ name: chatName }).exec();
 
-    // Find or save chat
     if (chat) {
-      // Check if the user already joined the chat to avoid duplicates
-      const memberFound = chat.members.find((id) => id.toString() === userId);
+      // Ensure all users are added to the chat, avoiding duplicates
+      const newUserIds = userIds.map((id) => new Types.ObjectId(id));
+      const updatedMembers = new Set([
+        ...chat.members.map((m) => m.toString()),
+        ...newUserIds.map((id) => id.toString()),
+      ]);
 
-      if (!memberFound) {
-        // Add the user if not exist
-        const userIdObj = new Types.ObjectId(userId);
-        chat.members.push(userIdObj);
-        await chat.save();
-      }
+      chat.members = Array.from(updatedMembers).map(
+        (id) => new Types.ObjectId(id)
+      );
+      await chat.save();
     } else {
-      // Create the chat
+      // Create the chat if it doesn't exist
+      const userIdsObj = userIds.map((id) => new Types.ObjectId(id));
       chat = await Chat.create({
         name: chatName,
         type,
-        members: [userId],
+        members: userIdsObj,
         messages: [],
       });
     }
 
     return chat;
   }
+
+  async saveChatInvitation(userId: string, chatName: string): Promise<void> {
+    const newPendingChatInvite = new PendingChatInvites(userId, chatName);
+    await newPendingChatInvite.save();
+  }
+
+  async clearPendingChatInvites(userId: string): Promise<void> {
+    await PendingChatInvites.deleteMany({ userId });
+  }
+
+  // public async saveChat(
+  //   chatName: string,
+  //   type: "direct" | "group",
+  //   userId: string
+  // ): Promise<IChatDocument> {
+  //   // Find chat by name
+  //   let chat = await Chat.findOne({ name: chatName }).exec();
+
+  //   // Find or save chat
+  //   if (chat) {
+  //     // Check if the user already joined the chat to avoid duplicates
+  //     const memberFound = chat.members.find((id) => id.toString() === userId);
+
+  //     if (!memberFound) {
+  //       // Add the user if not exist
+  //       const userIdObj = new Types.ObjectId(userId);
+  //       chat.members.push(userIdObj);
+  //       await chat.save();
+  //     }
+  //   } else {
+  //     // Create the chat
+  //     chat = await Chat.create({
+  //       name: chatName,
+  //       type,
+  //       members: [userId],
+  //       messages: [],
+  //     });
+  //   }
+
+  //   return chat;
+  // }
 
   // Save message in DB
   public async saveMessage(
