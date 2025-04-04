@@ -12,20 +12,8 @@ export const signUpSchema = z
         message: SIGN_UP_DATA.ERR_LETTER_NUMBER,
       })
       .trim(),
-    firstName: z
-      .string()
-      .min(3)
-      .regex(REGEX.HAS_LETTER_NUMBER, {
-        message: SIGN_UP_DATA.ERR_LETTER_NUMBER,
-      })
-      .trim(),
-    lastName: z
-      .string()
-      .min(4)
-      .regex(REGEX.HAS_LETTER_NUMBER, {
-        message: SIGN_UP_DATA.ERR_LETTER_NUMBER,
-      })
-      .trim(),
+    firstName: z.string().min(3).trim(),
+    lastName: z.string().min(4).trim(),
     email: z.string().email().trim(),
     password: z
       .string()

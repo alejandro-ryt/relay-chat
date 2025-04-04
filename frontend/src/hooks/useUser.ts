@@ -13,7 +13,7 @@ export const useUser = () => {
   const [isGetUserDetails, setIsGetUserDetails] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const { authUser } = useAuthStore();
-  const { setUser, user } = useUserStore();
+  const { setUser } = useUserStore();
 
   const getUserDetails = async () => {
     try {
@@ -31,7 +31,7 @@ export const useUser = () => {
         setUser(responseData);
       }
     } catch (error: unknown) {
-      toast.error(getApiError(error));
+      toast.error(getApiError(error) ?? "Oops something went wrong");
     } finally {
       setIsGetUserDetails(true);
     }
@@ -58,6 +58,7 @@ export const useUser = () => {
         throw errorData;
       }
       const responseData = await response.json();
+      console.log("updated", responseData);
       if (responseData) {
         setUser(responseData);
       }

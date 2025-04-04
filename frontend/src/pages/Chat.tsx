@@ -17,23 +17,15 @@ const Chat = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const { logout } = useAuth();
   const { user } = useUserStore();
-  const { showModal } = useUser();
-  const {
-    selectedChatId,
-    selectedChatData,
-    setSelectedChatData,
-    setSelectedChatPreviewData,
-  } = useCurrentChatState();
+  const { showModal, getUserDetails } = useUser();
+  const { selectedChatId, setSelectedChatData, setSelectedChatPreviewData } =
+    useCurrentChatState();
 
   useEffect(() => {
+    getUserDetails();
     setSelectedChatData();
     setSelectedChatPreviewData();
-  }, [
-    selectedChatId,
-    selectedChatData,
-    setSelectedChatData,
-    setSelectedChatPreviewData,
-  ]);
+  }, []);
 
   return (
     <section className="relative flex flex-row xl:max-w-[65vw] w-full min-h-[75vh] rounded-[1.5rem]">
