@@ -7,15 +7,20 @@ export default class UserService implements IUserService {
   }
 
   async getUserByEmail(email: string): Promise<IUserDocument | null> {
-    return await User.findOne({email}).exec();
+    return await User.findOne({ email }).exec();
   }
 
   async getUserByUsername(username: string): Promise<IUser | null> {
-    return await User.findOne({username}).exec();
+    return await User.findOne({ username }).exec();
   }
 
   async getUserBySocketId(socketId: string): Promise<IUserDocument | null> {
-    return await User.findOne({socketId}).exec();
+    return await User.findOne({ socketId }).exec();
+  }
+
+  async getUserSocketIdByUserId(userId: string): Promise<string | null> {
+    const user = await User.findOne({ id: userId }).exec();
+    return user ? user.socketId : null;
   }
 
   async createUser(user: IUser): Promise<IUser> {
@@ -23,7 +28,10 @@ export default class UserService implements IUserService {
     return await newUser.save();
   }
 
-  async updateUser(id: string, updatedUser: Partial<IUser>): Promise<IUser | null> {
+  async updateUser(
+    id: string,
+    updatedUser: Partial<IUser>
+  ): Promise<IUser | null> {
     return await User.findByIdAndUpdate(
       id,
       { ...updatedUser, updatedAt: new Date().toISOString() },
