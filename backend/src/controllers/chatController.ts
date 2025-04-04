@@ -48,8 +48,8 @@ export const getChatsByUserId = async (
         chatPic: chat.chatPic,
         lastMessage: lastMessage
           ? {
-              content: lastMessage.message,
-              sender: lastMessage.author,
+              message: lastMessage.message,
+              author: lastMessage.author,
               timestamp: lastMessage.createdAt,
             }
           : null,
