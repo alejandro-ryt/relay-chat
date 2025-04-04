@@ -1,6 +1,11 @@
 import { useAuthStore } from "@/store/useAuthStore";
 import DOMPurify from "dompurify";
-import { TSignUpForm, TSignInForm, TAuthUser } from "@/types/auth.types";
+import {
+  TSignUpForm,
+  TSignInForm,
+  TAuthUser,
+  TSignUpFormData,
+} from "@/types/auth.types";
 import { useNavigate } from "react-router";
 import { ROUTES } from "@/constants/routes";
 import toast from "react-hot-toast";
@@ -18,7 +23,7 @@ export const useAuth = () => {
   const sendSignUp = async (values: TSignUpForm) => {
     try {
       setIsSigningUp(true);
-      const sanitizeData = {
+      const sanitizeData: TSignUpFormData = {
         email: DOMPurify.sanitize(values.email),
         firstName: DOMPurify.sanitize(values.firstName),
         lastName: DOMPurify.sanitize(values.lastName),

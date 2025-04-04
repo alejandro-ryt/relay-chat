@@ -1,17 +1,13 @@
-import { TAuthStore } from "@/types/auth.types";
 import { PersistStorage, StorageValue } from "zustand/middleware";
 
-export const storagePersistAuth: PersistStorage<TAuthStore> = {
+export const createStoragePersist = <T>(): PersistStorage<T> => ({
   getItem: (
     name: string
-  ):
-    | StorageValue<TAuthStore>
-    | Promise<StorageValue<TAuthStore> | null>
-    | null => {
+  ): StorageValue<T> | Promise<StorageValue<T> | null> | null => {
     const storedValue = localStorage.getItem(name);
     if (storedValue) {
       try {
-        return JSON.parse(storedValue);
+        return JSON.parse(storedValue) as StorageValue<T>;
       } catch (error) {
         console.error("Error parsing stored data:", error);
         return null;
@@ -19,13 +15,10 @@ export const storagePersistAuth: PersistStorage<TAuthStore> = {
     }
     return null;
   },
-  setItem: (
-    name: string,
-    value: StorageValue<TAuthStore>
-  ): void | Promise<void> => {
+  setItem: (name: string, value: StorageValue<T>): void | Promise<void> => {
     localStorage.setItem(name, JSON.stringify(value));
   },
   removeItem: (name: string): void | Promise<void> => {
     localStorage.removeItem(name);
   },
-};
+});

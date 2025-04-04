@@ -9,35 +9,49 @@ import ChatBox from "@/components/chat/ChatBox";
 import RecentChats from "@/components/chat/RecentChats";
 import { useCurrentChatState } from "@/store/useChat";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserStore } from "@/store/useUserStore";
+import EditProfile from "@/components/chat/EditProfile";
+import { useUser } from "@/hooks/useUser";
 
 const Chat = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const { logout } = useAuth();
-  const {
-    selectedChatId,
-    selectedChatData,
-    setSelectedChatData,
-    setSelectedChatPreviewData,
-  } = useCurrentChatState();
+  const { user } = useUserStore();
+  const { showModal, getUserDetails } = useUser();
+  const { selectedChatId, setSelectedChatData, setSelectedChatPreviewData } =
+    useCurrentChatState();
 
   useEffect(() => {
+    getUserDetails();
     setSelectedChatData();
     setSelectedChatPreviewData();
-  }, [
-    selectedChatId,
-    selectedChatData,
-    setSelectedChatData,
-    setSelectedChatPreviewData,
-  ]);
+  }, []);
 
   return (
     <section className="relative flex flex-row xl:max-w-[65vw] w-full min-h-[75vh] rounded-[1.5rem]">
       {/* Sidebar */}
       <aside className="flex flex-col w-24 h-full items-center justify-between pt-4 pb-2">
-        <Avatar
-          pic="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-          sizeClass="w-16"
-        />
+        <div className="dropdown dropdown-start">
+          <div
+            tabIndex={0}
+            role="button"
+            className="btn block mask h-full w-full mask-squircle"
+          >
+            <Avatar pic={user?.profilePic} sizeClass="w-16" />
+          </div>
+          <ul
+            tabIndex={0}
+            className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+          >
+            <li>
+              <button onClick={showModal}>Edit Profile</button>
+            </li>
+            <li>
+              <a>Themes coming soon...</a>
+            </li>
+          </ul>
+        </div>
+        <EditProfile />
 
         <div role="group" className="flex flex-col items-center w-full">
           <IconButton

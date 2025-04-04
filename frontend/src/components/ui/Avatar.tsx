@@ -1,12 +1,18 @@
-import { TAvatarProps } from "@/types/chat.types";
+import { TAvatarProps } from "@/types/Chat.types";
 
 const Avatar = ({ pic, sizeClass }: TAvatarProps) => {
-  return (
+  return pic ? (
     <article className="avatar">
-      <figure className={`mask mask-squircle ${sizeClass}`}>
+      <figure className={`mask bg-base-content mask-squircle ${sizeClass}`}>
         <img loading="lazy" src={pic} />
       </figure>
     </article>
+  ) : (
+    <div className="avatar avatar-placeholder mask mask-squircle">
+      <div className="bg-neutral text-neutral-content w-16">
+        <span className="text">D</span>
+      </div>
+    </div>
   );
 };
 
