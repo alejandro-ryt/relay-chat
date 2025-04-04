@@ -35,7 +35,7 @@ export const EditProfile = () => {
       aria-labelledby="modal-title"
       aria-describedby="modal-description"
     >
-      <div className="modal-box" role="dialog" aria-label="Edit Profile">
+      <div className="modal-box" role="group" aria-label="Edit Profile">
         <form method="dialog">
           <button
             type="button"
