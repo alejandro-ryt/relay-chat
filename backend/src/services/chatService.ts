@@ -17,6 +17,7 @@ class ChatService implements IChatService {
       .populate("members", "id firstName lastName username email")
       .populate({
         path: "messages",
+        select: "message author createdAt",
         options: { sort: { createdAt: -1 }, limit: 1 }, // Get the most recent message
       })
       .exec();
@@ -26,6 +27,18 @@ class ChatService implements IChatService {
   public async findByChatName(chatName: string): Promise<IChatDocument | null> {
     return await Chat.findOne({ name: chatName }).exec();
   }
+
+  public async findByChatNamePopulated(
+    chatName: string
+  ): Promise<IChat | null> {
+    const chat = await Chat.findOne({ name: chatName })
+      .populate("members", "id profilePic firstName lastName username email")
+      .populate("messages", "message author createdAt")
+      .exec();
+    console.log("chat service --> chat populated", chat);
+    return chat;
+  }
+
   // Find and/or save chat
   public async saveChat(
     chatName: string,
@@ -65,7 +78,7 @@ class ChatService implements IChatService {
     userId: string
   ): Promise<IMessageDocument> {
     const newMessage = new Message({
-      username: userId,
+      author: userId,
       message,
       createdAt: new Date(),
     });
