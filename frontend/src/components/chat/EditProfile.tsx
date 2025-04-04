@@ -28,29 +28,46 @@ export const EditProfile = () => {
   const { closeModal, updateProfile, isUpdating } = useUser();
 
   return (
-    <dialog id="modal_edit_profile" className="modal">
-      <div className="modal-box">
+    <dialog
+      id="modal_edit_profile"
+      className="modal"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      aria-describedby="modal-description"
+    >
+      <div className="modal-box" role="dialog" aria-label="Edit Profile">
         <form method="dialog">
           <button
             type="button"
             onClick={closeModal}
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            aria-label="Close Edit Profile Modal"
           >
-            <ErrorIcon />
+            <ErrorIcon aria-hidden="true" />
           </button>
         </form>
-        <h3 className="font-bold text-lg flex gap-2 items-center">
-          <figure>
+        <h3
+          id="modal-title"
+          className="font-bold text-lg flex gap-2 items-center"
+        >
+          <figure aria-hidden="true">
             <img
               className="mask mask-squircle w-8 h-8"
               loading="lazy"
               src={user?.profilePic}
+              alt="user profile avatar"
             />
           </figure>
           {USER.EDIT_TITLE}
         </h3>
-        <p className="py-6">{USER.SUB_TITLE}</p>
-        <form className="space-y-5" onSubmit={handleSubmit(updateProfile)}>
+        <p id="modal-description" className="py-6">
+          {USER.SUB_TITLE}
+        </p>
+        <form
+          className="space-y-5"
+          onSubmit={handleSubmit(updateProfile)}
+          aria-label="Edit Profile Form"
+        >
           <section className="grid gap-2 grid-cols-1">
             <InputField
               legend={USER.PROFILE_PIC}
@@ -71,11 +88,15 @@ export const EditProfile = () => {
               {...register("lastName")}
             />
           </section>
-          <button disabled={isUpdating} className="btn btn-block btn-primary">
+          <button
+            disabled={isUpdating}
+            aria-label={USER.UPDATE_BTN}
+            className="btn btn-block btn-primary"
+          >
             {isUpdating ? (
-              <span className="loading loading-spinner"></span>
+              <span className="loading loading-spinner" aria-busy="true"></span>
             ) : (
-              <UserIcon />
+              <UserIcon aria-hidden="true" />
             )}
             {USER.UPDATE_BTN}
           </button>
