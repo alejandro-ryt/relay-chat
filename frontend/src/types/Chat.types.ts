@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 export type TAvatarProps = {
-  pic: string;
+  pic: string | undefined;
   sizeClass: string;
 };
 

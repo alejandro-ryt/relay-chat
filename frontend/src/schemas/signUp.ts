@@ -1,13 +1,13 @@
 import { REGEX } from "@/constants/regex";
 import SIGN_UP_DATA from "@/constants/signUp";
-import { SignUpForm } from "@/types/auth.types";
+import { TSignUpForm } from "@/types/auth.types";
 import { z } from "zod";
 
 export const signUpSchema = z
   .object({
     username: z
       .string()
-      .min(6)
+      .min(4)
       .regex(REGEX.HAS_LETTER_NUMBER, {
         message: SIGN_UP_DATA.ERR_LETTER_NUMBER,
       })
@@ -59,4 +59,4 @@ export const initialSignUpForm = {
   password: "",
   confirmPassword: "",
   agreement: false,
-} as unknown as SignUpForm;
+} as unknown as TSignUpForm;

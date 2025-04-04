@@ -1,11 +1,11 @@
 import { TAuthStore } from "@/types/auth.types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { storagePersistAuth } from "@/utils/persistStore";
+import { createStoragePersist } from "@/utils/persistStore";
 
 export const useAuthStore = create<TAuthStore>()(
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       authUser: null,
       socket: null,
       isAuthenticated: false,
@@ -18,7 +18,7 @@ export const useAuthStore = create<TAuthStore>()(
     }),
     {
       name: "auth-store",
-      storage: storagePersistAuth,
+      storage: createStoragePersist<TAuthStore>(),
     }
   )
 );
