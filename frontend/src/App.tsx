@@ -19,7 +19,6 @@ const App = () => {
           <Route path="setting" element={<Setting />} />
         </Route>
         <Route path="sign-up" element={<SignUp />} />
-        <Route path="chat" element={<Chat />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
