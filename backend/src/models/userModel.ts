@@ -6,6 +6,12 @@ import {
   validatePasswordFormat,
 } from "@/utils/inputValidations";
 
+export enum ContactStatus {
+  PENDING = "pending",
+  ACCEPTED = "accepted",
+  BLOCKED = "blocked",
+}
+
 const userSchema = new Schema<IUserDocument>(
   {
     profilePic: {
@@ -45,6 +51,16 @@ const userSchema = new Schema<IUserDocument>(
       required: [true, "User password required"],
     },
     socketId: { type: String, required: false, default: null },
+    contacts: [
+      {
+        contact: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        isBlocked: { type: Boolean, required: false, default: false },
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -37,6 +37,7 @@ export const signUp = async (
       email,
       password,
       socketId: null,
+      contacts: [],
     };
 
     const createdUser = await userService.createUser(newUser);

@@ -99,3 +99,117 @@ export const deleteUser = async (
     );
   }
 };
+
+// Add Contact
+export const addContact = async (req: Request, res: Response) => {
+  try {
+    const { userId, contactId } = req.params;
+    if (!userId || !contactId) {
+      throw new ErrorHandler(
+        `${ERROR.ERROR_ID_REQUIRED}: ${!userId ? "user ID" : "contact ID"}`,
+        StatusCodes.BAD_REQUEST
+      );
+    }
+    const user = await userService.getUserById(userId);
+    const contact = await userService.getUserById(contactId);
+
+    if (!user) {
+      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
+    }
+
+    if (!contact) {
+      throw new ErrorHandler(ERROR.CONTACT_NOT_FOUND, StatusCodes.NOT_FOUND);
+    }
+
+    // Check if contact is already added
+    const existingContact = user.contacts?.find(
+      (userContact) => userContact?.contact.id === contact.id
+    );
+
+    if (existingContact) {
+      throw new ErrorHandler(
+        ERROR.ERROR_CONTACT_ALREADY_ADDED,
+        StatusCodes.BAD_REQUEST
+      );
+    }
+    await userService.addContact(user, contact);
+    res.status(StatusCodes.OK).end();
+  } catch (error) {
+    console.log("adding contact --> error", error);
+    if (error instanceof ErrorHandler) {
+      throw new ErrorHandler(error.message, error.statusCode);
+    }
+    throw new ErrorHandler(
+      ERROR.INTERNAL_SERVICE_ERROR,
+      StatusCodes.SERVICE_UNAVAILABLE
+    );
+  }
+};
+
+// Remove Contact
+export const removeContactController = async (req: Request, res: Response) => {
+  try {
+    const { userId, contactId } = req.params;
+    if (!userId || !contactId) {
+      throw new ErrorHandler(
+        `${ERROR.ERROR_ID_REQUIRED}: ${!userId ? "user ID" : "contact ID"}`,
+        StatusCodes.BAD_REQUEST
+      );
+    }
+    const user = await userService.getUserById(userId);
+    const contact = await userService.getUserById(contactId);
+
+    if (!user) {
+      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
+    }
+
+    if (!contact) {
+      throw new ErrorHandler(ERROR.CONTACT_NOT_FOUND, StatusCodes.NOT_FOUND);
+    }
+    await userService.removeContact(user, contact);
+
+    res.status(StatusCodes.OK).end();
+  } catch (error) {
+    if (error instanceof ErrorHandler) {
+      throw new ErrorHandler(error.message, error.statusCode);
+    }
+    throw new ErrorHandler(
+      ERROR.INTERNAL_SERVICE_ERROR,
+      StatusCodes.SERVICE_UNAVAILABLE
+    );
+  }
+};
+
+// Block Contact
+export const blockContactController = async (req: Request, res: Response) => {
+  try {
+    const { userId, contactId } = req.params;
+    if (!userId || !contactId) {
+      throw new ErrorHandler(
+        `${ERROR.ERROR_ID_REQUIRED}: ${!userId ? "user ID" : "contact ID"}`,
+        StatusCodes.BAD_REQUEST
+      );
+    }
+    const user = await userService.getUserById(userId);
+    const contact = await userService.getUserById(contactId);
+
+    if (!user) {
+      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
+    }
+
+    if (!contact) {
+      throw new ErrorHandler(ERROR.CONTACT_NOT_FOUND, StatusCodes.NOT_FOUND);
+    }
+    await userService.blockContact(user, contact);
+    res.status(StatusCodes.OK).end();
+  } catch (error) {
+    console.log("blocking contact --> error", error);
+    if (error instanceof ErrorHandler) {
+      throw new ErrorHandler(error.message, error.statusCode);
+    }
+    throw new ErrorHandler(
+      ERROR.INTERNAL_SERVICE_ERROR,
+      StatusCodes.SERVICE_UNAVAILABLE
+    );
+  }
+};

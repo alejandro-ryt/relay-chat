@@ -3,6 +3,8 @@ export const ERROR = {
   ERROR_FETCHING_USERS: "Error fetching users",
   ERROR_FETCHING_USER_BY_ID: "Error fetching user by ID",
   USER_NOT_FOUND: "User not found",
+  CONTACT_NOT_FOUND: "Contact not found",
+  ERROR_CONTACT_ALREADY_ADDED: "Contact already added",
   USER_NOT_EXIST_SOCKET:
     "User not found. You must be registered to join a chat.",
   ERROR_CREATING_USER: "Error creating user",
