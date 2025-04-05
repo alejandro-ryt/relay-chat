@@ -71,7 +71,7 @@ export const useAuth = () => {
         throw errorData;
       }
       const authData = (await response.json()) as TAuthUser;
-      authenticate(authData);
+      authenticate({ ...authData, details: null });
       toast.success(`Welcome ${authData.username}`);
       navigate(ROUTES.CHAT);
     } catch (error: unknown) {

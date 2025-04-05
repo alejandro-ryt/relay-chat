@@ -7,13 +7,18 @@ export const useAuthStore = create<TAuthStore>()(
   persist(
     (set, _get) => ({
       authUser: null,
+      authUserDetails: null,
       socket: null,
       isAuthenticated: false,
       authenticate: (data) => {
         set({ authUser: data, isAuthenticated: true });
       },
+      setAuthUserDetails: (data) => {
+        set({ authUserDetails: data });
+      },
       logOut: () => {
         set({ authUser: null, isAuthenticated: false });
+        set({ authUserDetails: null });
       },
     }),
     {

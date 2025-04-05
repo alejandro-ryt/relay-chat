@@ -8,16 +8,19 @@ export type TUser = {
   lastName: string;
   password: string;
   profilePic: string;
-  socketId: null;
+  socketId: string | null;
   updatedAt: string;
   username: string;
+  contacts: TUserContact[];
   __v: number;
   _id: string;
 };
 
+export type TUserContact = { isBlocked: boolean; contact: TUser };
+
 export type TUserStore = {
-  user: TUser | null;
-  setUser: (data: TUser) => void;
+  users: TUser[];
+  setUsers: (data: TUser[]) => void;
 };
 
 export type TEditUserForm = z.output<typeof userEditSchema>;
