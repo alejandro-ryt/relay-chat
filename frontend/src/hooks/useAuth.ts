@@ -15,7 +15,7 @@ import { TApiError } from "@/types/api.types";
 import { getApiError } from "@/utils/errors";
 
 export const useAuth = () => {
-  const { authenticate, logOut } = useAuthStore();
+  const { authenticate, logOut, socketConnection } = useAuthStore();
 
   const navigate = useNavigate();
   const [isSigningIn, setIsSigningIn] = useState(false);
@@ -45,6 +45,7 @@ export const useAuth = () => {
       }
       toast.success("Account Created!");
       navigate(ROUTES.SIGN_IN);
+      socketConnection();
     } catch (error: unknown) {
       toast.error(getApiError(error));
     } finally {

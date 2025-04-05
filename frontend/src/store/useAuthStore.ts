@@ -2,18 +2,16 @@ import { TAuthStore } from "@/types/auth.types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createStoragePersist } from "@/utils/persistStore";
-import { useSocketStore } from "./useSocketStore";
-
-const socket = useSocketStore.getState().socket;
+import { io } from "socket.io-client";
 
 export const useAuthStore = create<TAuthStore>()(
   persist(
-    (set, _get) => ({
+    (set, get) => ({
+      socket: null,
       authUser: null,
       authUserDetails: null,
       isAuthenticated: false,
       authenticate: (data) => {
-        socket?.emit("initiateSocket", data.userId);
         set({ authUser: data, isAuthenticated: true });
       },
       setAuthUserDetails: (data) => {
@@ -22,6 +20,24 @@ export const useAuthStore = create<TAuthStore>()(
       logOut: () => {
         set({ authUser: null, isAuthenticated: false });
         set({ authUserDetails: null });
+      },
+      socketConnection: () => {
+        const { authUser } = get();
+        console.log("socket", get().socket?.active);
+        if (!authUser || get().socket?.connected) return;
+        const socket = io(import.meta.env.VITE_WS_URL);
+        console.log("socket", socket);
+        socket.connect();
+        socket.on("connect", () => {
+          console.log("Socket connected successfully");
+          console.log("socket", socket);
+          set({ socket: socket });
+          console.log("socket status:", get().socket?.connected); // Log after setting
+          socket.emit("initiateSocket", authUser.userId);
+        });
+        console.log("auth", authUser.userId);
+        socket.emit("initiateSocket", get().authUser?.userId);
+        set({ socket: socket });
       },
     }),
     {

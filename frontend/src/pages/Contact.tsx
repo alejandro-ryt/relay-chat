@@ -1,5 +1,4 @@
 import SearchInput from "@/components/chat/SearchInput";
-import Avatar from "@/components/ui/Avatar";
 import { useUser } from "@/hooks/useUser";
 import { useUserStore } from "@/store/useUserStore";
 import clsx from "clsx";
