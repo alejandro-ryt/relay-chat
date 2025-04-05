@@ -1,5 +1,5 @@
 import { END_POINT } from "@/constants/endpoint";
-import { TPreviewChat } from "@/types/Chat.types";
+import { TPreviewChat } from "@/types/chat.types";
 
 export const useChat = () => {
   // Get Chats by User ID

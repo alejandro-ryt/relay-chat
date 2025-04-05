@@ -1,7 +1,7 @@
 import IconButton from "@/components/ui/IconButton";
 import VerticalDotsIcon from "@/components/ui/icons/VerticalDotsIcon";
 import { useCurrentChatState } from "@/store/useChatStore";
-import { TRecentChatsProps } from "@/types/Chat.types";
+import { TRecentChatsProps } from "@/types/chat.types";
 import Avatar from "../ui/Avatar";
 
 const ChatHeader = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {

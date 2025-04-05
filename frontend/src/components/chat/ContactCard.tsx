@@ -1,5 +1,5 @@
 import Avatar from "@/components/ui/Avatar";
-import { TContactCardProps } from "@/types/Chat.types";
+import { TContactCardProps } from "@/types/chat.types";
 
 const ContactCard = ({ pic, name }: TContactCardProps) => {
   return (

@@ -69,7 +69,6 @@ export type TPreviewChat = {
 };
 
 export type TChatState = {
-  socket: null | Socket;
   selectedChatId: string | null;
   selectedChatData: TChat | null;
   selectedChatPreviewData: TPreviewChat | null;

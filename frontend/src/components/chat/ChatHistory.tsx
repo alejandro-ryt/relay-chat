@@ -1,7 +1,7 @@
 import ChatMessage from "@/components/chat/ChatMessage";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCurrentChatState } from "@/store/useChatStore";
-import { TChatMember } from "@/types/Chat.types";
+import { TChatMember } from "@/types/chat.types";
 import { useEffect } from "react";
 
 const ChatHistory = () => {

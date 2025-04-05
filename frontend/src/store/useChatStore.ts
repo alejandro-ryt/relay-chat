@@ -4,12 +4,13 @@ import {
   TChatActions,
   TChatMessage,
   TPreviewChat,
-} from "@/types/Chat.types";
-import { io } from "socket.io-client";
+} from "@/types/chat.types";
+import { useSocketStore } from "./useSocketStore";
+
+const socket = useSocketStore.getState().socket;
 
 export const useCurrentChatState = create<TChatState & TChatActions>(
   (set, get) => ({
-    socket: io("ws://localhost:3001"),
     selectedChatId: null,
     selectedChatData: null,
     selectedChatPreviewData: null,
@@ -24,7 +25,6 @@ export const useCurrentChatState = create<TChatState & TChatActions>(
 
     // Set Chat Data
     setSelectedChatData: () => {
-      const socket = get().socket;
       if (socket) {
         socket.on("chatData", (chatData: any) => {
           set({
@@ -61,13 +61,19 @@ export const useCurrentChatState = create<TChatState & TChatActions>(
 
     // Connect to chat
     connectToChat: (userId: string) => {
-      const socket = get().socket;
+      let membersIds: string[] = [];
+
+      get().selectedChatData?.members.forEach((member) => {
+        member._id !== userId ? membersIds.push(member._id) : null;
+      });
+
       if (socket && userId) {
         socket.emit(
           "joinChat",
           get().selectedChatPreviewData?.chatName,
           "group",
-          userId
+          userId,
+          membersIds
         ); // Emit event to server to join the room
       } else {
         console.error("Socket is null. Unable to join chat.");
@@ -76,7 +82,6 @@ export const useCurrentChatState = create<TChatState & TChatActions>(
 
     // Send Messsage
     sendMessage: (message: string, userId) => {
-      const socket = get().socket;
       if (socket) {
         socket.emit(
           "sendMessage",
@@ -94,7 +99,6 @@ export const useCurrentChatState = create<TChatState & TChatActions>(
     // Get Messsages
     getMessage: () => {
       try {
-        const socket = get().socket;
         if (socket) {
           socket.on("sendMessage", (msg: TChatMessage) => {
             const existingMessage = get().selectedChatData?.messages.find(

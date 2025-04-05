@@ -2,16 +2,18 @@ import { TAuthStore } from "@/types/auth.types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createStoragePersist } from "@/utils/persistStore";
+import { useSocketStore } from "./useSocketStore";
+
+const socket = useSocketStore.getState().socket;
 
 export const useAuthStore = create<TAuthStore>()(
   persist(
     (set, _get) => ({
       authUser: null,
       authUserDetails: null,
-      socket: null,
       isAuthenticated: false,
-      socket: null,
       authenticate: (data) => {
+        socket?.emit("initiateSocket", data.userId);
         set({ authUser: data, isAuthenticated: true });
       },
       setAuthUserDetails: (data) => {

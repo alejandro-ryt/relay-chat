@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import ContactCard from "@/components/chat/ContactCard";
 import { useCurrentChatState } from "@/store/useChatStore";
-import { TRecentChatsProps } from "@/types/Chat.types";
+import { TRecentChatsProps } from "@/types/chat.types";
 
 const ChatSidebar = ({ showSidebar }: TRecentChatsProps) => {
   const { selectedChatData } = useCurrentChatState();

@@ -3,7 +3,7 @@ import IconButton from "@/components/ui/IconButton";
 import ArrowIcon from "@/components/ui/icons/ArrowIcon";
 import ChatPreview from "@/components/chat/ChatPreview";
 import SearchInput from "@/components/chat/SearchInput";
-import { TRecentChatsProps } from "@/types/Chat.types";
+import { TRecentChatsProps } from "@/types/chat.types";
 import { useCurrentChatState } from "@/store/useChatStore";
 
 const RecentChats = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {

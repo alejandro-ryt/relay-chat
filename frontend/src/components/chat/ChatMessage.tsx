@@ -1,5 +1,5 @@
 import Avatar from "@/components/ui/Avatar";
-import { TChatMessageProps } from "@/types/Chat.types";
+import { TChatMessageProps } from "@/types/chat.types";
 import clsx from "clsx";
 
 const ChatMessage = ({ type, pic, name, time, message }: TChatMessageProps) => {
