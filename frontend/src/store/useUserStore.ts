@@ -6,9 +6,9 @@ import { persist } from "zustand/middleware";
 export const useUserStore = create<TUserStore>()(
   persist(
     (set, _get) => ({
-      user: null,
-      setUser: (data) => {
-        set({ user: data });
+      users: [],
+      setUsers: (data) => {
+        set({ users: data });
       },
     }),
     {
