@@ -4,15 +4,19 @@ import SignUp from "@/pages/SignUp";
 import Layout from "@/layout/Layout";
 import Chat from "@/pages/Chat";
 import NotFound from "@/pages/NotFound";
-import { AuthenticationLayout } from "@/layout/AuthenticationLayout";
+import { ChatLayout } from "@/layout/ChatLayout";
+import { Contact } from "@/pages/Contact";
+import { Setting } from "@/pages/Settings";
 
 const App = () => {
   return (
     <Routes>
       <Route element={<Layout />} path="/">
         <Route index element={<SignIn />} />
-        <Route element={<AuthenticationLayout />}>
+        <Route element={<ChatLayout />}>
           <Route path="chat" element={<Chat />} />
+          <Route path="contact" element={<Contact />} />
+          <Route path="setting" element={<Setting />} />
         </Route>
         <Route path="sign-up" element={<SignUp />} />
         <Route path="chat" element={<Chat />} />
