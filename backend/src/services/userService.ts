@@ -10,6 +10,12 @@ import { ErrorHandler } from "@/utils/errorHandler";
 import { StatusCodes } from "http-status-codes";
 
 export default class UserService implements IUserService {
+  async searchUsersByQuery(query: any, skip: number, limit: number) {
+    const users = await User.find(query).skip(skip).limit(Number(limit)).exec();
+
+    const totalCount = await User.countDocuments(query);
+    return { users, totalCount };
+  }
   async getUserById(id: string): Promise<IUserDocument | null> {
     return await User.findById(id).exec();
   }

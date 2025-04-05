@@ -26,7 +26,7 @@ export const getUserById = async (
       throw new ErrorHandler(error.message, error.statusCode);
     }
     throw new ErrorHandler(
-      ERROR.ERROR_CREATING_USER,
+      ERROR.INTERNAL_SERVICE_ERROR,
       StatusCodes.SERVICE_UNAVAILABLE
     );
   }
@@ -211,5 +211,46 @@ export const blockContactController = async (req: Request, res: Response) => {
       ERROR.INTERNAL_SERVICE_ERROR,
       StatusCodes.SERVICE_UNAVAILABLE
     );
+  }
+};
+
+// Search users
+export const searchUsers = async (req: Request, res: Response) => {
+  try {
+    const { searchText, page = 1, limit = 10 } = req.query;
+
+    if (!searchText || typeof searchText !== "string") {
+      res.status(400).json({
+        error: "searchText query parameter is required and should be a string",
+      });
+    }
+
+    // Build search query
+    const searchQuery = {
+      $or: [
+        { username: { $regex: new RegExp(searchText as string, "i") } },
+        { firstName: { $regex: new RegExp(searchText as string, "i") } },
+        { lastName: { $regex: new RegExp(searchText as string, "i") } },
+      ],
+    };
+    console.log("searchQuery type", typeof searchQuery);
+
+    // Pagination options
+    const skip = (Number(page) - 1) * Number(limit);
+    const { users, totalCount } = await userService.searchUsersByQuery(
+      searchQuery,
+      skip,
+      Number(limit)
+    );
+
+    res.status(200).json({
+      totalCount,
+      page: Number(page),
+      totalPages: Math.ceil(totalCount / Number(limit)),
+      users,
+    });
+  } catch (error) {
+    console.error("Error search users", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };

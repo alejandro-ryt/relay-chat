@@ -73,7 +73,7 @@ export const getChatsByUserId = async (
       throw new ErrorHandler(error.message, error.statusCode);
     }
     throw new ErrorHandler(
-      ERROR.ERROR_CREATING_USER,
+      ERROR.INTERNAL_SERVICE_ERROR,
       StatusCodes.SERVICE_UNAVAILABLE
     );
   }
