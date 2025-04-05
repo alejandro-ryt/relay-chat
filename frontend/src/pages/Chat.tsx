@@ -2,16 +2,36 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import ChatBox from "@/components/chat/ChatBox";
 import RecentChats from "@/components/chat/RecentChats";
-import { useCurrentChatState } from "@/store/useChat";
+import { useCurrentChatState } from "@/store/useChatStore";
+import { useChat } from "@/hooks/useChat";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const Chat = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const { selectedChatId, setSelectedChatData, setSelectedChatPreviewData } =
     useCurrentChatState();
+  const { getChatsByUserId } = useChat();
+  const { authUser } = useAuthStore();
+
+  useEffect(() => {
+    const fetchSelectedChatPreviewData = async () => {
+      setSelectedChatData();
+      if (authUser?.userId) {
+        try {
+          const chats = await getChatsByUserId(authUser.userId);
+          setSelectedChatPreviewData(authUser.userId, chats);
+        } catch (error) {
+          console.error("Error fetching chats:", error);
+          setSelectedChatPreviewData(authUser.userId, []);
+        }
+      }
+    };
+
+    fetchSelectedChatPreviewData();
+  }, [selectedChatId, authUser?.userId]);
 
   useEffect(() => {
     setSelectedChatData();
-    setSelectedChatPreviewData();
   }, []);
 
   return (

@@ -16,6 +16,7 @@ import { getApiError } from "@/utils/errors";
 
 export const useAuth = () => {
   const { authenticate, logOut } = useAuthStore();
+
   const navigate = useNavigate();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
@@ -71,7 +72,7 @@ export const useAuth = () => {
         throw errorData;
       }
       const authData = (await response.json()) as TAuthUser;
-      authenticate({ ...authData, details: null });
+      authenticate(authData);
       toast.success(`Welcome ${authData.username}`);
       navigate(ROUTES.CHAT);
     } catch (error: unknown) {
