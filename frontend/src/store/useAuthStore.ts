@@ -2,9 +2,7 @@ import { TAuthStore } from "@/types/auth.types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createStoragePersist } from "@/utils/persistStore";
-import { useSocketStore } from "./useSocketStore";
-
-const socket = useSocketStore.getState().socket;
+import socket from "@/socket/socket";
 
 export const useAuthStore = create<TAuthStore>()(
   persist(
