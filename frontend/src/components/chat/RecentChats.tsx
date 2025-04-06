@@ -1,13 +1,13 @@
-import { motion } from "motion/react";
-import IconButton from "@/components/ui/IconButton";
-import ArrowIcon from "@/components/ui/icons/ArrowIcon";
 import ChatPreview from "@/components/chat/ChatPreview";
 import SearchInput from "@/components/chat/SearchInput";
+import IconButton from "@/components/ui/IconButton";
+import ArrowIcon from "@/components/ui/icons/ArrowIcon";
+import { useChatStore } from "@/store/useChatStore";
 import { TRecentChatsProps } from "@/types/chat.types";
-import { useCurrentChatState } from "@/store/useChatStore";
+import { motion } from "motion/react";
 
 const RecentChats = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {
-  const { setSelectedChatId, chatPreviewArray } = useCurrentChatState();
+  const { setSelectedChatId, chatPreviewArray } = useChatStore();
 
   return (
     <section className="flex flex-col max-w-72 ">

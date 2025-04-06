@@ -1,21 +1,23 @@
+import { END_POINT } from "@/constants/endpoint";
+import { ROUTES } from "@/constants/routes";
 import { useAuthStore } from "@/store/useAuthStore";
-import DOMPurify from "dompurify";
+import { useChatStore } from "@/store/useChatStore";
+import { TApiError } from "@/types/api.types";
 import {
-  TSignUpForm,
-  TSignInForm,
   TAuthUser,
+  TSignInForm,
+  TSignUpForm,
   TSignUpFormData,
 } from "@/types/auth.types";
-import { useNavigate } from "react-router";
-import { ROUTES } from "@/constants/routes";
-import toast from "react-hot-toast";
-import { useState } from "react";
-import { END_POINT } from "@/constants/endpoint";
-import { TApiError } from "@/types/api.types";
 import { getApiError } from "@/utils/errors";
+import DOMPurify from "dompurify";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router";
 
 export const useAuth = () => {
   const { authenticate, logOut } = useAuthStore();
+  const { resetData } = useChatStore();
 
   const navigate = useNavigate();
   const [isSigningIn, setIsSigningIn] = useState(false);
@@ -92,6 +94,7 @@ export const useAuth = () => {
         const errorData: TApiError = await response.json();
         throw errorData;
       }
+      resetData();
       logOut();
       toast.success("Logout Success");
     } catch (error: unknown) {

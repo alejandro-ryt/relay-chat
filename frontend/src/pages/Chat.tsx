@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import { motion } from "motion/react";
 import ChatBox from "@/components/chat/ChatBox";
 import RecentChats from "@/components/chat/RecentChats";
-import { useCurrentChatState } from "@/store/useChatStore";
 import { useChat } from "@/hooks/useChat";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useChatStore } from "@/store/useChatStore";
+import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 
 const Chat = () => {
   const [showSidebar, setShowSidebar] = useState(false);
   const { selectedChatId, setSelectedChatData, setSelectedChatPreviewData } =
-    useCurrentChatState();
+    useChatStore();
   const { getChatsByUserId } = useChat();
   const { authUser } = useAuthStore();
 
