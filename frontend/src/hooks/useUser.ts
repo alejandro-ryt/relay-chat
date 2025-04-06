@@ -14,7 +14,14 @@ export const useUser = () => {
   const [isGetUserDetails, setIsGetUserDetails] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const { authUser, setAuthUserDetails } = useAuthStore();
-  const { setUsers } = useUserStore();
+  const { setUsers, users } = useUserStore();
+  const [addUsers, setAddUsers] = useState<TUser[]>([]);
+
+  const removeAddUser = (contactId: string) => {
+    setAddUsers((prevState) =>
+      prevState.filter((user) => user._id !== contactId)
+    );
+  };
 
   const getUserDetails = async () => {
     try {
@@ -86,9 +93,12 @@ export const useUser = () => {
     contactId: string,
     action: "add" | "block" | "delete"
   ) => {
-    console.log("user id auth", authUser?.userId);
-    console.log("action", action);
-    console.log("contactId", contactId);
+    if (action === "add") {
+      const user = users.find((user) => user._id === contactId);
+      if (user) {
+        setAddUsers((prevState) => [user, ...prevState]);
+      }
+    }
   };
 
   const closeModal = () => {
@@ -110,6 +120,8 @@ export const useUser = () => {
     updateProfile,
     getUserDetails,
     getContacts,
+    removeAddUser,
+    addUsers,
     isGetUserDetails,
     isUpdating,
   };

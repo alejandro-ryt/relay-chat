@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import cookie from "cookie";
+import * as cookie from "cookie";
 import dotenv from "dotenv";
 import { StatusCodes } from "http-status-codes";
 import mongoose, { Types } from "mongoose";
@@ -127,10 +127,8 @@ export const signIn = async (
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // Set to true if using HTTPS
         maxAge: 3600, // 1 hour
-        sameSite: "strict",
       })
     );
-
     res
       .status(StatusCodes.OK)
       .json({ userId: user.id, username: user.username });

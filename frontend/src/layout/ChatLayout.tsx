@@ -30,9 +30,9 @@ export const ChatLayout = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <section className="relative flex flex-row xl:max-w-[65vw] w-full min-h-[75vh] rounded-[1.5rem]">
+    <section className="relative flex rounded-[1.5rem]">
       {/* Sidebar */}
-      <aside className="flex flex-col w-24 h-full items-center justify-between pt-4 pb-2">
+      <aside className="flex flex-col w-24 flex-1 items-center justify-between pt-4 pb-2">
         <div className="dropdown dropdown-start">
           <div
             tabIndex={0}
@@ -81,7 +81,9 @@ export const ChatLayout = () => {
       </aside>
       {/* Sidebar */}
       {/* Dynamic Container */}
-      <Outlet />
+      <div className="flex-10">
+        <Outlet />
+      </div>
       {/* Dynamic Container */}
     </section>
   );
