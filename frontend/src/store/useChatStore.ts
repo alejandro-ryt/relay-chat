@@ -5,7 +5,7 @@ import {
   TChatMessage,
   TPreviewChat,
 } from "@/types/chat.types";
-import { useAuthStore } from "./useAuthStore";
+import socket from "@/socket/socket";
 
 export const useCurrentChatState = create<TChatState & TChatActions>(
   (set, get) => ({
@@ -23,7 +23,7 @@ export const useCurrentChatState = create<TChatState & TChatActions>(
 
     // Set Chat Data
     setSelectedChatData: () => {
-      const socket = useAuthStore.getState().socket;
+      console.log("setSelectedChatData --> socket", socket);
       if (socket) {
         socket.on("chatData", (chatData: any) => {
           set({

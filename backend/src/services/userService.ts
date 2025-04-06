@@ -1,9 +1,10 @@
 import { IUserService, IUser, IUserDocument } from "@/interfaces/user";
 import User from "@/models/userModel";
+import { Types } from "mongoose";
 
 export default class UserService implements IUserService {
   async getUserById(id: string): Promise<IUser | null> {
-    return await User.findById(id).exec();
+    return await User.findById(new Types.ObjectId(id)).exec();
   }
 
   async getUserByEmail(email: string): Promise<IUserDocument | null> {
@@ -19,7 +20,8 @@ export default class UserService implements IUserService {
   }
 
   async getUserSocketIdByUserId(userId: string): Promise<string | null> {
-    const user = await User.findOne({ id: userId }).exec();
+
+    const user = await User.findOne({ _id: new Types.ObjectId(userId) }).exec();
     return user ? user.socketId : null;
   }
 
@@ -40,7 +42,7 @@ export default class UserService implements IUserService {
   }
 
   async deleteUser(id: string): Promise<boolean> {
-    const result = await User.findByIdAndDelete(id).exec();
+    const result = await User.findByIdAndDelete(new Types.ObjectId(id)).exec();
     return result !== null;
   }
 }

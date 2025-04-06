@@ -16,13 +16,13 @@ class ChatService implements IChatService {
   public async getPendingChatInvitesByUserId(
     userId: string
   ): Promise<IPendingInvites[]> {
-    return await PendingChatInvites.find({ userId }).exec();
+    return await PendingChatInvites.find({ userId: new Types.ObjectId(userId) }).exec();
   }
 
   // Get all chats with last message by user id
   public async findChatsByUserId(userId: string) {
     // Return the populated type directly
-    return await Chat.find({ members: userId })
+    return await Chat.find({ members: new Types.ObjectId(userId) })
       .populate("members", "id firstName lastName username email")
       .populate({
         path: "messages",
@@ -89,7 +89,7 @@ class ChatService implements IChatService {
   }
 
   async clearPendingChatInvites(userId: string): Promise<void> {
-    await PendingChatInvites.deleteMany({ userId });
+    await PendingChatInvites.deleteMany({ userId: new Types.ObjectId(userId) });
   }
 
   // public async saveChat(
