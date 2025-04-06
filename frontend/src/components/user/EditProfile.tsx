@@ -1,5 +1,4 @@
 import { userEditSchema } from "@/schemas/user";
-import { useUserStore } from "@/store/useUserStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { InputField } from "@/components/form/InputField";
@@ -9,9 +8,10 @@ import { useUser } from "@/hooks/useUser";
 import { USER } from "@/constants/user";
 import { TEditUserForm } from "@/types/user.types";
 import { ErrorIcon } from "react-hot-toast";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export const EditProfile = () => {
-  const { user } = useUserStore();
+  const { authUserDetails } = useAuthStore();
   const {
     register,
     handleSubmit,
@@ -19,9 +19,9 @@ export const EditProfile = () => {
   } = useForm<TEditUserForm>({
     resolver: zodResolver(userEditSchema),
     defaultValues: {
-      profilePic: user?.profilePic,
-      firstName: user?.firstName,
-      lastName: user?.lastName,
+      profilePic: authUserDetails?.profilePic,
+      firstName: authUserDetails?.firstName,
+      lastName: authUserDetails?.lastName,
     },
   });
 
@@ -54,7 +54,7 @@ export const EditProfile = () => {
             <img
               className="mask mask-squircle w-8 h-8"
               loading="lazy"
-              src={user?.profilePic}
+              src={authUserDetails?.profilePic}
               alt="user profile avatar"
             />
           </figure>

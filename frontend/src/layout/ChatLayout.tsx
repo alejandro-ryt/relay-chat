@@ -1,4 +1,4 @@
-import EditProfile from "@/components/chat/EditProfile";
+import EditProfile from "@/components/user/EditProfile";
 import Avatar from "@/components/ui/Avatar";
 import IconButton from "@/components/ui/IconButton";
 import ChatIcon from "@/components/ui/icons/ChatIcon";
@@ -16,7 +16,7 @@ export const ChatLayout = () => {
   const { logout } = useAuth();
   const { authUserDetails } = useAuthStore();
   const navigate = useNavigate();
-  const { showModal, getUserDetails, getContacts } = useUser();
+  const { showModal, getUserDetails } = useUser();
   const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
@@ -26,13 +26,12 @@ export const ChatLayout = () => {
     }
 
     getUserDetails();
-    getContacts();
   }, [isAuthenticated, navigate]);
 
   return (
-    <section className="relative flex rounded-[1.5rem]">
+    <section className="relative grid grid-cols-12 grid-rows-1 h-full rounded-[1.5rem]">
       {/* Sidebar */}
-      <aside className="flex flex-col w-24 flex-1 items-center justify-between pt-4 pb-2">
+      <aside className="flex flex-col w-24 flex-1 h-full col-span-1 row-span-1 items-center justify-between pt-4 pb-2">
         <div className="dropdown dropdown-start">
           <div
             tabIndex={0}
@@ -81,7 +80,7 @@ export const ChatLayout = () => {
       </aside>
       {/* Sidebar */}
       {/* Dynamic Container */}
-      <div className="flex-10">
+      <div className="col-span-11 row-span-1 size-full">
         <Outlet />
       </div>
       {/* Dynamic Container */}

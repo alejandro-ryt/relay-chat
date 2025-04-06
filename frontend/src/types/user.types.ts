@@ -19,8 +19,20 @@ export type TUser = {
 export type TUserContact = { isBlocked: boolean; contact: TUser };
 
 export type TUserStore = {
-  users: TUser[];
-  setUsers: (data: TUser[]) => void;
+  users: TUserSearch[];
+  setUsers: (data: TUserSearch[]) => void;
 };
+
+export type TUserSearchResponse = {
+  page: number;
+  totalCount: number;
+  totalPages: number;
+  users: TUserSearch[];
+};
+
+export type TUserSearch = Pick<
+  TUser,
+  "email" | "firstName" | "lastName" | "username" | "_id"
+>;
 
 export type TEditUserForm = z.output<typeof userEditSchema>;
