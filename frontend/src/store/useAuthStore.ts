@@ -11,6 +11,7 @@ export const useAuthStore = create<TAuthStore>()(
       authUserDetails: null,
       isAuthenticated: false,
       authenticate: (data) => {
+        socket?.connect();
         socket?.emit("initiateSocket", data.userId);
         set({ authUser: data, isAuthenticated: true });
       },
@@ -18,6 +19,7 @@ export const useAuthStore = create<TAuthStore>()(
         set({ authUserDetails: data });
       },
       logOut: () => {
+        socket?.disconnect();
         set({ authUser: null, isAuthenticated: false });
         set({ authUserDetails: null });
       },

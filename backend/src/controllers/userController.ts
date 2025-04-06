@@ -6,6 +6,7 @@ import { IUser } from "@/interfaces/user";
 import { ErrorHandler } from "@/utils/errorHandler";
 import { Socket } from "socket.io";
 import { lookUpForPendingInvites } from "./chatController";
+import { Types } from "mongoose";
 
 const userService = new UserService();
 
@@ -58,7 +59,7 @@ export const updateUser = async (
       password,
     };
 
-    const result = await userService.updateUser(req.params.id, updatedUser);
+    const result = await userService.updateUser(new Types.ObjectId(req.params.id), updatedUser);
     if (!result) {
       throw new ErrorHandler(
         ERROR.ERROR_UPDATING_USER,
@@ -92,7 +93,7 @@ export const assignSocketIdByUserId = async (
       throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
-    const updatedUser = await userService.updateUser(userId, {
+    const updatedUser = await userService.updateUser(new Types.ObjectId(userId), {
       socketId: socket.id,
     });
     if (!updatedUser) {

@@ -38,8 +38,7 @@ export default class UserService implements IUserService {
   }
 
   async getUserSocketIdByUserId(userId: string): Promise<string | null> {
-
-    const user = await User.findOne({ _id: new Types.ObjectId(userId) }).exec();
+    const user = await User.findById(new Types.ObjectId(userId)).exec();
     return user ? user.socketId : null;
   }
 
@@ -49,7 +48,7 @@ export default class UserService implements IUserService {
   }
 
   async updateUser(
-    id: string,
+    id: Types.ObjectId,
     updatedUser: Partial<IUser>
   ): Promise<IUser | null> {
     return await User.findByIdAndUpdate(
