@@ -16,6 +16,7 @@ import { getApiError } from "@/utils/errors";
 
 export const useAuth = () => {
   const { authenticate, logOut } = useAuthStore();
+
   const navigate = useNavigate();
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);

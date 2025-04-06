@@ -1,15 +1,17 @@
 const LogoutIcon = () => {
   return (
     <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="size-6"
     >
       <path
-        d="M13 17L14.4 15.6L11.8 13L22 13L22 11L11.8 11L14.4 8.4L13 7L8 12L13 17ZM4 5L12 5L12 3L4 3C2.9 3 2 3.9 2 5L2 19C2 20.1 2.9 21 4 21L12 21L12 19L4 19L4 5Z"
-        fill="var(--color-base-content)"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
       />
     </svg>
   );

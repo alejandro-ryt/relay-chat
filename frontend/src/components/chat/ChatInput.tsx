@@ -1,9 +1,13 @@
-import SendIcon from "@/components/ui/icons/SendIcon";
 import { useRef, useEffect } from "react";
+import SendIcon from "@/components/ui/icons/SendIcon";
 import IconButton from "@/components/ui/IconButton";
+import { useCurrentChatState } from "@/store/useChatStore";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const ChatInput = () => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const { sendMessage } = useCurrentChatState();
+  const { authUser } = useAuthStore();
 
   useEffect(() => {
     if (inputRef.current) {
@@ -22,6 +26,15 @@ const ChatInput = () => {
     }
   };
 
+  const handleMessage = () => {
+    if (inputRef.current) {
+      const message = inputRef.current.value;
+      sendMessage(message, authUser?.userId || ""); // Send the message to the chat with socket.io
+      inputRef.current.value = ""; // Clear the input after sending the message
+      handleInput(); // Reset the height of the textarea
+    }
+  };
+
   return (
     <label className="flex flex-row justify-center items-center m-4 mb-1">
       <textarea
@@ -34,7 +47,7 @@ const ChatInput = () => {
       <IconButton
         icon={<SendIcon />}
         shape="round"
-        action={() => console.log("sent")}
+        action={() => handleMessage()}
       />
     </label>
   );

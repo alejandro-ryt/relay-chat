@@ -4,6 +4,8 @@ import UserService from "@/services/userService";
 import { ERROR } from "@/constants/relayChat";
 import { IUser } from "@/interfaces/user";
 import { ErrorHandler } from "@/utils/errorHandler";
+import { Socket } from "socket.io";
+import { lookUpForPendingInvites } from "./chatController";
 
 const userService = new UserService();
 
@@ -64,6 +66,43 @@ export const updateUser = async (
       );
     }
     res.status(StatusCodes.OK).json(result);
+  } catch (error) {
+    if (error instanceof ErrorHandler) {
+      throw new ErrorHandler(error.message, error.statusCode);
+    }
+    throw new ErrorHandler(
+      ERROR.ERROR_UPDATING_USER,
+      StatusCodes.SERVICE_UNAVAILABLE
+    );
+  }
+};
+
+export const assignSocketIdByUserId = async (
+  userId: string,
+  socket: Socket
+) => {
+  try {
+    // Check if userId was provided
+    if (!userId) {
+      throw new ErrorHandler(ERROR.ERROR_ID_REQUIRED, StatusCodes.BAD_REQUEST);
+    }
+    const currentUser = await userService.getUserById(userId);
+    // Check if user was found
+    if (!currentUser) {
+      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
+    }
+
+    const updatedUser = await userService.updateUser(userId, {
+      socketId: socket.id,
+    });
+    if (!updatedUser) {
+      throw new ErrorHandler(
+        ERROR.ERROR_UPDATING_USER,
+        StatusCodes.BAD_REQUEST
+      );
+    }
+
+    if (updatedUser.socketId) lookUpForPendingInvites(socket, userId);
   } catch (error) {
     if (error instanceof ErrorHandler) {
       throw new ErrorHandler(error.message, error.statusCode);

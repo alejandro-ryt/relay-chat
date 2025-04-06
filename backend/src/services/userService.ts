@@ -8,6 +8,7 @@ import {
 import User from "@/models/userModel";
 import { ErrorHandler } from "@/utils/errorHandler";
 import { StatusCodes } from "http-status-codes";
+import { Types } from "mongoose";
 
 export default class UserService implements IUserService {
   async searchUsersByQuery(query: any, skip: number, limit: number) {
@@ -21,7 +22,7 @@ export default class UserService implements IUserService {
     return { users, totalCount };
   }
   async getUserById(id: string): Promise<IUserDocument | null> {
-    return await User.findById(id).exec();
+    return await User.findById(new Types.ObjectId(id)).exec();
   }
 
   async getUserByEmail(email: string): Promise<IUserDocument | null> {
@@ -34,6 +35,12 @@ export default class UserService implements IUserService {
 
   async getUserBySocketId(socketId: string): Promise<IUserDocument | null> {
     return await User.findOne({ socketId }).exec();
+  }
+
+  async getUserSocketIdByUserId(userId: string): Promise<string | null> {
+
+    const user = await User.findOne({ _id: new Types.ObjectId(userId) }).exec();
+    return user ? user.socketId : null;
   }
 
   async createUser(user: IUser): Promise<IUser> {
@@ -53,7 +60,7 @@ export default class UserService implements IUserService {
   }
 
   async deleteUser(id: string): Promise<boolean> {
-    const result = await User.findByIdAndDelete(id).exec();
+    const result = await User.findByIdAndDelete(new Types.ObjectId(id)).exec();
     return result !== null;
   }
 

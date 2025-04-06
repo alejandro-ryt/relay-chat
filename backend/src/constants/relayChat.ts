@@ -20,6 +20,8 @@ export const ERROR = {
   ERROR_PASSWORD_FORMAT: "Invalid password format",
   // Chat Error messages
   ERROR_CHAT_NOT_FOUND: "Chat not found",
+  ERROR_SOCKET_INSTANCE_NOT_FOUND:
+    "We could find the socket instance based on the socket id you provided",
   // General Error messages
   ERROR_EMAIL_PASSWORD_MISSING: "Either the Password or Email wasn't provided",
   ERROR_ID_REQUIRED: "ID was not provided",

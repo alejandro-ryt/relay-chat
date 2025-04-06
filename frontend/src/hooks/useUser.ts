@@ -2,18 +2,19 @@ import { END_POINT } from "@/constants/endpoint";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
 import { TApiError } from "@/types/api.types";
-import { TEditUserForm } from "@/types/user.types";
+import { TEditUserForm, TUser } from "@/types/user.types";
 import { getApiError } from "@/utils/errors";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import DOMPurify from "dompurify";
+import { generateUsers } from "@/utils/mockUsers";
 
 export const useUser = () => {
   const modal = document.getElementById("modal_edit_profile");
   const [isGetUserDetails, setIsGetUserDetails] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const { authUser } = useAuthStore();
-  const { setUser } = useUserStore();
+  const { authUser, setAuthUserDetails } = useAuthStore();
+  const { setUsers } = useUserStore();
 
   const getUserDetails = async () => {
     try {
@@ -26,14 +27,25 @@ export const useUser = () => {
         const errorData: TApiError = await response.json();
         throw errorData;
       }
-      const responseData = await response.json();
+      const responseData = (await response.json()) as TUser;
       if (responseData) {
-        setUser(responseData);
+        setAuthUserDetails({ ...responseData, contacts: [] });
       }
     } catch (error: unknown) {
       toast.error(getApiError(error) ?? "Oops something went wrong");
     } finally {
       setIsGetUserDetails(true);
+    }
+  };
+
+  const getContacts = async () => {
+    try {
+      setTimeout(() => {
+        new Promise((resolve) => resolve(true));
+      }, 1500);
+      setUsers(generateUsers(10));
+    } catch (error: unknown) {
+      toast.error(getApiError(error) ?? "Oops something went wrong");
     }
   };
 
@@ -58,9 +70,8 @@ export const useUser = () => {
         throw errorData;
       }
       const responseData = await response.json();
-      console.log("updated", responseData);
       if (responseData) {
-        setUser(responseData);
+        setAuthUserDetails({ ...responseData, contacts: [] });
       }
       toast.success("Profile Updated");
       closeModal();
@@ -69,6 +80,15 @@ export const useUser = () => {
     } finally {
       setIsUpdating(false);
     }
+  };
+
+  const contactAction = (
+    contactId: string,
+    action: "add" | "block" | "delete"
+  ) => {
+    console.log("user id auth", authUser?.userId);
+    console.log("action", action);
+    console.log("contactId", contactId);
   };
 
   const closeModal = () => {
@@ -86,8 +106,10 @@ export const useUser = () => {
   return {
     showModal,
     closeModal,
+    contactAction,
     updateProfile,
     getUserDetails,
+    getContacts,
     isGetUserDetails,
     isUpdating,
   };
