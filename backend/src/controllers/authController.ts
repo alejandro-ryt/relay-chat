@@ -37,6 +37,7 @@ export const signUp = async (
       email,
       password,
       socketId: null,
+      contacts: [],
     };
 
     const createdUser = await userService.createUser(newUser);
@@ -57,7 +58,7 @@ export const signUp = async (
     // Generic server error for any unexpected errors
     return next(
       new ErrorHandler(
-        ERROR.ERROR_CREATING_USER,
+        ERROR.INTERNAL_SERVICE_ERROR,
         StatusCodes.SERVICE_UNAVAILABLE
       )
     );
