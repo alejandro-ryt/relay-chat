@@ -15,14 +15,26 @@ export default class UserService implements IUserService {
     const users = await User.find(query)
       .skip(skip)
       .limit(Number(limit))
-      .select("id firstName lastName username email")
+      .select("profilePic firstName lastName username email socketId")
+      .populate({
+        path: "contacts.contact",
+        select: "firstName lastName email username profilePic socketId",
+      })
+      .lean()
       .exec();
 
     const totalCount = await User.countDocuments(query);
     return { users, totalCount };
   }
   async getUserById(id: string): Promise<IUserDocument | null> {
-    return await User.findById(new Types.ObjectId(id)).exec();
+    return await User.findById(new Types.ObjectId(id))
+      .select("firstName lastName email username profilePic contacts socketId")
+      .populate({
+        path: "contacts.contact",
+        select: "firstName lastName email username profilePic socketId",
+      })
+      .lean()
+      .exec();
   }
 
   async getUserByEmail(email: string): Promise<IUserDocument | null> {
