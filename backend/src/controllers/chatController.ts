@@ -6,7 +6,7 @@ import UserService from "@/services/userService";
 import { ERROR } from "@/constants/relayChat";
 import { ErrorHandler } from "@/utils/errorHandler";
 import { IMessage } from "@/interfaces/message";
-import { IUser } from "@/interfaces/user";
+import { Types } from "mongoose";
 
 const chatService = new ChatService();
 const userService = new UserService();
@@ -133,15 +133,28 @@ export const joinChat = async (
       );
     }
 
+     // Find or create the chat (room) in the database
+     await chatService.saveChat(chatName, type, [currentUserId, ...membersId]);
+
+     // Get chat by name (Populated)
+     const chat = await chatService.findByChatNamePopulated(chatName);
+     // If the chat doesn't exist, throw a custom error
+     if (!chat) {
+       throw new ErrorHandler(ERROR.ERROR_CHAT_NOT_FOUND, StatusCodes.NOT_FOUND);
+     }
+
     // Add each user to the socket room
     membersId.forEach(async (userId) => {
+      if (chat.members.includes(new Types.ObjectId(userId))) return;
       // Here we emit the event to the individual user socket
       const userSocketId = await userService.getUserSocketIdByUserId(userId);
+
       if (!userSocketId) {
         await chatService.saveChatInvitation(userId, chatName);
         return;
       }
       const memberSocketInstance = io.sockets.sockets.get(userSocketId);
+
       if (!memberSocketInstance) {
         throw new ErrorHandler(
           ERROR.ERROR_SOCKET_INSTANCE_NOT_FOUND,
@@ -150,17 +163,6 @@ export const joinChat = async (
       }
       memberSocketInstance.join(chatName); // Add other users/members to the chat
     });
-
-    // Find or create the chat (room) in the database
-    await chatService.saveChat(chatName, type, [currentUserId, ...membersId]);
-
-    // Get chat by name (Populated)
-    const chat = await chatService.findByChatNamePopulated(chatName);
-    // If the chat doesn't exist, throw a custom error
-    if (!chat) {
-      throw new ErrorHandler(ERROR.ERROR_CHAT_NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
-    console.log("chat", chat);
 
     socket.join(chat.name ?? chatName); // Join the room
     socket.emit("notification", `Welcome to room ${chatName}!`);
@@ -260,7 +262,7 @@ export const handleDisconnect = async (socket: Socket): Promise<void> => {
         StatusCodes.NOT_FOUND
       );
     }
-    await chatService.handleDisconnect(user.id, { socketId: undefined });
+    await chatService.handleDisconnect(user.id, { socketId: null });
   } catch (error) {
     console.error("Error handling disconnect:", error);
     // Handle errors by emitting the error message to the client
