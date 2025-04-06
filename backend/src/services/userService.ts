@@ -11,7 +11,11 @@ import { StatusCodes } from "http-status-codes";
 
 export default class UserService implements IUserService {
   async searchUsersByQuery(query: any, skip: number, limit: number) {
-    const users = await User.find(query).skip(skip).limit(Number(limit)).exec();
+    const users = await User.find(query)
+      .skip(skip)
+      .limit(Number(limit))
+      .select("id firstName lastName username email")
+      .exec();
 
     const totalCount = await User.countDocuments(query);
     return { users, totalCount };
