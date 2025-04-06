@@ -23,7 +23,6 @@ export const useCurrentChatState = create<TChatState & TChatActions>(
 
     // Set Chat Data
     setSelectedChatData: () => {
-      console.log("setSelectedChatData --> socket", socket);
       if (socket) {
         socket.on("chatData", (chatData: any) => {
           set({
@@ -61,11 +60,9 @@ export const useCurrentChatState = create<TChatState & TChatActions>(
     // Connect to chat
     connectToChat: (userId: string) => {
       let membersIds: string[] = [];
-
       get().selectedChatData?.members.forEach((member) => {
         member._id !== userId ? membersIds.push(member._id) : null;
       });
-      const socket = useAuthStore.getState().socket;
       if (socket && userId) {
         socket.emit(
           "joinChat",
@@ -81,7 +78,6 @@ export const useCurrentChatState = create<TChatState & TChatActions>(
 
     // Send Messsage
     sendMessage: (message: string, userId) => {
-      const socket = useAuthStore.getState().socket;
       if (socket) {
         socket.emit(
           "sendMessage",
@@ -99,7 +95,6 @@ export const useCurrentChatState = create<TChatState & TChatActions>(
     // Get Messsages
     getMessage: () => {
       try {
-        const socket = useAuthStore.getState().socket;
         if (socket) {
           socket.on("sendMessage", (msg: TChatMessage) => {
             const existingMessage = get().selectedChatData?.messages.find(
