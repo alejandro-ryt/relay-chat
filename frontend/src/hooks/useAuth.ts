@@ -48,7 +48,7 @@ export const useAuth = () => {
       toast.success("Account Created!");
       navigate(ROUTES.SIGN_IN);
     } catch (error: unknown) {
-      toast.error(getApiError(error));
+      toast.error(getApiError(error) ?? "Oops something went wrong");
     } finally {
       setIsSigningUp(false);
     }
@@ -78,7 +78,7 @@ export const useAuth = () => {
       toast.success(`Welcome ${authData.username}`);
       navigate(ROUTES.CHAT);
     } catch (error: unknown) {
-      toast.error(getApiError(error));
+      toast.error(getApiError(error) ?? "Oops something went wrong");
     } finally {
       setIsSigningIn(false);
     }
@@ -98,7 +98,7 @@ export const useAuth = () => {
       logOut();
       toast.success("Logout Success");
     } catch (error: unknown) {
-      toast.error(getApiError(error));
+      toast.error(getApiError(error) ?? "Oops something went wrong");
     }
   };
 

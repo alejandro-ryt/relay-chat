@@ -91,6 +91,6 @@ export type TChatActions = {
   connectToChat: (userId: string) => void;
   sendMessage: (message: string, userId: string) => void;
   getMessage: () => void;
-  joinChat: (data: TJoinChat) => void;
+  joinChat: (data: TJoinChat) => boolean;
   resetData: () => void;
 };

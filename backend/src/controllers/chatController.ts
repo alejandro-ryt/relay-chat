@@ -152,13 +152,14 @@ export const joinChat = async (
     membersId.forEach(async (userId) => {
       if (chat.members.includes(new Types.ObjectId(userId))) return;
       // Here we emit the event to the individual user socket
+
       const userSocketId = await userService.getUserSocketIdByUserId(userId);
       console.log("joinChat --> userSocketId", userSocketId);
       if (!userSocketId) {
         await chatService.saveChatInvitation(userId, chatName);
         return;
       }
-      const memberSocketInstance = io.sockets.sockets.get(userSocketId);
+      const memberSocketInstance = io.of("/").sockets.get(userSocketId);
       console.log("joinChat --> memberSocketInstance", memberSocketInstance);
 
       if (!memberSocketInstance) {

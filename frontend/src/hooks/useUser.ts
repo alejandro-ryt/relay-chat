@@ -9,8 +9,11 @@ import toast from "react-hot-toast";
 import DOMPurify from "dompurify";
 import { useChatStore } from "@/store/useChatStore";
 import { TJoinChat } from "@/types/chat.types";
+import { useNavigate } from "react-router";
+import { ROUTES } from "@/constants/routes";
 
 export const useUser = () => {
+  const navigate = useNavigate();
   const [isShowAddModal, setIsShowAddModal] = useState(false);
   const [isShowEditModal, setIsShowEditModal] = useState(false);
   const [isGetUserDetails, setIsGetUserDetails] = useState(false);
@@ -73,7 +76,10 @@ export const useUser = () => {
         }, 1500)
       );
       const responseData = (await response.json()) as TUserSearchResponse;
-      setUsers(responseData.users);
+      const filterContacts = responseData.users.filter(
+        (user) => user._id !== authUser?.userId
+      );
+      setUsers(filterContacts);
     } catch (error: unknown) {
       toast.error(getApiError(error) ?? "Oops something went wrong");
     } finally {
@@ -210,7 +216,11 @@ export const useUser = () => {
             currentUserId: authUser!.userId,
             type: "group",
           };
-    joinChat(joinData);
+    const isJoined = joinChat(joinData);
+    if (isJoined) {
+      toast.success("Chat Created");
+      navigate(ROUTES.CHAT);
+    }
   };
 
   const toggleShowAddModal = () => setIsShowAddModal(!isShowAddModal);
