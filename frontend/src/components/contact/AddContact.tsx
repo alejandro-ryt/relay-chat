@@ -39,7 +39,6 @@ export const AddContact = () => {
         </svg>
         Add Contact
       </button>
-
       <dialog
         className="modal"
         aria-modal="true"
@@ -84,50 +83,59 @@ export const AddContact = () => {
           <section className="grid">
             <SearchInput />
             {!isSearching ? (
-              <div className="gap-4 flex-grow max-h-[60dvh] flex flex-col py-4 overflow-y-auto">
+              <div>
                 {users.length > 0 ? (
-                  users.map((user) => (
-                    <div key={`contact-${user._id}`}>
-                      <div className="h-full w-full shadow p-2 flex-col md:flex-row gap-4 justify-between bg-base-200 flex items-center rounded-[1.5rem]">
-                        <section className="flex items-center w-full gap-2">
-                          <div className="avatar avatar-online">
-                            <figure className="w-16 mask mask-squircle">
+                  <ul className="list bg-base-100 rounded-box shadow-md mt-2">
+                    <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">
+                      All contacts
+                    </li>
+                    <div className="max-h-[60dvh] overflow-y-auto">
+                      {users.map((user, index) => (
+                        <div key={`your-contact-id-${user._id}-index-${index}`}>
+                          <li className="list-row">
+                            <div className="relative">
                               <img
-                                loading="lazy"
-                                alt="profile photo"
-                                src={
-                                  "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-                                }
+                                className="size-10 mask mask-squircle"
+                                src="https://img.daisyui.com/images/profile/demo/1@94.webp"
                               />
-                            </figure>
-                          </div>
-                          <section className="flex-row flex flex-1 gap-2">
-                            <p className="capitalize">{user.firstName}</p>
-                            <p className="capitalize">{user.lastName}</p>
-                          </section>
-                        </section>
-                        <button
-                          onClick={() => addContact(user._id)}
-                          className="btn btn-primary btn-circle btn-ghost"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={1.5}
-                            stroke="currentColor"
-                            className="size-4"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M12 4.5v15m7.5-7.5h-15"
-                            />
-                          </svg>
-                        </button>
-                      </div>
+                              {user.socketId ? (
+                                <div className="bg-success border border-success w-3 h-3 rounded-full absolute top-0 right-0 -mr-1 -mt-1"></div>
+                              ) : (
+                                <div className="bg-base-100 border border-neutral w-3 h-3 rounded-full absolute top-0 right-0 -mr-1 -mt-1"></div>
+                              )}
+                            </div>
+                            <div className="flex flex-col h-full">
+                              <div>
+                                {user.firstName} {user.lastName}
+                              </div>
+                              <div className="text-xs uppercase font-semibold opacity-60">
+                                {user.socketId ? "Online" : "Offline"}
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => addContact(user._id)}
+                              className="btn btn-circle btn-ghost"
+                            >
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="size-6"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M12 4.5v15m7.5-7.5h-15"
+                                />
+                              </svg>
+                            </button>
+                          </li>
+                        </div>
+                      ))}
                     </div>
-                  ))
+                  </ul>
                 ) : (
                   <p>Contact Not Found</p>
                 )}

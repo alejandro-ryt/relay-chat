@@ -2,12 +2,7 @@ import { END_POINT } from "@/constants/endpoint";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
 import { TApiError } from "@/types/api.types";
-import {
-  TEditUserForm,
-  TUser,
-  TUserSearch,
-  TUserSearchResponse,
-} from "@/types/user.types";
+import { TEditUserForm, TUser, TUserSearchResponse } from "@/types/user.types";
 import { getApiError } from "@/utils/errors";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -15,8 +10,8 @@ import DOMPurify from "dompurify";
 // import { generateUsers } from "@/utils/mockUsers";
 
 export const useUser = () => {
-  const modal = document.getElementById("modal_edit_profile");
   const [isShowAddModal, setIsShowAddModal] = useState(false);
+  const [isShowEditModal, setIsShowEditModal] = useState(false);
   const [isGetUserDetails, setIsGetUserDetails] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -96,7 +91,7 @@ export const useUser = () => {
         `${import.meta.env.VITE_BASE_URL}${END_POINT.USER_UPDATE}/${authUser?.userId}`,
         {
           headers: { "Content-Type": "application/json" },
-          method: "POST",
+          method: "PUT",
           body: JSON.stringify(sanitizeData),
         }
       );
@@ -106,12 +101,12 @@ export const useUser = () => {
       }
       const responseData = await response.json();
       if (responseData) {
-        setAuthUserDetails({ ...responseData, contacts: [] });
+        setAuthUserDetails(responseData);
       }
       toast.success("Profile Updated");
-      closeModal();
+      toggleShowEditModal();
     } catch (error: unknown) {
-      toast.error(getApiError(error));
+      toast.error(getApiError(error) ?? "Oops something went wrong");
     } finally {
       setIsUpdating(false);
     }
@@ -133,22 +128,21 @@ export const useUser = () => {
   const deleteContact = async (contactId: string) => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}${END_POINT.ADD_CONTACT}/${authUser?.userId}/${contactId}`,
+        `${import.meta.env.VITE_BASE_URL}${END_POINT.REMOVE_CONTACT}/${authUser?.userId}/${contactId}`,
         {
           credentials: "same-origin",
           headers: { "Content-Type": "application/json" },
-          method: "POST",
+          method: "DELETE",
         }
       );
       if (!response.ok) {
         const errorData: TApiError = await response.json();
         throw errorData;
       }
-      toast.success("Contact Added");
+      toast.success("Contact Removed");
       await getUserDetails();
     } catch (error: unknown) {
-      toast.error(getApiError(error));
-    } finally {
+      toast.error(getApiError(error) ?? "Oops something went wrong");
     }
   };
 
@@ -169,39 +163,29 @@ export const useUser = () => {
       toast.success("Contact Added");
       await getUserDetails();
     } catch (error: unknown) {
-      toast.error(getApiError(error));
+      toast.error(getApiError(error) ?? "Oops something went wrong");
     } finally {
     }
   };
 
-  const closeModal = () => {
-    if (modal && modal instanceof HTMLDialogElement) {
-      modal?.close();
-    }
-  };
-
-  const showModal = () => {
-    // if (modal && modal instanceof HTMLDialogElement) {
-    //   modal.showModal();
-    // }
-  };
-
   const toggleShowAddModal = () => setIsShowAddModal(!isShowAddModal);
 
+  const toggleShowEditModal = () => setIsShowEditModal(!isShowEditModal);
+
   return {
-    showModal,
-    closeModal,
     contactAction,
     updateProfile,
     getUserDetails,
     getContacts,
     removeAddUser,
     toggleShowAddModal,
+    toggleShowEditModal,
     addContact,
     deleteContact,
     addUsers,
     isGetUserDetails,
     isShowAddModal,
+    isShowEditModal,
     isUpdating,
     isSearching,
   };
