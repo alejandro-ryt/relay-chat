@@ -1,5 +1,6 @@
 import socket from "@/socket/socket";
 import {
+  TChat,
   TChatActions,
   TChatMessage,
   TChatState,
@@ -23,7 +24,7 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   // Set Chat Data
   setSelectedChatData: () => {
     if (socket) {
-      socket.on("chatData", (chatData: any) => {
+      socket.on("chatData", (chatData: TChat) => {
         set({
           selectedChatData: chatData,
         });

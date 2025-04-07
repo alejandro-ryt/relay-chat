@@ -1,7 +1,7 @@
 import { signUpSchema } from "@/schemas/signUp";
 import { signInSchema } from "@/schemas/signIn";
 import { z } from "zod";
-import { TUser, TUserContact } from "./user.types";
+import { TUser, TUserContact } from "@/types/user.types";
 
 export type TSignUpForm = z.output<typeof signUpSchema>;
 export type TSignUpFormData = Omit<

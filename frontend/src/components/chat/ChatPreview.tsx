@@ -1,6 +1,7 @@
 import Avatar from "@/components/ui/Avatar";
 import { useChatStore } from "@/store/useChatStore";
 import { TChatPreviewProps } from "@/types/chat.types";
+import clsx from "clsx";
 
 const ChatPreview = ({
   id,
@@ -13,7 +14,10 @@ const ChatPreview = ({
   return (
     <button
       onClick={action}
-      className={`flex text-left rounded-[1rem] ${id === selectedChatId ? "bg-base-300" : ""} hover:bg-base-300 mx-5 my-3 p-3 cursor-pointer`}
+      className={clsx(
+        "flex text-left rounded-[1rem] hover:bg-base-300 mx-5 my-3 p-3 cursor-pointer",
+        id === selectedChatId ? "bg-base-300" : ""
+      )}
     >
       <Avatar pic={pic} sizeClass="w-10 mr-2" />
       <section className="w-5/6 mr-3">
