@@ -46,6 +46,7 @@ export default class UserService implements IUserService {
   }
 
   async getUserBySocketId(socketId: string): Promise<IUserDocument | null> {
+    console.log("getUserBySocketId --> socketId", socketId);
     return await User.findOne({ socketId }).exec();
   }
 
@@ -81,64 +82,78 @@ export default class UserService implements IUserService {
       contact: contact._id,
       isBlocked: false,
     } as IContact);
-  
+
     await User.updateOne(
       { _id: user._id },
       { $set: { contacts: user.contacts } }
     );
-  
+
     // Add the user to the contact's contact list as well
     contact.contacts.push({
       contact: user._id,
       isBlocked: false,
     } as IContact);
-  
+
     await User.updateOne(
       { _id: contact._id },
       { $set: { contacts: contact.contacts } }
     );
-  }  
+  }
 
   // Remove a contact
   async removeContact(user: IUserDocument, contact: IUserDocument) {
     // Remove contact from user
     user.contacts = user.contacts.filter(
-      (contactUser) => contactUser.contact._id.toString() !== contact._id.toString()
+      (contactUser) =>
+        contactUser.contact._id.toString() !== contact._id.toString()
     );
-    await User.updateOne({ _id: user._id },
-      { $set: { contacts: user.contacts } });
+    await User.updateOne(
+      { _id: user._id },
+      { $set: { contacts: user.contacts } }
+    );
 
     // Remove contact on the other side
     contact.contacts = contact.contacts.filter(
-      (contactUser) => contactUser.contact._id.toString() !== user._id.toString()
+      (contactUser) =>
+        contactUser.contact._id.toString() !== user._id.toString()
     );
-    await User.updateOne({ _id: contact._id },
-      { $set: { contacts: contact.contacts } });
+    await User.updateOne(
+      { _id: contact._id },
+      { $set: { contacts: contact.contacts } }
+    );
   }
 
   // Block a contact
   async blockContact(user: IUserDocument, contactUser: IUserDocument) {
     const contact = user.contacts.find(
-      (userContact) => userContact.contact._id.toString() === contactUser._id.toString()
+      (userContact) =>
+        userContact.contact._id.toString() === contactUser._id.toString()
     );
 
     if (!contact) {
       throw new ErrorHandler(ERROR.CONTACT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
     contact.isBlocked = true;
-    await User.updateOne({ _id: user._id },{ $set: { contacts: user.contacts } });
+    await User.updateOne(
+      { _id: user._id },
+      { $set: { contacts: user.contacts } }
+    );
 
     // Block the user on the other side as well
     if (contactUser) {
       const reverseContact = contactUser.contacts.find(
-        (userContact) => userContact.contact._id.toString() === user._id.toString()
+        (userContact) =>
+          userContact.contact._id.toString() === user._id.toString()
       );
 
       if (reverseContact) {
         reverseContact.isBlocked = true;
-        await User.updateOne({ _id: contactUser._id },{
-          $set: { contacts: contactUser.contacts },
-        });
+        await User.updateOne(
+          { _id: contactUser._id },
+          {
+            $set: { contacts: contactUser.contacts },
+          }
+        );
       }
     }
   }

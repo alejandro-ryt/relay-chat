@@ -22,7 +22,6 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
 
   // Set Chat Data
   setSelectedChatData: () => {
-    console.log("setSelectedChatData --> socket", socket);
     if (socket) {
       socket.on("chatData", (chatData: any) => {
         set({

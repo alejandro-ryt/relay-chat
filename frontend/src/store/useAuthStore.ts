@@ -13,6 +13,7 @@ export const useAuthStore = create<TAuthStore>()(
       isAuthenticated: false,
       authenticate: (data) => {
         socket?.connect();
+        socket.emit("initiateSocket", data.userId);
         set({ authUser: data, isAuthenticated: true });
       },
       setAuthUserDetails: (data) => {

@@ -16,7 +16,9 @@ class ChatService implements IChatService {
   public async getPendingChatInvitesByUserId(
     userId: string
   ): Promise<IPendingInvites[]> {
-    return await PendingChatInvites.find({ userId: new Types.ObjectId(userId) }).exec();
+    return await PendingChatInvites.find({
+      userId: new Types.ObjectId(userId),
+    }).exec();
   }
 
   // Get all chats with last message by user id
@@ -54,30 +56,37 @@ class ChatService implements IChatService {
     type: "direct" | "group",
     userIds: string[] // Array of userIds
   ): Promise<IChatDocument> {
+    console.log("saveChat --> chatName", chatName);
     // Find chat by name
     let chat = await Chat.findOne({ name: chatName }).exec();
-
+    console.log("saveChat --> chat", chat);
     if (chat) {
       // Ensure all users are added to the chat, avoiding duplicates
       const newUserIds = userIds.map((id) => new Types.ObjectId(id));
+      console.log("saveChat --> newUserIds", newUserIds);
       const updatedMembers = new Set([
         ...chat.members.map((m) => m.toString()),
-        ...newUserIds.map((id) => id.toString()),
+        ...newUserIds.map((_id) => _id.toString()),
       ]);
+
+      console.log("saveChat --> updatedMembers", updatedMembers);
 
       chat.members = Array.from(updatedMembers).map(
         (id) => new Types.ObjectId(id)
       );
+      console.log("saveChat --> chat.members", chat.members);
       await chat.save();
     } else {
       // Create the chat if it doesn't exist
       const userIdsObj = userIds.map((id) => new Types.ObjectId(id));
+      console.log("saveChat new chat --> userIdsObj", userIdsObj);
       chat = await Chat.create({
         name: chatName,
         type,
         members: userIdsObj,
         messages: [],
       });
+      console.log("saveChat new chat --> chat", chat);
     }
 
     return chat;
@@ -89,7 +98,7 @@ class ChatService implements IChatService {
       {
         $set: {
           userId: new Types.ObjectId(userId),
-        }
+        },
       },
       { upsert: true }
     );
