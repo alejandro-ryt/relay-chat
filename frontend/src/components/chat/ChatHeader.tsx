@@ -1,11 +1,11 @@
 import IconButton from "@/components/ui/IconButton";
 import VerticalDotsIcon from "@/components/ui/icons/VerticalDotsIcon";
-import { useCurrentChatState } from "@/store/useChatStore";
+import { useChatStore } from "@/store/useChatStore";
 import { TRecentChatsProps } from "@/types/chat.types";
 import Avatar from "../ui/Avatar";
 
 const ChatHeader = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {
-  const { selectedChatData, selectedChatPreviewData } = useCurrentChatState();
+  const { selectedChatData, selectedChatPreviewData } = useChatStore();
 
   return (
     <section className="flex flex-row justify-between items-center mb-6">
