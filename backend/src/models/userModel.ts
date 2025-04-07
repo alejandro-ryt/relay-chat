@@ -6,12 +6,6 @@ import {
   validatePasswordFormat,
 } from "@/utils/inputValidations";
 
-export enum ContactStatus {
-  PENDING = "pending",
-  ACCEPTED = "accepted",
-  BLOCKED = "blocked",
-}
-
 const userSchema = new Schema<IUserDocument>(
   {
     profilePic: {
