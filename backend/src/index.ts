@@ -27,10 +27,9 @@ connectDB();
 
 // Middleware to parse JSON
 app.use(express.json());
+app.use(errorMiddleware);
 
 app.use("/api", routes);
-
-app.use(errorMiddleware);
 
 // Setup socket events
 io.on("connection", (socket) => {
