@@ -9,8 +9,11 @@ import toast from "react-hot-toast";
 import DOMPurify from "dompurify";
 import { useChatStore } from "@/store/useChatStore";
 import { TJoinChat } from "@/types/chat.types";
+import { useNavigate } from "react-router";
+import { ROUTES } from "@/constants/routes";
 
 export const useUser = () => {
+  const navigate = useNavigate();
   const [isShowAddModal, setIsShowAddModal] = useState(false);
   const [isShowEditModal, setIsShowEditModal] = useState(false);
   const [isGetUserDetails, setIsGetUserDetails] = useState(false);
@@ -210,7 +213,11 @@ export const useUser = () => {
             currentUserId: authUser!.userId,
             type: "group",
           };
-    joinChat(joinData);
+    const isJoined = joinChat(joinData);
+    if (isJoined) {
+      toast.success("Chat Created");
+      navigate(ROUTES.CHAT);
+    }
   };
 
   const toggleShowAddModal = () => setIsShowAddModal(!isShowAddModal);

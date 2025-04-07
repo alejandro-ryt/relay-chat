@@ -125,11 +125,13 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
           data.currentUserId,
           data.membersIds
         );
-      } else {
-        console.error("Socket is null. Unable to joinChat.");
+        return true;
       }
+      console.error("Socket is null. Unable to joinChat.");
+      return false;
     } catch (error) {
       console.error("Error while joinChat:", error);
+      return false;
     }
   },
 
