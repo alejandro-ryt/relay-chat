@@ -1,12 +1,12 @@
-import { useRef, useEffect } from "react";
-import SendIcon from "@/components/ui/icons/SendIcon";
 import IconButton from "@/components/ui/IconButton";
-import { useCurrentChatState } from "@/store/useChatStore";
+import SendIcon from "@/components/ui/icons/SendIcon";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useChatStore } from "@/store/useChatStore";
+import { useEffect, useRef } from "react";
 
 const ChatInput = () => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  const { sendMessage } = useCurrentChatState();
+  const { sendMessage } = useChatStore();
   const { authUser } = useAuthStore();
 
   useEffect(() => {

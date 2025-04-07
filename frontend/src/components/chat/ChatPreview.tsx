@@ -1,5 +1,5 @@
 import Avatar from "@/components/ui/Avatar";
-import { useCurrentChatState } from "@/store/useChatStore";
+import { useChatStore } from "@/store/useChatStore";
 import { TChatPreviewProps } from "@/types/chat.types";
 
 const ChatPreview = ({
@@ -9,7 +9,7 @@ const ChatPreview = ({
   message,
   action,
 }: TChatPreviewProps) => {
-  const { selectedChatId } = useCurrentChatState();
+  const { selectedChatId } = useChatStore();
   return (
     <button
       onClick={action}

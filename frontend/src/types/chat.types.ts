@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { Socket } from "socket.io-client";
 
 export type TAvatarProps = {
   pic: string | undefined;
@@ -85,4 +84,5 @@ export type TChatActions = {
   connectToChat: (userId: string) => void;
   sendMessage: (message: string, userId: string) => void;
   getMessage: () => void;
+  resetData: () => void;
 };
