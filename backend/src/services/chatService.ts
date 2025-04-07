@@ -84,8 +84,15 @@ class ChatService implements IChatService {
   }
 
   async saveChatInvitation(userId: string, chatName: string): Promise<void> {
-    const newPendingChatInvite = new PendingChatInvites(userId, chatName);
-    await newPendingChatInvite.save();
+    await PendingChatInvites.updateOne(
+      { chatName }, // search by chatName
+      {
+        $set: {
+          userId: new Types.ObjectId(userId),
+        }
+      },
+      { upsert: true }
+    );
   }
 
   async clearPendingChatInvites(userId: string): Promise<void> {
@@ -156,7 +163,7 @@ class ChatService implements IChatService {
     userId: string,
     user: Partial<IUser>
   ): Promise<IUser | null> {
-    return await userService.updateUser(userId, user);
+    return await userService.updateUser(new Types.ObjectId(userId), user);
   }
 }
 

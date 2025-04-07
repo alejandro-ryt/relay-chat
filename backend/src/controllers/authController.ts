@@ -113,10 +113,8 @@ export const signIn = async (
         StatusCodes.BAD_REQUEST
       );
     }
-    // Get user id Object
-    const userId = user._id as Types.ObjectId;
 
-    const token = jwt.sign({ userId: userId.toString() }, JWT_SECRET, {
+    const token = jwt.sign({ userId: user._id.toString() }, JWT_SECRET, {
       expiresIn: "1h",
     });
 
@@ -133,6 +131,7 @@ export const signIn = async (
       .status(StatusCodes.OK)
       .json({ userId: user.id, username: user.username });
   } catch (error) {
+    console.log("Error sign in", error)
     // Check if it's a Mongoose validation error
     if (error instanceof mongoose.Error.ValidationError) {
       const errorMessage = error.message;

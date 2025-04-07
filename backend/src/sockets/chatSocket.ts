@@ -75,9 +75,8 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
   );
 
   // Handle 'disconnect' event
-  socket.on("disconnect", () => {
+  socket.on("disconnect", (socketCliente) => {
     try {
-      console.log(`User disconnected: ${socket.id}`);
       chatController.handleDisconnect(socket);
     } catch (error: unknown) {
       // Handle errors by emitting the error message to the client

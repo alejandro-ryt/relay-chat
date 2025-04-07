@@ -25,7 +25,7 @@ export interface IUserService {
   getUserByUsername(username: string): Promise<IUser | null>;
   getUserBySocketId(socketId: string): Promise<IUserDocument | null>;
   createUser(user: IUser): Promise<IUser>;
-  updateUser(id: string, updatedUser: Partial<IUser>): Promise<IUser | null>;
+  updateUser(id: Types.ObjectId, updatedUser: Partial<IUser>): Promise<IUser | null>;
   deleteUser(id: string): Promise<boolean>;
   addContact(userId: IUserDocument, contactId: IUserDocument): Promise<void>;
   removeContact(userId: IUserDocument, contactId: IUserDocument): Promise<void>;

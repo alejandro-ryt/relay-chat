@@ -11,12 +11,14 @@ export const useAuthStore = create<TAuthStore>()(
       authUserDetails: null,
       isAuthenticated: false,
       authenticate: (data) => {
+        socket?.connect();
         set({ authUser: data, isAuthenticated: true });
       },
       setAuthUserDetails: (data) => {
         set({ authUserDetails: data });
       },
       logOut: () => {
+        socket?.disconnect();
         set({ authUser: null, isAuthenticated: false });
         set({ authUserDetails: null });
       },
