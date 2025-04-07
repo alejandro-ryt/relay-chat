@@ -18,11 +18,10 @@ const Settings = () => {
       <article>
         <section className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold">Theme</h2>
-          <p className="text-sm text-base-content/70">
+          <p className="text-sm text-base-content/70 mb-10">
             Choose a theme for your chat interface
             <nav className="dropdown dropdown-hover">
               <button tabIndex={0} className="btn m-1">
-                {/* Current theme: {theme.charAt(0).toUpperCase() + theme.slice(1)} */}
                 <svg
                   width="12px"
                   height="12px"
