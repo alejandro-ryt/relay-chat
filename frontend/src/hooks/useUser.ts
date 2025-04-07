@@ -4,13 +4,14 @@ import { useUserStore } from "@/store/useUserStore";
 import { TApiError } from "@/types/api.types";
 import { TEditUserForm, TUser, TUserSearchResponse } from "@/types/user.types";
 import { getApiError } from "@/utils/errors";
-import { useState } from "react";
+import { SyntheticEvent, useState } from "react";
 import toast from "react-hot-toast";
 import DOMPurify from "dompurify";
 import { useChatStore } from "@/store/useChatStore";
 import { TJoinChat } from "@/types/chat.types";
 import { useNavigate } from "react-router";
 import { ROUTES } from "@/constants/routes";
+import useDebounce from "./useDebounce";
 
 export const useUser = () => {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export const useUser = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [addUsers, setAddUsers] = useState<TUser[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const { setUsers } = useUserStore();
   const { authUser, authUserDetails, setAuthUserDetails } = useAuthStore();
   const { joinChat } = useChatStore();
@@ -29,6 +31,13 @@ export const useUser = () => {
     setAddUsers((prevState) =>
       prevState.filter((user) => user._id !== contactId)
     );
+  };
+
+  const handleFilterContact = (
+    event: SyntheticEvent<HTMLInputElement, Event>
+  ) => {
+    const value = (event.target as HTMLInputElement).value;
+    setSearchTerm(value);
   };
 
   const getUserDetails = async () => {
@@ -194,7 +203,6 @@ export const useUser = () => {
       await getUserDetails();
     } catch (error: unknown) {
       toast.error(getApiError(error) ?? "Oops something went wrong");
-    } finally {
     }
   };
 
@@ -227,6 +235,8 @@ export const useUser = () => {
 
   const toggleShowEditModal = () => setIsShowEditModal(!isShowEditModal);
 
+  const debouncedSearchContactTerm = useDebounce(searchTerm, 300);
+
   return {
     addStartChat,
     updateProfile,
@@ -241,6 +251,9 @@ export const useUser = () => {
     blockContact,
     generateAvatar,
     startChat,
+    handleFilterContact,
+    debouncedSearchContactTerm,
+    searchTerm,
     searchQuery,
     addUsers,
     isGetUserDetails,
