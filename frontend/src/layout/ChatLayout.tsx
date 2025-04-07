@@ -61,7 +61,7 @@ export const ChatLayout = () => {
       </aside>
       {/* Sidebar */}
       {/* Dynamic Container */}
-      <div className="col-span-11 row-span-1 size-full">
+      <div className="col-span-11 row-span-1 min-h-[80dvh]">
         <Outlet />
       </div>
       {/* Dynamic Container */}

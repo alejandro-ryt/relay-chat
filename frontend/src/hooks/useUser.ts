@@ -76,7 +76,10 @@ export const useUser = () => {
         }, 1500)
       );
       const responseData = (await response.json()) as TUserSearchResponse;
-      setUsers(responseData.users);
+      const filterContacts = responseData.users.filter(
+        (user) => user._id !== authUser?.userId
+      );
+      setUsers(filterContacts);
     } catch (error: unknown) {
       toast.error(getApiError(error) ?? "Oops something went wrong");
     } finally {
