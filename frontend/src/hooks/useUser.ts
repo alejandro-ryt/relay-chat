@@ -7,7 +7,8 @@ import { getApiError } from "@/utils/errors";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import DOMPurify from "dompurify";
-// import { generateUsers } from "@/utils/mockUsers";
+import { useChatStore } from "@/store/useChatStore";
+import { TJoinChat } from "@/types/chat.types";
 
 export const useUser = () => {
   const [isShowAddModal, setIsShowAddModal] = useState(false);
@@ -17,8 +18,9 @@ export const useUser = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { authUser, setAuthUserDetails } = useAuthStore();
-  const { setUsers, users } = useUserStore();
+  const { joinChat } = useChatStore();
   const [addUsers, setAddUsers] = useState<TUser[]>([]);
+  const { setUsers, users } = useUserStore();
 
   const removeAddUser = (contactId: string) => {
     setAddUsers((prevState) =>
@@ -112,16 +114,13 @@ export const useUser = () => {
     }
   };
 
-  const contactAction = (
-    contactId: string,
-    action: "add" | "block" | "delete"
-  ) => {
-    if (action === "add") {
-      const user = users.find((user) => user._id === contactId);
-      console.log(user);
-      if (user === undefined) {
-        // setAddUsers((prevState) => [user, ...prevState]);
-      }
+  const addStartChat = (contactId: string) => {
+    const user = users.find((user) => user._id === contactId);
+    const isDuplicate = addUsers.some(
+      (existingUser) => existingUser._id === contactId
+    );
+    if (user && !isDuplicate) {
+      setAddUsers((prevState) => [user, ...prevState]);
     }
   };
 
@@ -140,6 +139,27 @@ export const useUser = () => {
         throw errorData;
       }
       toast.success("Contact Removed");
+      await getUserDetails();
+    } catch (error: unknown) {
+      toast.error(getApiError(error) ?? "Oops something went wrong");
+    }
+  };
+
+  const blockContact = async (contactId: string) => {
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_BASE_URL}${END_POINT.BLOCK_CONTACT}/${authUser?.userId}/${contactId}`,
+        {
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json" },
+          method: "POST",
+        }
+      );
+      if (!response.ok) {
+        const errorData: TApiError = await response.json();
+        throw errorData;
+      }
+      toast.success("Contact Blocked");
       await getUserDetails();
     } catch (error: unknown) {
       toast.error(getApiError(error) ?? "Oops something went wrong");
@@ -168,12 +188,33 @@ export const useUser = () => {
     }
   };
 
+  const generateAvatar = (firstName: string, lastName: string) =>
+    `https://ui-avatars.com/api/?name=${firstName.at(0)}+${lastName.at(0)}`;
+
+  const startChat = (chatName: string) => {
+    const joinData: TJoinChat =
+      addUsers.length === 1
+        ? {
+            membersIds: addUsers.map((value) => value._id),
+            chatName: chatName,
+            currentUserId: authUser!.userId,
+            type: "direct",
+          }
+        : {
+            membersIds: addUsers.map((value) => value._id),
+            chatName: chatName,
+            currentUserId: authUser!.userId,
+            type: "group",
+          };
+    joinChat(joinData);
+  };
+
   const toggleShowAddModal = () => setIsShowAddModal(!isShowAddModal);
 
   const toggleShowEditModal = () => setIsShowEditModal(!isShowEditModal);
 
   return {
-    contactAction,
+    addStartChat,
     updateProfile,
     getUserDetails,
     getContacts,
@@ -182,6 +223,11 @@ export const useUser = () => {
     toggleShowEditModal,
     addContact,
     deleteContact,
+    setSearchQuery,
+    blockContact,
+    generateAvatar,
+    startChat,
+    searchQuery,
     addUsers,
     isGetUserDetails,
     isShowAddModal,

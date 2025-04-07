@@ -1,36 +1,85 @@
 import SearchInput from "@/components/chat/SearchInput";
 import AddContact from "@/components/contact/AddContact";
+import useDebounce from "@/hooks/useDebounce";
 import { useUser } from "@/hooks/useUser";
 import { useAuthStore } from "@/store/useAuthStore";
 import clsx from "clsx";
+import { SyntheticEvent, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export const Contact = () => {
-  const { authUserDetails } = useAuthStore();
-  const { contactAction, addUsers, removeAddUser, deleteContact } = useUser();
+  const { authUserDetails, authUserContact, filterContacts } = useAuthStore();
+  const {
+    addUsers,
+    addStartChat,
+    removeAddUser,
+    deleteContact,
+    blockContact,
+    generateAvatar,
+    startChat,
+  } = useUser();
+  const [chatName, setChatName] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
-  console.log(authUserDetails);
+  useEffect(() => {
+    filterContacts(searchTerm);
+  }, [debouncedSearchTerm]);
+
+  const handleStartChat = () => {
+    if (addUsers.length > 1 && chatName.length === 0) {
+      toast.error("You need to give a Chat Name.");
+      return;
+    }
+    if (addUsers.length > 1 && chatName.length < 4) {
+      toast.error("Must has minimum 4 characters.");
+      return;
+    }
+    startChat(
+      addUsers.length === 1
+        ? `${authUserDetails!.username}-${addUsers[0].username}`
+        : chatName
+    );
+  };
+
+  const handleFilterContact = (
+    event: SyntheticEvent<HTMLInputElement, Event>
+  ) => {
+    const value = (event.target as HTMLInputElement).value;
+    setSearchTerm(value);
+  };
 
   return (
     <section className="grid col-span-2 grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 p-2 h-full">
       <div className="bg-base-100 rounded-[1.5rem] flex flex-col px-2 py-2 h-full">
         <div className="grid md:grid-cols-2 justify-center gap-4 items-center">
-          <SearchInput />
+          <SearchInput
+            value={searchTerm}
+            handleOnchange={handleFilterContact}
+          />
           <AddContact />
         </div>
-        {authUserDetails && authUserDetails.contacts.length > 0 ? (
+        {authUserContact && authUserContact.length > 0 ? (
           <ul className="list bg-base-100 rounded-box shadow-md mt-2">
             <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">
               All your contacts
             </li>
             <div className="max-h-[70dvh] overflow-y-auto">
-              {/* <div className="gap-4 flex-grow max-h-[70dvh] flex flex-col py-4 overflow-y-auto"> */}
-              {authUserDetails.contacts.map((user, index) => (
+              {authUserContact.map((user, index) => (
                 <div key={`your-contact-id-${user.contact._id}-index-${index}`}>
                   <li className="list-row">
                     <div className="relative">
                       <img
                         className="size-10 mask mask-squircle"
-                        src="https://img.daisyui.com/images/profile/demo/1@94.webp"
+                        loading="lazy"
+                        src={
+                          user.contact.profilePic
+                            ? user.contact.profilePic
+                            : generateAvatar(
+                                user.contact.firstName,
+                                user.contact.lastName
+                              )
+                        }
                       />
                       {user.contact.socketId ? (
                         <div className="bg-success border border-success w-3 h-3 rounded-full absolute top-0 right-0 -mr-1 -mt-1"></div>
@@ -46,11 +95,12 @@ export const Contact = () => {
                         {user.contact.socketId ? "Online" : "Offline"}
                       </div>
                     </div>
-                    <div className="dropdown dropdown-end">
-                      <div
-                        tabIndex={0}
-                        role="button"
-                        className="btn btn-circle btn-ghost z-10"
+                    <section className="flex gap-2">
+                      <button
+                        type="button"
+                        disabled={user.isBlocked}
+                        onClick={() => addStartChat(user.contact._id)}
+                        className="btn btn-circle btn-ghost"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -58,86 +108,57 @@ export const Contact = () => {
                           viewBox="0 0 24 24"
                           strokeWidth={1.5}
                           stroke="currentColor"
-                          className="size-6"
+                          className="size-4"
                         >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
-                            d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            d="M12 4.5v15m7.5-7.5h-15"
                           />
                         </svg>
-                      </div>
-                      <ul
-                        tabIndex={0}
-                        className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+                      </button>
+                      <button
+                        type="button"
+                        disabled={user.isBlocked}
+                        onClick={() => blockContact(user.contact._id)}
+                        className="btn btn-circle btn-ghost"
                       >
-                        <li>
-                          <a
-                            onClick={() =>
-                              contactAction(user.contact._id, "add")
-                            }
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="size-4 text-primary"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M12 4.5v15m7.5-7.5h-15"
-                              />
-                            </svg>
-                            Add Chat
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            onClick={() =>
-                              contactAction(user.contact._id, "block")
-                            }
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="size-4 text-base-content"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"
-                              />
-                            </svg>
-                            Block User
-                          </a>
-                        </li>
-                        <li>
-                          <a onClick={() => deleteContact(user.contact._id)}>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              strokeWidth={1.5}
-                              stroke="currentColor"
-                              className="size-4 text-error"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
-                              />
-                            </svg>
-                            Delete User
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="size-4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M18.364 18.364A9 9 0 0 0 5.636 5.636m12.728 12.728A9 9 0 0 1 5.636 5.636m12.728 12.728L5.636 5.636"
+                          />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteContact(user.contact._id)}
+                        className="btn btn-circle btn-ghost"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={1.5}
+                          stroke="currentColor"
+                          className="size-4"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                          />
+                        </svg>
+                      </button>
+                    </section>
                   </li>
                 </div>
               ))}
@@ -200,6 +221,7 @@ export const Contact = () => {
                       </section>
                     </section>
                     <button
+                      type="button"
                       onClick={() => removeAddUser(user._id)}
                       className="btn btn-circle"
                     >
@@ -235,8 +257,21 @@ export const Contact = () => {
             )}
           </div>
         </div>
+        {addUsers.length > 1 ? (
+          <input
+            type="text"
+            value={chatName}
+            placeholder="Chat Name"
+            minLength={4}
+            onChange={(e) => setChatName(e.currentTarget.value)}
+            required
+            className="input input-neutral w-full"
+          />
+        ) : null}
         <button
+          type="button"
           disabled={addUsers.length === 0}
+          onClick={handleStartChat}
           className="btn btn-primary btn-block"
         >
           <svg

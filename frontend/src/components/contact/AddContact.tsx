@@ -2,23 +2,35 @@ import { useUser } from "@/hooks/useUser";
 import SearchInput from "../chat/SearchInput";
 import { ErrorIcon } from "react-hot-toast";
 import { useUserStore } from "@/store/useUserStore";
-import { useEffect } from "react";
+import { SyntheticEvent, useEffect } from "react";
+import useDebounce from "@/hooks/useDebounce";
 
 export const AddContact = () => {
   const {
     toggleShowAddModal,
     addContact,
     getContacts,
+    setSearchQuery,
+    generateAvatar,
+    searchQuery,
     isSearching,
     isShowAddModal,
   } = useUser();
   const { users } = useUserStore();
+  const debouncedSearchTerm = useDebounce(searchQuery, 300);
 
   useEffect(() => {
     if (isShowAddModal) {
       getContacts();
     }
-  }, [isShowAddModal]);
+  }, [isShowAddModal, debouncedSearchTerm]);
+
+  const handleInputChange = (
+    event: SyntheticEvent<HTMLInputElement, Event>
+  ) => {
+    const value = (event.target as HTMLInputElement).value;
+    setSearchQuery(value);
+  };
 
   return (
     <>
@@ -81,7 +93,10 @@ export const AddContact = () => {
             We display suggestions but you can search a specific user.
           </p>
           <section className="grid">
-            <SearchInput />
+            <SearchInput
+              value={searchQuery}
+              handleOnchange={handleInputChange}
+            />
             {!isSearching ? (
               <div>
                 {users.length > 0 ? (
@@ -96,7 +111,15 @@ export const AddContact = () => {
                             <div className="relative">
                               <img
                                 className="size-10 mask mask-squircle"
-                                src="https://img.daisyui.com/images/profile/demo/1@94.webp"
+                                loading="lazy"
+                                src={
+                                  user.profilePic
+                                    ? user.profilePic
+                                    : generateAvatar(
+                                        user.firstName,
+                                        user.lastName
+                                      )
+                                }
                               />
                               {user.socketId ? (
                                 <div className="bg-success border border-success w-3 h-3 rounded-full absolute top-0 right-0 -mr-1 -mt-1"></div>

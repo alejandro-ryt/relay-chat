@@ -115,6 +115,25 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
     }
   },
 
+  // @ale || @jorge ocupo su ayuda aqui, no se si esta bien o me falto algo :(
+  joinChat: (data) => {
+    try {
+      if (socket) {
+        socket.emit(
+          "joinChat",
+          data.chatName,
+          data.type,
+          data.currentUserId,
+          data.membersIds
+        );
+      } else {
+        console.error("Socket is null. Unable to joinChat.");
+      }
+    } catch (error) {
+      console.error("Error while joinChat:", error);
+    }
+  },
+
   // Reset Data
   resetData: () => {
     set({
