@@ -48,7 +48,21 @@ const Chat = () => {
       <RecentChats showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
 
       {/* Chat Box */}
-      {selectedChatId ? <ChatBox /> : <section>Start a Chat</section>}
+      {selectedChatId ? (
+        <ChatBox />
+      ) : (
+        <div className="flex flex-col items-center justify-center p-8">
+          {/* Title */}
+          <h1 className="text-3xl font-semibold mb-4 text-base-content">
+            Welcome {authUser?.username}! 😎
+          </h1>
+
+          {/* Description */}
+          <p className="text-center text-sm text-base-content mb-8">
+            Chat with your friends, family, or anyone you want!
+          </p>
+        </div>
+      )}
     </motion.section>
   );
 };
