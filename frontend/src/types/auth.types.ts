@@ -12,7 +12,6 @@ export type TSignInForm = z.output<typeof signInSchema>;
 export type TAuthStore = {
   authUser: TAuthUser | null;
   authUserDetails: TUser | null;
-  authUserContact: TUserContact[];
   isAuthenticated: boolean;
   authenticate: (data: TAuthUser) => void;
   setAuthUserDetails: (data: TUser) => void;

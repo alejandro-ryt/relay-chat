@@ -8,7 +8,7 @@ import { SyntheticEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export const Contact = () => {
-  const { authUserDetails, authUserContact, filterContacts } = useAuthStore();
+  const { authUserDetails, filterContacts } = useAuthStore();
   const {
     addUsers,
     addStartChat,
@@ -20,11 +20,13 @@ export const Contact = () => {
   } = useUser();
   const [chatName, setChatName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [contacts, setContacts] = useState(authUserDetails?.contacts);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   useEffect(() => {
-    filterContacts(searchTerm);
-  }, [debouncedSearchTerm]);
+    const filtered = filterContacts(searchTerm);
+    setContacts(filtered.length > 0 ? filtered : authUserDetails?.contacts);
+  }, [debouncedSearchTerm, authUserDetails]);
 
   const handleStartChat = () => {
     if (addUsers.length > 1 && chatName.length === 0) {
@@ -59,13 +61,13 @@ export const Contact = () => {
           />
           <AddContact />
         </div>
-        {authUserContact && authUserContact.length > 0 ? (
+        {contacts && contacts.length > 0 ? (
           <ul className="list bg-base-100 rounded-box shadow-md mt-2">
             <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">
               All your contacts
             </li>
             <div className="max-h-[70dvh] overflow-y-auto">
-              {authUserContact.map((user, index) => (
+              {contacts.map((user, index) => (
                 <div key={`your-contact-id-${user.contact._id}-index-${index}`}>
                   <li className="list-row">
                     <div className="relative">

@@ -17,10 +17,10 @@ export const useUser = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const { authUser, setAuthUserDetails } = useAuthStore();
-  const { joinChat } = useChatStore();
   const [addUsers, setAddUsers] = useState<TUser[]>([]);
-  const { setUsers, users } = useUserStore();
+  const { setUsers } = useUserStore();
+  const { authUser, authUserDetails, setAuthUserDetails } = useAuthStore();
+  const { joinChat } = useChatStore();
 
   const removeAddUser = (contactId: string) => {
     setAddUsers((prevState) =>
@@ -115,12 +115,16 @@ export const useUser = () => {
   };
 
   const addStartChat = (contactId: string) => {
-    const user = users.find((user) => user._id === contactId);
-    const isDuplicate = addUsers.some(
-      (existingUser) => existingUser._id === contactId
+    const user = authUserDetails?.contacts.find(
+      (user) => user.contact._id === contactId
     );
-    if (user && !isDuplicate) {
-      setAddUsers((prevState) => [user, ...prevState]);
+    if (user) {
+      setAddUsers((prevState) => {
+        const isDuplicate = prevState.some(
+          (existingUser) => existingUser._id === user.contact._id
+        );
+        return isDuplicate ? prevState : [user.contact, ...prevState];
+      });
     }
   };
 

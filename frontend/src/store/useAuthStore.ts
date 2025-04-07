@@ -10,7 +10,6 @@ export const useAuthStore = create<TAuthStore>()(
       socket: null,
       authUser: null,
       authUserDetails: null,
-      authUserContact: [],
       isAuthenticated: false,
       authenticate: (data) => {
         socket?.connect();
@@ -18,17 +17,16 @@ export const useAuthStore = create<TAuthStore>()(
       },
       setAuthUserDetails: (data) => {
         set({ authUserDetails: data });
-        set({ authUserContact: data.contacts });
       },
       filterContacts: (searchTerm) => {
-        const authUser = get().authUserDetails;
-        if (!authUser || !authUser) {
+        const authUserContact = get().authUserDetails?.contacts;
+        if (!authUserContact || !authUserContact) {
           return [];
         }
 
         const lowerSearchTerm = searchTerm.toLowerCase();
 
-        return authUser.contacts.filter((userContact) => {
+        return authUserContact.filter((userContact) => {
           const lowerFirstName = userContact.contact.firstName.toLowerCase();
           const lowerLastName = userContact.contact.lastName.toLowerCase();
 
