@@ -36,7 +36,7 @@ const Chat = () => {
 
   return (
     <motion.section
-      className="absolute right-0 bottom-0 top-0 bg-base-100 flex flex-1 min-h-auto rounded-[1.5rem] m-2"
+      className="absolute right-0 bottom-0 top-0 bg-base-100 flex flex-1 min-h-auto rounded-[1.5rem] m-2 "
       animate={{
         width: !showSidebar
           ? "calc(100% - var(--spacing) * 26)"
@@ -51,7 +51,7 @@ const Chat = () => {
       {selectedChatId ? (
         <ChatBox />
       ) : (
-        <div className="flex flex-col items-center justify-center p-8">
+        <div className="flex flex-col items-center justify-center p-8 w-full">
           {/* Title */}
           <h1 className="text-3xl font-semibold mb-4 text-base-content">
             Welcome {authUser?.username}! 😎

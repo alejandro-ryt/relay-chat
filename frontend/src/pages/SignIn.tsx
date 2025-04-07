@@ -37,7 +37,7 @@ const SignIn = () => {
           transition: { duration: 0.3, ease: "easeIn" },
         }}
         layout
-        className="grid bg-base-100 max-h-[100%] shadow-2xl rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4"
+        className="grid bg-base-100 max-h-[100%] shadow-2xl rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4 md:min-h-[80vh]"
       >
         <figure className="h-full bg-[#f9f7f4] rounded-[1.5rem] w-full">
           <img

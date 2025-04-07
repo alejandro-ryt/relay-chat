@@ -29,7 +29,7 @@ export const ChatLayout = () => {
   return (
     <section className="relative grid grid-cols-12 grid-rows-1 h-full rounded-[1.5rem]">
       {/* Sidebar */}
-      <aside className="flex flex-col w-24 flex-1 h-full col-span-1 row-span-1 items-center justify-between pt-4 pb-2">
+      <aside className="flex flex-col w-24 flex-1 col-span-1 row-span-1 items-center justify-between pt-4 pb-2">
         <EditProfile />
 
         <div role="group" className="flex flex-col items-center w-full">

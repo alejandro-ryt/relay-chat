@@ -114,7 +114,7 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
     }
   },
 
-  // @ale || @jorge ocupo su ayuda aqui, no se si esta bien o me falto algo :(
+  // Join Chat
   joinChat: (data) => {
     try {
       if (socket) {
@@ -142,6 +142,16 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
       selectedChatData: null,
       selectedChatPreviewData: null,
       chatPreviewArray: [],
+    });
+  },
+  // Filtered Chats
+  filterChats: (searchTerm) => {
+    const chatsArray = get().chatPreviewArray;
+    if (!chatsArray || chatsArray.length === 0) {
+      return [];
+    }
+    return chatsArray.filter((chat) => {
+      return chat.chatName.toLowerCase().includes(searchTerm.toLowerCase());
     });
   },
 }));

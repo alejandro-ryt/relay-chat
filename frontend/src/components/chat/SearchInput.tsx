@@ -8,7 +8,7 @@ type Props = {
 
 const SearchInput = ({ handleOnchange, value }: Props) => {
   return (
-    <label className="input rounded-[0.8rem] w-auto outline-none">
+    <label className="input rounded-[0.8rem] outline-none w-full">
       <SearchInputIcon />
       <input
         type="search"

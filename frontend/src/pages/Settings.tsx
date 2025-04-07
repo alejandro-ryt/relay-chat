@@ -18,7 +18,7 @@ const Settings = () => {
       <article>
         <section className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold">Theme</h2>
-          <p className="text-sm text-base-content/70 mb-10">
+          <div className="text-sm text-base-content/70 mb-10">
             Choose a theme for your chat interface
             <nav className="dropdown dropdown-hover">
               <button tabIndex={0} className="btn m-1">
@@ -38,7 +38,7 @@ const Settings = () => {
                     <li key={t}>
                       <button
                         className={`
-                        group w-full flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors
+                        group w-full flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors cursor-pointer
                         ${theme === t ? "bg-base-200" : "hover:bg-base-200/50"}
                       `}
                         onClick={() => setTheme(t)}
@@ -63,7 +63,7 @@ const Settings = () => {
                 </div>
               </ul>
             </nav>
-          </p>
+          </div>
         </section>
 
         {/* Preview Section */}
