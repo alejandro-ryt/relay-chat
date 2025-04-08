@@ -133,7 +133,7 @@ export const signIn = async (
       .status(StatusCodes.OK)
       .json({ userId: user.id, username: user.username });
   } catch (error) {
-    console.log("Error sign in", error)
+    console.log("Error sign in", error);
     // Check if it's a Mongoose validation error
     if (error instanceof mongoose.Error.ValidationError) {
       const errorMessage = error.message;
