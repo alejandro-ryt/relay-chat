@@ -3,7 +3,7 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
 import { TApiError } from "@/types/api.types";
 import { TEditUserForm, TUser, TUserSearchResponse } from "@/types/user.types";
-import { getApiError } from "@/utils/errors";
+import { getApiError } from "@/utils";
 import { SyntheticEvent, useState } from "react";
 import toast from "react-hot-toast";
 import DOMPurify from "dompurify";
@@ -11,7 +11,8 @@ import { useChatStore } from "@/store/useChatStore";
 import { TJoinChat } from "@/types/chat.types";
 import { useNavigate } from "react-router";
 import { ROUTES } from "@/constants/routes";
-import useDebounce from "./useDebounce";
+import useDebounce from "@/hooks/useDebounce";
+import { TCreateChatForm } from "@/schemas/create";
 
 export const useUser = () => {
   const navigate = useNavigate();
@@ -38,6 +39,13 @@ export const useUser = () => {
   ) => {
     const value = (event.target as HTMLInputElement).value;
     setSearchTerm(value);
+  };
+
+  const handleFilterSearchUser = (
+    event: SyntheticEvent<HTMLInputElement, Event>
+  ) => {
+    const value = (event.target as HTMLInputElement).value;
+    setSearchQuery(value);
   };
 
   const getUserDetails = async () => {
@@ -78,12 +86,6 @@ export const useUser = () => {
         const errorData: TApiError = await response.json();
         throw errorData;
       }
-      // just to test the skeleton
-      await new Promise((resolve) =>
-        setTimeout(() => {
-          resolve(true);
-        }, 1500)
-      );
       const responseData = (await response.json()) as TUserSearchResponse;
       const filterContacts = responseData.users.filter(
         (user) => user._id !== authUser?.userId
@@ -206,21 +208,22 @@ export const useUser = () => {
     }
   };
 
-  const generateAvatar = (firstName: string, lastName: string) =>
-    `https://ui-avatars.com/api/?name=${firstName.at(0)}+${lastName.at(0)}`;
-
-  const startChat = (chatName: string) => {
+  const startChat = (data: TCreateChatForm) => {
+    const chatName =
+      data.chatName === "individual"
+        ? `${authUserDetails?.username}-${addUsers[0].username}`
+        : data.chatName;
     const joinData: TJoinChat =
       addUsers.length === 1
         ? {
             membersIds: addUsers.map((value) => value._id),
-            chatName: chatName,
+            chatName,
             currentUserId: authUser!.userId,
             type: "direct",
           }
         : {
             membersIds: addUsers.map((value) => value._id),
-            chatName: chatName,
+            chatName,
             currentUserId: authUser!.userId,
             type: "group",
           };
@@ -249,9 +252,9 @@ export const useUser = () => {
     deleteContact,
     setSearchQuery,
     blockContact,
-    generateAvatar,
     startChat,
     handleFilterContact,
+    handleFilterSearchUser,
     debouncedSearchContactTerm,
     searchTerm,
     searchQuery,

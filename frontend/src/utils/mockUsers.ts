@@ -236,3 +236,5 @@ export const generateUsers = (count: number): TUser[] => {
   }
   return users;
 };
+
+export default generateUsers;

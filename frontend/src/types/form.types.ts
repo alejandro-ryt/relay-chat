@@ -1,3 +1,4 @@
+import { TCreateChatForm } from "@/schemas/create";
 import { InputHTMLAttributes } from "react";
 
 export type TInputFieldProps = {
@@ -10,4 +11,9 @@ export type TInputFieldProps = {
 export type TPasswordCriteriaProps = {
   password: string;
   confirmPassword: string;
+};
+
+export type TCreateChat = {
+  handleOnSubmit: (data: TCreateChatForm) => void;
+  contactQuantity: number;
 };

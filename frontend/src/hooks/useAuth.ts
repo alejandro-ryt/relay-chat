@@ -9,7 +9,8 @@ import {
   TSignUpForm,
   TSignUpFormData,
 } from "@/types/auth.types";
-import { getApiError } from "@/utils/errors";
+import { generateAvatar } from "@/utils";
+import { getApiError } from "@/utils";
 import DOMPurify from "dompurify";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -32,6 +33,7 @@ export const useAuth = () => {
         lastName: DOMPurify.sanitize(values.lastName),
         password: DOMPurify.sanitize(values.password),
         username: DOMPurify.sanitize(values.username),
+        profilePic: generateAvatar(values.firstName, values.lastName),
       };
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}${END_POINT.SIGN_UP}`,

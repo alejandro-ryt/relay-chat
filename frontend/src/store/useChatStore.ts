@@ -114,7 +114,6 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
     }
   },
 
-  // @ale || @jorge ocupo su ayuda aqui, no se si esta bien o me falto algo :(
   joinChat: (data) => {
     try {
       if (socket) {

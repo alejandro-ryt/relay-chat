@@ -1,4 +1,17 @@
+import { TApiError } from "@/types/api.types";
+import { REGEX } from "@/constants/regex";
 import { PersistStorage, StorageValue } from "zustand/middleware";
+
+export const generateAvatar = (firstName: string, lastName: string) =>
+  `https://ui-avatars.com/api/?name=${firstName.at(0)}+${lastName.at(0)}`;
+
+export const getApiError = (error: unknown) => {
+  if (typeof error === "object" && error !== null) {
+    const apiError = error as TApiError;
+    return apiError.error;
+  }
+  return "Oops something went wrong";
+};
 
 export const createStoragePersist = <T>(): PersistStorage<T> => ({
   getItem: (
@@ -22,3 +35,15 @@ export const createStoragePersist = <T>(): PersistStorage<T> => ({
     localStorage.removeItem(name);
   },
 });
+
+export const passwordMatch = (password: string, confirmPassword: string) => {
+  if (!password || !confirmPassword) {
+    return false;
+  }
+
+  return (
+    password === confirmPassword &&
+    REGEX.HAS_ALL_SECURITY.test(password) &&
+    REGEX.HAS_ALL_SECURITY.test(confirmPassword)
+  );
+};
