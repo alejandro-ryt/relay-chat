@@ -4,11 +4,14 @@ import { Server } from "socket.io";
 import routes from "@/routes/index";
 import connectDB from "@/db/dbConfig";
 import cors from "cors";
+import dotenv from "dotenv";
 import { errorMiddleware } from "@/middlewares/errorMiddleware";
 import { handleSocketEvents } from "@/sockets/chatSocket";
 const app: Express = express();
 const server = createServer(app);
-const PORT: number = 3001;
+
+dotenv.config();
+const PORT: number = Number(process.env.PORT) ?? 3001;
 
 // Define a CORS options object
 const corsOptions = {
@@ -33,7 +36,6 @@ app.use("/api", routes);
 
 // Setup socket events
 io.on("connection", (socket) => {
-  console.log(`User connected: ${socket.id}`);
   // Pass the socket to the handler function
   handleSocketEvents(io, socket);
 });

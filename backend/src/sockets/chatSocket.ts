@@ -12,6 +12,7 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
    */
   socket.on("initiateSocket", async (userId: string) => {
     await assignSocketIdByUserId(userId, socket);
+    console.log(`User connected: ${socket.id}`);
   });
 
   // Handle 'joinChat' event

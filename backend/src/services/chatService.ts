@@ -1,10 +1,9 @@
-import { Socket } from "socket.io";
 import UserService from "@/services/userService";
 import Chat from "@/models/chatModel";
 import Message from "@/models/messageModel";
-import { IUser, IUserDocument } from "@/interfaces/user";
+import { IUser } from "@/interfaces/user";
 import { IChat, IChatService, IChatDocument } from "@/interfaces/chat";
-import { IMessage, IMessageDocument } from "@/interfaces/message";
+import { IMessageDocument } from "@/interfaces/message";
 import { Types } from "mongoose";
 import { IPendingInvites } from "@/interfaces/pendingChatInvites";
 import PendingChatInvites from "@/models/pendingChatInvites";
@@ -16,7 +15,9 @@ class ChatService implements IChatService {
   public async getPendingChatInvitesByUserId(
     userId: string
   ): Promise<IPendingInvites[]> {
-    return await PendingChatInvites.find({ userId: new Types.ObjectId(userId) }).exec();
+    return await PendingChatInvites.find({
+      userId: new Types.ObjectId(userId),
+    }).exec();
   }
 
   // Get all chats with last message by user id
@@ -37,6 +38,11 @@ class ChatService implements IChatService {
     return await Chat.findOne({ name: chatName }).exec();
   }
 
+  // Find chat by name
+  public async findByChatId(id: Types.ObjectId): Promise<IChatDocument | null> {
+    return await Chat.findById(id).exec();
+  }
+
   public async findByChatNamePopulated(
     chatName: string
   ): Promise<IChat | null> {
@@ -44,7 +50,6 @@ class ChatService implements IChatService {
       .populate("members", "id profilePic firstName lastName username email")
       .populate("messages", "message author createdAt")
       .exec();
-    console.log("chat service --> chat populated", chat);
     return chat;
   }
 
@@ -89,7 +94,7 @@ class ChatService implements IChatService {
       {
         $set: {
           userId: new Types.ObjectId(userId),
-        }
+        },
       },
       { upsert: true }
     );
@@ -98,38 +103,6 @@ class ChatService implements IChatService {
   async clearPendingChatInvites(userId: string): Promise<void> {
     await PendingChatInvites.deleteMany({ userId: new Types.ObjectId(userId) });
   }
-
-  // public async saveChat(
-  //   chatName: string,
-  //   type: "direct" | "group",
-  //   userId: string
-  // ): Promise<IChatDocument> {
-  //   // Find chat by name
-  //   let chat = await Chat.findOne({ name: chatName }).exec();
-
-  //   // Find or save chat
-  //   if (chat) {
-  //     // Check if the user already joined the chat to avoid duplicates
-  //     const memberFound = chat.members.find((id) => id.toString() === userId);
-
-  //     if (!memberFound) {
-  //       // Add the user if not exist
-  //       const userIdObj = new Types.ObjectId(userId);
-  //       chat.members.push(userIdObj);
-  //       await chat.save();
-  //     }
-  //   } else {
-  //     // Create the chat
-  //     chat = await Chat.create({
-  //       name: chatName,
-  //       type,
-  //       members: [userId],
-  //       messages: [],
-  //     });
-  //   }
-
-  //   return chat;
-  // }
 
   // Save message in DB
   public async saveMessage(
