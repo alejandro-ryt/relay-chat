@@ -1,6 +1,5 @@
 import { motion } from "motion/react";
-import { SyntheticEvent, useEffect, useState } from "react";
-import clsx from "clsx";
+import { SyntheticEvent, useEffect, useLayoutEffect, useState } from "react";
 import ChatPreview from "@/components/chat/ChatPreview";
 import SearchInput from "@/components/chat/SearchInput";
 import useDebounce from "@/hooks/useDebounce";
@@ -9,6 +8,7 @@ import { useChatStore } from "@/store/useChatStore";
 const RecentChats = () => {
   const {
     setSelectedChatId,
+    selectedChatId,
     chatPreviewArray,
     filterChats,
     recentChatsSidebar,
@@ -23,6 +23,12 @@ const RecentChats = () => {
     const value = (event.target as HTMLInputElement).value;
     setSearchTerm(value);
   };
+
+  useLayoutEffect(() => {
+    if (selectedChatId === null) {
+      setSelectedChatId(chatsArray?.[0]?.id || null);
+    }
+  }, [chatsArray]);
 
   useEffect(() => {
     const filtered = filterChats(searchTerm);

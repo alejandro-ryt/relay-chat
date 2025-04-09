@@ -15,8 +15,6 @@ const ChatHeader = () => {
     setChatInfoSidebar,
   } = useChatStore();
 
-  const toggleRecentChatsSidebar = setRecentChatsSidebar(!recentChatsSidebar);
-
   return (
     <section className="flex justify-between items-center h-14 m-2">
       <section className="flex flex-row">
@@ -35,7 +33,7 @@ const ChatHeader = () => {
               shape="round"
               title="Contacts"
               icon={<ArrowIcon />}
-              action={toggleRecentChatsSidebar}
+              action={() => setRecentChatsSidebar(!recentChatsSidebar)}
             />
           </section>
         </motion.div>
