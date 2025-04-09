@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { InputField } from "@/components/form/InputField";
 import SIGN_UP_DATA from "@/constants/signUp";
-import { UserIcon } from "@/components/ui/icons/UserIcon";
+import UserIcon from "@/components/ui/icons/UserIcon";
 import { useUser } from "@/hooks/useUser";
 import { USER } from "@/constants/user";
 import { TEditUserForm } from "@/types/user.types";
@@ -30,14 +30,14 @@ export const EditProfile = () => {
     useUser();
 
   return (
-    <>
-      <div className="dropdown dropdown-start">
+    <article className="flex justify-between items-center h-14 m-2">
+      <div className="dropdown dropdown-start" role="group">
         <div
           tabIndex={0}
           role="button"
           className="btn block mask h-full w-full mask-squircle"
         >
-          <Avatar pic={authUserDetails?.profilePic} sizeClass="w-16" />
+          <Avatar pic={authUserDetails?.profilePic} sizeClass="w-12" />
         </div>
         <ul
           tabIndex={0}
@@ -127,7 +127,7 @@ export const EditProfile = () => {
           </form>
         </div>
       </dialog>
-    </>
+    </article>
   );
 };
 export default EditProfile;

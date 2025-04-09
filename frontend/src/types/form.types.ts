@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, SyntheticEvent } from "react";
 
 export type TInputFieldProps = {
   legend: string;
@@ -10,4 +10,9 @@ export type TInputFieldProps = {
 export type TPasswordCriteriaProps = {
   password: string;
   confirmPassword: string;
+};
+
+export type TSearchInputProps = {
+  handleOnchange: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
+  value: string;
 };

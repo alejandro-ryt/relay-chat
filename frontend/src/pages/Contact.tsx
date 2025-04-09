@@ -1,11 +1,11 @@
+import clsx from "clsx";
+import { SyntheticEvent, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import SearchInput from "@/components/chat/SearchInput";
 import AddContact from "@/components/contact/AddContact";
 import useDebounce from "@/hooks/useDebounce";
 import { useUser } from "@/hooks/useUser";
 import { useAuthStore } from "@/store/useAuthStore";
-import clsx from "clsx";
-import { SyntheticEvent, useEffect, useState } from "react";
-import toast from "react-hot-toast";
 
 export const Contact = () => {
   const { authUserDetails, filterContacts } = useAuthStore();

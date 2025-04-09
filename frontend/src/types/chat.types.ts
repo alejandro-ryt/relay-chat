@@ -33,11 +33,6 @@ export type TIconButtonProps = {
   action: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
 
-export type TRecentChatsProps = {
-  showSidebar: boolean;
-  setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
 export type TChatMessage = {
   _id: string;
   author: string;
@@ -67,13 +62,6 @@ export type TPreviewChat = {
   timestamp: Date;
 };
 
-export type TChatState = {
-  selectedChatId: string | null;
-  selectedChatData: TChat | null;
-  selectedChatPreviewData: TPreviewChat | null;
-  chatPreviewArray: TPreviewChat[] | null;
-};
-
 export type TJoinChat = {
   chatName: string;
   type: "direct" | "group";
@@ -81,7 +69,18 @@ export type TJoinChat = {
   membersIds: string[];
 };
 
+export type TChatState = {
+  chatInfoSidebar: boolean;
+  recentChatsSidebar: boolean;
+  selectedChatId: string | null;
+  selectedChatData: TChat | null;
+  selectedChatPreviewData: TPreviewChat | null;
+  chatPreviewArray: TPreviewChat[] | null;
+};
+
 export type TChatActions = {
+  setChatInfoSidebar: (chatInfoSidebar: boolean) => void;
+  setRecentChatsSidebar: (recentChatsSidebar: boolean) => void;
   setSelectedChatId: (selectedId: string | null) => void;
   setSelectedChatData: () => void;
   setSelectedChatPreviewData: (

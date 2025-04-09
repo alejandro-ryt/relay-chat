@@ -1,15 +1,18 @@
-import ChatPreview from "@/components/chat/ChatPreview";
-import SearchInput from "@/components/chat/SearchInput";
-import IconButton from "@/components/ui/IconButton";
-import ArrowIcon from "@/components/ui/icons/ArrowIcon";
-import useDebounce from "@/hooks/useDebounce";
-import { useChatStore } from "@/store/useChatStore";
-import { TRecentChatsProps } from "@/types/chat.types";
 import { motion } from "motion/react";
 import { SyntheticEvent, useEffect, useState } from "react";
+import clsx from "clsx";
+import ChatPreview from "@/components/chat/ChatPreview";
+import SearchInput from "@/components/chat/SearchInput";
+import useDebounce from "@/hooks/useDebounce";
+import { useChatStore } from "@/store/useChatStore";
 
-const RecentChats = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {
-  const { setSelectedChatId, chatPreviewArray, filterChats } = useChatStore();
+const RecentChats = () => {
+  const {
+    setSelectedChatId,
+    chatPreviewArray,
+    filterChats,
+    recentChatsSidebar,
+  } = useChatStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [chatsArray, setChatsArray] = useState(chatPreviewArray);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -26,13 +29,20 @@ const RecentChats = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {
     setChatsArray(
       filtered && filtered.length > 0 ? filtered : chatPreviewArray || []
     );
-
-    console.log(filtered);
   }, [debouncedSearchTerm, chatPreviewArray]);
 
   return (
-    <section className="flex flex-col max-w-72 ">
-      <section className="m-2">
+    <motion.section
+      className="flex flex-col border-r-1 border-base-200"
+      initial={{ width: "0rem", display: "none", opacity: 0 }}
+      animate={{
+        display: recentChatsSidebar ? "flex" : "none",
+        opacity: recentChatsSidebar ? 100 : 0,
+        width: recentChatsSidebar ? "25rem" : "0rem",
+      }}
+      transition={{ ease: "anticipate", duration: 0.3 }}
+    >
+      <section className="flex justify-center items-center h-14 m-2">
         <SearchInput value={searchTerm} handleOnchange={handleFilterContact} />
       </section>
 
@@ -51,26 +61,7 @@ const RecentChats = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {
           );
         })}
       </section>
-
-      {/* Show / Hide Control Sidebar */}
-      <section className="flex m-8 ml-5">
-        <motion.div
-          role="button"
-          initial={{ rotate: 180 }}
-          animate={{
-            rotate: showSidebar ? 180 : 0,
-          }}
-          transition={{ duration: 0.2 }}
-        >
-          <IconButton
-            shape="round"
-            title="Contacts"
-            icon={<ArrowIcon />}
-            action={() => setShowSidebar(!showSidebar)}
-          />
-        </motion.div>
-      </section>
-    </section>
+    </motion.section>
   );
 };
 

@@ -1,6 +1,6 @@
 import { InputField } from "@/components/form/InputField";
-import { SignInIcon } from "@/components/ui/icons/SignInIcon";
-import { CreateIcon } from "@/components/ui/icons/CreateIcon";
+import SignInIcon from "@/components/ui/icons/SignInIcon";
+import CreateIcon from "@/components/ui/icons/CreateIcon";
 import { ROUTES } from "@/constants/routes";
 import SIGN_IN_DATA from "@/constants/signIn";
 import { useAuth } from "@/hooks/useAuth";

@@ -1,7 +1,7 @@
 import { TInputFieldProps } from "@/types/form.types";
 import { FC, useState } from "react";
-import { EyeClosedIcon } from "../ui/icons/EyeCloseIcon";
-import { EyeOpenIcon } from "../ui/icons/EyeOpenIcon";
+import EyeClosedIcon from "../ui/icons/EyeCloseIcon";
+import EyeOpenIcon from "../ui/icons/EyeOpenIcon";
 
 export const InputField: FC<TInputFieldProps> = ({
   type = "text",

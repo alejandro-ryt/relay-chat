@@ -9,6 +9,8 @@ import {
 import { create } from "zustand";
 
 export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
+  chatInfoSidebar: false,
+  recentChatsSidebar: true,
   selectedChatId: null,
   selectedChatData: null,
   selectedChatPreviewData: null,
@@ -18,6 +20,20 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   setSelectedChatId: (selectedChatId: string | null) => {
     set({
       selectedChatId,
+    });
+  },
+
+  // Set Chat Info Sidebar
+  setChatInfoSidebar: (chatInfoSidebar: boolean) => {
+    set({
+      chatInfoSidebar,
+    });
+  },
+
+  // Set Recent Chats Sidebar
+  setRecentChatsSidebar: (recentChatsSidebar: boolean) => {
+    set({
+      recentChatsSidebar,
     });
   },
 

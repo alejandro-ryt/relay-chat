@@ -1,6 +1,6 @@
 import { InputField } from "@/components/form/InputField";
 import { PasswordCriteria } from "@/components/form/PasswordCriteria";
-import { CreateIcon } from "@/components/ui/icons/CreateIcon";
+import CreateIcon from "@/components/ui/icons/CreateIcon";
 import SIGN_UP_DATA from "@/constants/signUp";
 import { useAuth } from "@/hooks/useAuth";
 import { signUpSchema, initialSignUpForm } from "@/schemas/signUp";

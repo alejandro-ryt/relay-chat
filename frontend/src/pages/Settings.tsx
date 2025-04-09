@@ -83,14 +83,14 @@ const Settings = () => {
                       <div
                         className={`
                             max-w-[80%] rounded-xl p-3 shadow-sm
-                            ${message.isSent ? "bg-primary text-primary-content" : "bg-base-200"}
+                            ${!message.isSent ? "bg-primary text-primary-content" : "bg-base-200"}
                           `}
                       >
                         <p className="text-sm">{message.content}</p>
                         <p
                           className={`
                               text-[10px] mt-1.5
-                              ${message.isSent ? "text-primary-content/70" : "text-base-content/70"}
+                              ${message.isSent ? "text-base-content/70" : "text-primary-content/70"}
                             `}
                         ></p>
                       </div>
