@@ -34,7 +34,7 @@ const Chat = () => {
   }, []);
 
   return (
-    <motion.section className="bg-base-100 flex flex-1 h-full rounded-[1.5rem] m-2">
+    <motion.section className="bg-base-100 flex flex-1 h-[calc(100dvh-3rem)] rounded-[1.5rem] m-2">
       {/* Recent Chats */}
       <RecentChats />
 
@@ -42,7 +42,7 @@ const Chat = () => {
       {selectedChatId ? (
         <ChatBox />
       ) : (
-        <div className="flex flex-col items-center justify-center p-8 w-full h-dvh-100">
+        <div className="flex flex-col items-center justify-center p-8 w-full">
           {/* Title */}
           <h1 className="text-3xl font-semibold mb-4 text-base-content">
             Welcome {authUser?.username}! 😎
