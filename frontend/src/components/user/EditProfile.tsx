@@ -30,8 +30,8 @@ export const EditProfile = () => {
     useUser();
 
   return (
-    <header>
-      <div className="dropdown dropdown-start">
+    <>
+      <header className="dropdown dropdown-start">
         <div
           tabIndex={0}
           role="button"
@@ -47,7 +47,7 @@ export const EditProfile = () => {
             <button onClick={toggleShowEditModal}>{USER.EDIT_TITLE}</button>
           </li>
         </ul>
-      </div>
+      </header>
       <dialog
         id="modal_edit_profile"
         className="modal"
@@ -127,7 +127,7 @@ export const EditProfile = () => {
           </form>
         </main>
       </dialog>
-    </header>
+    </>
   );
 };
 export default EditProfile;
