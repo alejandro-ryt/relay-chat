@@ -1,6 +1,5 @@
 import clsx from "clsx";
-import { SyntheticEvent, useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 import SearchInput from "@/components/chat/SearchInput";
 import AddContact from "@/components/contact/AddContact";
 import { BadgeOnlineOffline } from "@/components/contact/BadgeOnlineOffline";
@@ -11,8 +10,6 @@ import { CONTACT_DATA } from "@/constants/contact";
 import { useUser } from "@/hooks/useUser";
 import { useAuthStore } from "@/store/useAuthStore";
 import { generateAvatar } from "@/utils";
-import clsx from "clsx";
-import { useEffect, useState } from "react";
 
 export const Contact = () => {
   const { authUserDetails, filterContacts } = useAuthStore();
