@@ -7,6 +7,8 @@ import { ERROR } from "@/constants/relayChat";
 import { ErrorHandler } from "@/utils/errorHandler";
 import { IMessage } from "@/interfaces/message";
 import { Types } from "mongoose";
+import { log } from "console";
+import { throws } from "assert";
 
 const chatService = new ChatService();
 const userService = new UserService();
@@ -235,6 +237,51 @@ export const sendMessage = async (
       message: newMessage.message,
       createdAt: newMessage.createdAt,
     });
+
+    // Emit notification of a new message
+    const sockets = io.of("/").sockets.keys();
+    console.log("sockets", sockets);
+
+    // return all Socket instances in the "room1" room
+    // const sockets = await myNamespace.in(chatName).fetchSockets();
+    // console.log("sockets", sockets);
+
+    for (const socketId in sockets) {
+      console.log("socketId", socketId);
+      const memberSocketInstance = io.of("/").sockets.get(socketId);
+      if (!memberSocketInstance) {
+        throw new ErrorHandler("no instances", 400);
+      }
+      memberSocketInstance.emit("notification", {
+        username: newMessage.author,
+        message: newMessage.message,
+      });
+    }
+    //   console.log(socket.id);
+    //   socket.emit("notification", {
+    //     username: newMessage.author,
+    //     message: newMessage.message,
+    //   });
+    // console.log(socket.handshake);
+    // console.log(socket.rooms);
+    // console.log(socket.data);
+
+    // socket.emit("hello");
+    // socket.join("room1");
+    // socket.leave("room2");
+    // socket.disconnect();
+    // }
+    // let sockets = await io.sockets.;
+    // console.log("sockets before filter", sockets);
+    // sockets = sockets.filter((s) => s.id !== socket.id);
+    // console.log("sockets", sockets);
+
+    // for (const socket of sockets) {
+    //   socket.emit("notification", {
+    //     username: newMessage.author,
+    //     message: newMessage.message,
+    //   });
+    // }
   } catch (error) {
     console.error("Error joining room:", error);
     // Handle errors by emitting the error message to the client

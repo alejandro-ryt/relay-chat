@@ -6,6 +6,7 @@ import {
   TChatState,
   TPreviewChat,
 } from "@/types/chat.types";
+import toast from "react-hot-toast";
 import { create } from "zustand";
 
 export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
@@ -15,6 +16,7 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   selectedChatData: null,
   selectedChatPreviewData: null,
   chatPreviewArray: [],
+  notification: null,
 
   // Set Chat id
   setSelectedChatId: (selectedChatId: string | null) => {
@@ -111,7 +113,10 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   getMessage: () => {
     try {
       if (socket) {
+        get().getNotification(); // Get notifications
         socket.on("sendMessage", (msg: TChatMessage) => {
+          console.log("msg", msg);
+
           const existingMessage = get().selectedChatData?.messages.find(
             (message) => message._id === msg._id
           );
@@ -169,5 +174,17 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
     return chatsArray.filter((chat) => {
       return chat.chatName.toLowerCase().includes(searchTerm.toLowerCase());
     });
+  },
+  // Get Notification
+  getNotification: () => {
+    if (socket) {
+      socket.on("notification", (message) => {
+        if (message && message.username && message.message) {
+          toast.success(`${message.username} : ${message.message}`);
+        } // Show notification using toast
+      });
+    } else {
+      console.error("Socket is null. Unable to get notifications.");
+    }
   },
 }));
