@@ -123,8 +123,10 @@ export const joinChat = async (
   membersId: string[]
 ): Promise<void> => {
   try {
+    console.log("joinChat --> currentUserId", currentUserId);
     // Find the user in the database using the userId
     const user = await userService.getUserById(currentUserId);
+    console.log("joinChat --> user", user);
     // If the user doesn't exist, throw a custom error
     if (!user) {
       throw new ErrorHandler(
@@ -133,27 +135,32 @@ export const joinChat = async (
       );
     }
 
-     // Find or create the chat (room) in the database
-     await chatService.saveChat(chatName, type, [currentUserId, ...membersId]);
+    console.log("joinChat --> membersId", membersId);
 
-     // Get chat by name (Populated)
-     const chat = await chatService.findByChatNamePopulated(chatName);
-     // If the chat doesn't exist, throw a custom error
-     if (!chat) {
-       throw new ErrorHandler(ERROR.ERROR_CHAT_NOT_FOUND, StatusCodes.NOT_FOUND);
-     }
+    // Find or create the chat (room) in the database
+    await chatService.saveChat(chatName, type, [currentUserId, ...membersId]);
+
+    // Get chat by name (Populated)
+    const chat = await chatService.findByChatNamePopulated(chatName);
+    console.log("joinChat --> chat", chat);
+    // If the chat doesn't exist, throw a custom error
+    if (!chat) {
+      throw new ErrorHandler(ERROR.ERROR_CHAT_NOT_FOUND, StatusCodes.NOT_FOUND);
+    }
 
     // Add each user to the socket room
     membersId.forEach(async (userId) => {
       if (chat.members.includes(new Types.ObjectId(userId))) return;
       // Here we emit the event to the individual user socket
-      const userSocketId = await userService.getUserSocketIdByUserId(userId);
 
+      const userSocketId = await userService.getUserSocketIdByUserId(userId);
+      console.log("joinChat --> userSocketId", userSocketId);
       if (!userSocketId) {
         await chatService.saveChatInvitation(userId, chatName);
         return;
       }
-      const memberSocketInstance = io.sockets.sockets.get(userSocketId);
+      const memberSocketInstance = io.of("/").sockets.get(userSocketId);
+      console.log("joinChat --> memberSocketInstance", memberSocketInstance);
 
       if (!memberSocketInstance) {
         throw new ErrorHandler(

@@ -3,7 +3,11 @@ import { Schema, model } from "mongoose";
 
 const pendingChatSchema = new Schema<IPendingInvitesDocument>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true, unique: false },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     chatName: { type: String, required: true, unique: true },
   },
   { timestamps: true }

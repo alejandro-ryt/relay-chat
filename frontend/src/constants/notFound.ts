@@ -1,4 +1,5 @@
 const DATA = {
+  API_ERROR: "Oops something went wrong",
   ERROR: `404 Page Not Found`,
   MESSAGE: `Our servers are currently experiencing an existential crisis. They seem
         to have misplaced this page, and frankly, they're not taking it well.

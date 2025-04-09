@@ -11,7 +11,7 @@ const RecentChats = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {
 
   return (
     <section className="flex flex-col max-w-72 ">
-      <SearchInput />
+      <SearchInput value="" handleOnchange={() => {}} />
 
       {/* Chats Preview */}
       <section className="flex flex-col flex-1">

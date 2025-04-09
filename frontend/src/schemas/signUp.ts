@@ -32,6 +32,7 @@ export const signUpSchema = z
         message: SIGN_UP_DATA.ERR_AGREEMENT,
       }),
     }),
+    profilePic: z.string().optional(),
   })
   .required()
   .refine((data) => data.password === data.confirmPassword, {

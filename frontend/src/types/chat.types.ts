@@ -74,6 +74,13 @@ export type TChatState = {
   chatPreviewArray: TPreviewChat[] | null;
 };
 
+export type TJoinChat = {
+  chatName: string;
+  type: "direct" | "group";
+  currentUserId: string;
+  membersIds: string[];
+};
+
 export type TChatActions = {
   setSelectedChatId: (selectedId: string | null) => void;
   setSelectedChatData: () => void;
@@ -84,5 +91,6 @@ export type TChatActions = {
   connectToChat: (userId: string) => void;
   sendMessage: (message: string, userId: string) => void;
   getMessage: () => void;
+  joinChat: (data: TJoinChat) => boolean;
   resetData: () => void;
 };

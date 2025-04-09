@@ -1,5 +1,4 @@
-import EditProfile from "@/components/chat/EditProfile";
-import Avatar from "@/components/ui/Avatar";
+import EditProfile from "@/components/user/EditProfile";
 import IconButton from "@/components/ui/IconButton";
 import ChatIcon from "@/components/ui/icons/ChatIcon";
 import FriendsIcon from "@/components/ui/icons/FriendsIcon";
@@ -14,9 +13,8 @@ import { Outlet, useNavigate } from "react-router";
 
 export const ChatLayout = () => {
   const { logout } = useAuth();
-  const { authUserDetails } = useAuthStore();
   const navigate = useNavigate();
-  const { showModal, getUserDetails, getContacts } = useUser();
+  const { getUserDetails } = useUser();
   const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
@@ -26,30 +24,12 @@ export const ChatLayout = () => {
     }
 
     getUserDetails();
-    getContacts();
   }, [isAuthenticated, navigate]);
 
   return (
-    <section className="relative flex flex-row xl:max-w-[65vw] w-full min-h-[75vh] rounded-[1.5rem]">
+    <section className="relative grid grid-cols-12 grid-rows-1 h-full rounded-[1.5rem]">
       {/* Sidebar */}
-      <aside className="flex flex-col w-24 h-full items-center justify-between pt-4 pb-2">
-        <div className="dropdown dropdown-start">
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn block mask h-full w-full mask-squircle"
-          >
-            <Avatar pic={authUserDetails?.profilePic} sizeClass="w-16" />
-          </div>
-          <ul
-            tabIndex={0}
-            className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-          >
-            <li>
-              <button onClick={showModal}>Edit Profile</button>
-            </li>
-          </ul>
-        </div>
+      <aside className="flex flex-col w-24 flex-1 h-full col-span-1 row-span-1 items-center justify-between pt-4 pb-2">
         <EditProfile />
 
         <div role="group" className="flex flex-col items-center w-full">
@@ -81,7 +61,9 @@ export const ChatLayout = () => {
       </aside>
       {/* Sidebar */}
       {/* Dynamic Container */}
-      <Outlet />
+      <div className="col-span-11 row-span-1 min-h-[80dvh]">
+        <Outlet />
+      </div>
       {/* Dynamic Container */}
     </section>
   );

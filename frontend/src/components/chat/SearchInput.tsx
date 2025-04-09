@@ -1,10 +1,22 @@
 import SearchInputIcon from "@/components/ui/icons/SearchInputIcon";
+import { SyntheticEvent } from "react";
 
-const SearchInput = () => {
+type Props = {
+  handleOnchange: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
+  value: string;
+};
+
+const SearchInput = ({ handleOnchange, value }: Props) => {
   return (
-    <label className="input rounded-[0.8rem] m-5 w-auto outline-none">
+    <label className="input rounded-[0.8rem] w-auto outline-none">
       <SearchInputIcon />
-      <input type="search" required placeholder="Search" />
+      <input
+        type="search"
+        value={value}
+        required
+        onChange={handleOnchange}
+        placeholder="Search"
+      />
     </label>
   );
 };

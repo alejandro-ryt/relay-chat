@@ -8,7 +8,7 @@ import { errorMiddleware } from "@/middlewares/errorMiddleware";
 import { handleSocketEvents } from "@/sockets/chatSocket";
 const app: Express = express();
 const server = createServer(app);
-const PORT: number = 3001;
+const PORT: number = 4000;
 
 // Define a CORS options object
 const corsOptions = {

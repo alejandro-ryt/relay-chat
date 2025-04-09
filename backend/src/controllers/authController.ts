@@ -125,10 +125,8 @@ export const signIn = async (
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // Set to true if using HTTPS
         maxAge: 3600, // 1 hour
-        sameSite: "strict",
       })
     );
-
     res
       .status(StatusCodes.OK)
       .json({ userId: user.id, username: user.username });
