@@ -29,10 +29,6 @@ const Chat = () => {
     fetchSelectedChatPreviewData();
   }, [selectedChatId, authUser?.userId]);
 
-  //   useEffect(() => {
-  //     setSelectedChatData();
-  //   }, []);
-
   return (
     <motion.section className="bg-base-100 flex flex-1 h-[calc(100dvh-3rem)] rounded-[1.5rem] m-2">
       {/* Recent Chats */}
