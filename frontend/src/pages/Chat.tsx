@@ -13,19 +13,19 @@ const Chat = () => {
   const { authUser } = useAuthStore();
 
   const fetchSelectedChatPreviewData = async () => {
-    setSelectedChatData();
-    if (authUser?.userId) {
-      try {
+    try {
+      if (authUser?.userId) {
         const chats = await getChatsByUserId(authUser.userId);
         setSelectedChatPreviewData(authUser.userId, chats);
-      } catch (error) {
-        console.error("Error fetching chats:", error);
-        setSelectedChatPreviewData(authUser.userId, []);
       }
+    } catch (error) {
+      console.error("Error fetching chats:", error);
+      setSelectedChatPreviewData(authUser?.userId || "", []);
     }
   };
 
   useEffect(() => {
+    setSelectedChatData();
     fetchSelectedChatPreviewData();
   }, [selectedChatId, authUser?.userId]);
 
