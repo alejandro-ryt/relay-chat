@@ -9,7 +9,7 @@ import { USER } from "@/constants/user";
 import { TEditUserForm } from "@/types/user.types";
 import { ErrorIcon } from "react-hot-toast";
 import { useAuthStore } from "@/store/useAuthStore";
-import Avatar from "../ui/Avatar";
+import Avatar from "@/components/ui/Avatar";
 
 export const EditProfile = () => {
   const { authUserDetails } = useAuthStore();
@@ -30,7 +30,7 @@ export const EditProfile = () => {
     useUser();
 
   return (
-    <>
+    <header>
       <div className="dropdown dropdown-start">
         <div
           tabIndex={0}
@@ -44,7 +44,7 @@ export const EditProfile = () => {
           className="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
         >
           <li>
-            <button onClick={toggleShowEditModal}>Edit Profile</button>
+            <button onClick={toggleShowEditModal}>{USER.EDIT_TITLE}</button>
           </li>
         </ul>
       </div>
@@ -56,7 +56,7 @@ export const EditProfile = () => {
         aria-describedby="modal-description"
         open={isShowEditModal}
       >
-        <div className="modal-box" role="group" aria-label="Edit Profile">
+        <main className="modal-box" aria-label="Edit Profile">
           <form method="dialog">
             <button
               type="button"
@@ -125,9 +125,9 @@ export const EditProfile = () => {
               {USER.UPDATE_BTN}
             </button>
           </form>
-        </div>
+        </main>
       </dialog>
-    </>
+    </header>
   );
 };
 export default EditProfile;

@@ -1,4 +1,6 @@
+import { API } from "@/constants/api";
 import { END_POINT } from "@/constants/endpoint";
+import DATA from "@/constants/notFound";
 import { ROUTES } from "@/constants/routes";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useChatStore } from "@/store/useChatStore";
@@ -47,10 +49,10 @@ export const useAuth = () => {
         const errorData: TApiError = await response.json();
         throw errorData;
       }
-      toast.success("Account Created!");
+      toast.success(API.ACCOUNT_CREATED);
       navigate(ROUTES.SIGN_IN);
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     } finally {
       setIsSigningUp(false);
     }
@@ -77,10 +79,10 @@ export const useAuth = () => {
       }
       const authData = (await response.json()) as TAuthUser;
       authenticate(authData);
-      toast.success(`Welcome ${authData.username}`);
+      toast.success(`${API.WELCOME} ${authData.username}`);
       navigate(ROUTES.CHAT);
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     } finally {
       setIsSigningIn(false);
     }
@@ -98,9 +100,9 @@ export const useAuth = () => {
       }
       resetData();
       logOut();
-      toast.success("Logout Success");
+      toast.success(API.LOGOUT);
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
   };
 

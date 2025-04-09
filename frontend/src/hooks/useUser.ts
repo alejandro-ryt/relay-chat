@@ -13,6 +13,8 @@ import { useNavigate } from "react-router";
 import { ROUTES } from "@/constants/routes";
 import useDebounce from "@/hooks/useDebounce";
 import { TCreateChatForm } from "@/schemas/create";
+import DATA from "@/constants/notFound";
+import { API } from "@/constants/api";
 
 export const useUser = () => {
   const navigate = useNavigate();
@@ -64,7 +66,7 @@ export const useUser = () => {
         setAuthUserDetails(responseData);
       }
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     } finally {
       setIsGetUserDetails(true);
     }
@@ -92,7 +94,7 @@ export const useUser = () => {
       );
       setUsers(filterContacts);
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     } finally {
       setIsSearching(false);
     }
@@ -122,10 +124,10 @@ export const useUser = () => {
       if (responseData) {
         setAuthUserDetails(responseData);
       }
-      toast.success("Profile Updated");
+      toast.success(API.PROFILE_UPDATED);
       toggleShowEditModal();
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     } finally {
       setIsUpdating(false);
     }
@@ -159,10 +161,10 @@ export const useUser = () => {
         const errorData: TApiError = await response.json();
         throw errorData;
       }
-      toast.success("Contact Removed");
+      toast.success(API.CONTACT_REMOVE);
       await getUserDetails();
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
   };
 
@@ -180,10 +182,10 @@ export const useUser = () => {
         const errorData: TApiError = await response.json();
         throw errorData;
       }
-      toast.success("Contact Blocked");
+      toast.success(API.CONTACT_BLOCK);
       await getUserDetails();
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
   };
 
@@ -201,10 +203,10 @@ export const useUser = () => {
         const errorData: TApiError = await response.json();
         throw errorData;
       }
-      toast.success("Contact Added");
+      toast.success(API.CONTACT_ADDED);
       await getUserDetails();
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
   };
 
@@ -229,7 +231,7 @@ export const useUser = () => {
           };
     const isJoined = joinChat(joinData);
     if (isJoined) {
-      toast.success("Chat Created");
+      toast.success(API.CHAT_CREATED);
       navigate(ROUTES.CHAT);
     }
   };

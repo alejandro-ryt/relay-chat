@@ -1,6 +1,7 @@
 import { TApiError } from "@/types/api.types";
 import { REGEX } from "@/constants/regex";
 import { PersistStorage, StorageValue } from "zustand/middleware";
+import DATA from "@/constants/notFound";
 
 export const generateAvatar = (firstName: string, lastName: string) =>
   `https://ui-avatars.com/api/?name=${firstName.at(0)}+${lastName.at(0)}`;
@@ -10,7 +11,7 @@ export const getApiError = (error: unknown) => {
     const apiError = error as TApiError;
     return apiError.error;
   }
-  return "Oops something went wrong";
+  return DATA.API_ERROR;
 };
 
 export const createStoragePersist = <T>(): PersistStorage<T> => ({
