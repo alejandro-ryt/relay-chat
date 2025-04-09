@@ -1,11 +1,12 @@
+import { useEffect } from "react";
 import ChatMessage from "@/components/chat/ChatMessage";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useChatStore } from "@/store/useChatStore";
 import { TChatMember } from "@/types/chat.types";
-import { useEffect } from "react";
 
 const ChatHistory = () => {
-  const { selectedChatData, getMessage } = useChatStore();
+  const { selectedChatData, chatPreviewArray, selectedChatId, getMessage } =
+    useChatStore();
   const { authUser } = useAuthStore();
 
   const getMemberInfo = (userId: string): TChatMember | undefined => {
@@ -24,7 +25,7 @@ const ChatHistory = () => {
 
   return (
     <section
-      className="flex-1 overflow-x-auto pr-3"
+      className="flex-1 overflow-x-auto m-2 mr-0 pr-3"
       ref={(el) => {
         if (el) {
           el.scrollTop = el.scrollHeight; // Scroll to bottom on render
@@ -32,6 +33,14 @@ const ChatHistory = () => {
       }}
     >
       {selectedChatData?.messages.map((message) => {
+        const currentChat = chatPreviewArray?.find(
+          (chat) => chat.id === selectedChatId
+        );
+
+        if (currentChat?.lastMessage) {
+          currentChat.lastMessage.message = message.message; // Update the last message in the chat preview array
+        }
+
         const messageType =
           authUser &&
           authUser.username === getMemberInfo(message.author)?.username

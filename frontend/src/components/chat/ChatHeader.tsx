@@ -1,18 +1,47 @@
+import { motion } from "motion/react";
 import IconButton from "@/components/ui/IconButton";
 import VerticalDotsIcon from "@/components/ui/icons/VerticalDotsIcon";
 import { useChatStore } from "@/store/useChatStore";
-import { TRecentChatsProps } from "@/types/chat.types";
-import Avatar from "../ui/Avatar";
+import Avatar from "@/components/ui/Avatar";
+import ArrowIcon from "@/components/ui/icons/ArrowIcon";
 
-const ChatHeader = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {
-  const { selectedChatData, selectedChatPreviewData } = useChatStore();
+const ChatHeader = () => {
+  const {
+    selectedChatData,
+    selectedChatPreviewData,
+    recentChatsSidebar,
+    setRecentChatsSidebar,
+    chatInfoSidebar,
+    setChatInfoSidebar,
+  } = useChatStore();
+
+  const toggleRecentChatsSidebar = setRecentChatsSidebar(!recentChatsSidebar);
 
   return (
-    <section className="flex flex-row justify-between items-center mb-6">
+    <section className="flex justify-between items-center h-14 m-2">
       <section className="flex flex-row">
-        <Avatar pic={selectedChatPreviewData?.chatPic} sizeClass="w-16" />
+        {/* Show / Hide Control Recent Chats Sidebar */}
+        <motion.div
+          className="flex h-auto items-center justify-center cursor-pointer"
+          role="button"
+          initial={{ rotate: 180 }}
+          animate={{
+            rotate: recentChatsSidebar ? 0 : 180,
+          }}
+          transition={{ duration: 0.2 }}
+        >
+          <section className="flex flex-row justify-center items-center h-10 mr-1">
+            <IconButton
+              shape="round"
+              title="Contacts"
+              icon={<ArrowIcon />}
+              action={toggleRecentChatsSidebar}
+            />
+          </section>
+        </motion.div>
+        <Avatar pic={selectedChatPreviewData?.chatPic} sizeClass="w-12" />
         <section className="flex flex-col ml-2">
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-xl font-bold truncate">
             {selectedChatPreviewData?.chatName}
           </h1>
           <p className="text-sm">{selectedChatData?.members.length} members</p>
@@ -23,7 +52,7 @@ const ChatHeader = ({ showSidebar, setShowSidebar }: TRecentChatsProps) => {
         shape="round"
         title="Contacts"
         icon={<VerticalDotsIcon />}
-        action={() => setShowSidebar(!showSidebar)}
+        action={() => setChatInfoSidebar(!chatInfoSidebar)}
       />
     </section>
   );

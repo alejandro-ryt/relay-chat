@@ -1,23 +1,22 @@
+import { motion } from "motion/react";
 import ContactCard from "@/components/chat/ContactCard";
 import { useChatStore } from "@/store/useChatStore";
-import { TRecentChatsProps } from "@/types/chat.types";
-import { motion } from "motion/react";
 
-const ChatSidebar = ({ showSidebar }: TRecentChatsProps) => {
-  const { selectedChatData } = useChatStore();
+const ChatSidebar = () => {
+  const { selectedChatData, chatInfoSidebar } = useChatStore();
 
   return (
     <motion.section
-      className="flex flex-col p-4 mr-[-1rem] mt-[-1rem] mb-[-1rem] bg-base-200"
+      className="flex flex-col p-4 bg-base-200"
       initial={{ width: "0rem", display: "none", opacity: 0 }}
       animate={{
-        display: showSidebar ? "flex" : "none",
-        opacity: showSidebar ? 100 : 0,
-        width: showSidebar ? "25rem" : "0rem",
-        marginLeft: showSidebar ? "1rem" : "0rem",
-        padding: showSidebar ? "1rem" : "0rem",
+        display: chatInfoSidebar ? "flex" : "none",
+        opacity: chatInfoSidebar ? 100 : 0,
+        width: chatInfoSidebar ? "25rem" : "0rem",
+        marginLeft: chatInfoSidebar ? "1rem" : "0rem",
+        padding: chatInfoSidebar ? "1rem" : "0rem",
       }}
-      transition={{ duration: 0.2 }}
+      transition={{ ease: "anticipate", duration: 0.3 }}
     >
       <h1 className="text-2xl font-bold">Chat Info</h1>
       <p className="text-sm">Members ({selectedChatData?.members.length}):</p>

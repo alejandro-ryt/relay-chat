@@ -1,14 +1,9 @@
 import SearchInputIcon from "@/components/ui/icons/SearchInputIcon";
-import { SyntheticEvent } from "react";
+import { TSearchInputProps } from "@/types/form.types";
 
-type Props = {
-  handleOnchange: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
-  value: string;
-};
-
-const SearchInput = ({ handleOnchange, value }: Props) => {
+const SearchInput = ({ handleOnchange, value }: TSearchInputProps) => {
   return (
-    <label className="input rounded-[0.8rem] w-auto outline-none">
+    <label className="input rounded-[0.8rem] outline-none w-full">
       <SearchInputIcon />
       <input
         type="search"

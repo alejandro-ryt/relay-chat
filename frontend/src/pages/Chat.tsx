@@ -1,13 +1,12 @@
+import { useEffect } from "react";
+import { motion } from "motion/react";
 import ChatBox from "@/components/chat/ChatBox";
 import RecentChats from "@/components/chat/RecentChats";
 import { useChat } from "@/hooks/useChat";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useChatStore } from "@/store/useChatStore";
-import { motion } from "motion/react";
-import { useEffect, useState } from "react";
 
 const Chat = () => {
-  const [showSidebar, setShowSidebar] = useState(false);
   const { selectedChatId, setSelectedChatData, setSelectedChatPreviewData } =
     useChatStore();
   const { getChatsByUserId } = useChat();
@@ -35,23 +34,15 @@ const Chat = () => {
   }, []);
 
   return (
-    <motion.section
-      className="absolute right-0 bottom-0 top-0 bg-base-100 flex flex-1 min-h-auto rounded-[1.5rem] m-2"
-      animate={{
-        width: !showSidebar
-          ? "calc(100% - var(--spacing) * 26)"
-          : "calc(100% - var(--spacing) * 4)",
-      }}
-      transition={{ duration: 0.2 }}
-    >
+    <motion.section className="bg-base-100 flex flex-1 h-full rounded-[1.5rem] m-2">
       {/* Recent Chats */}
-      <RecentChats showSidebar={showSidebar} setShowSidebar={setShowSidebar} />
+      <RecentChats />
 
       {/* Chat Box */}
       {selectedChatId ? (
         <ChatBox />
       ) : (
-        <div className="flex flex-col items-center justify-center p-8">
+        <div className="flex flex-col items-center justify-center p-8 w-full">
           {/* Title */}
           <h1 className="text-3xl font-semibold mb-4 text-base-content">
             Welcome {authUser?.username}! 😎

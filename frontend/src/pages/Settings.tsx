@@ -1,5 +1,6 @@
 import { THEMES } from "@/constants/themes";
 import { useThemeStore } from "@/store/useThemeStore";
+import { CHAT } from "@/constants/chat";
 
 const PREVIEW_MESSAGES = [
   { id: 1, content: "Hey! How's it going?", isSent: false },
@@ -18,8 +19,8 @@ const Settings = () => {
       <article>
         <section className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold">Theme</h2>
-          <p className="text-sm text-base-content/70 mb-10">
-            Choose a theme for your chat interface
+          <div className="text-sm text-base-content/70 mb-10">
+            {CHAT.THEME_SUBTITLE}
             <nav className="dropdown dropdown-hover">
               <button tabIndex={0} className="btn m-1">
                 <svg
@@ -38,7 +39,7 @@ const Settings = () => {
                     <li key={t}>
                       <button
                         className={`
-                        group w-full flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors
+                        group w-full flex flex-col items-center gap-1.5 p-2 rounded-lg transition-colors cursor-pointer
                         ${theme === t ? "bg-base-200" : "hover:bg-base-200/50"}
                       `}
                         onClick={() => setTheme(t)}
@@ -63,7 +64,7 @@ const Settings = () => {
                 </div>
               </ul>
             </nav>
-          </p>
+          </div>
         </section>
 
         {/* Preview Section */}
@@ -83,14 +84,14 @@ const Settings = () => {
                       <div
                         className={`
                             max-w-[80%] rounded-xl p-3 shadow-sm
-                            ${message.isSent ? "bg-primary text-primary-content" : "bg-base-200"}
+                            ${!message.isSent ? "bg-primary text-primary-content" : "bg-base-200"}
                           `}
                       >
                         <p className="text-sm">{message.content}</p>
                         <p
                           className={`
                               text-[10px] mt-1.5
-                              ${message.isSent ? "text-primary-content/70" : "text-base-content/70"}
+                              ${message.isSent ? "text-base-content/70" : "text-primary-content/70"}
                             `}
                         ></p>
                       </div>

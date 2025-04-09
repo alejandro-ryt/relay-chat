@@ -13,6 +13,11 @@ export type TPasswordCriteriaProps = {
   confirmPassword: string;
 };
 
+export type TSearchInputProps = {
+  handleOnchange: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
+  value: string;
+};
+
 export type TCreateChat = {
   handleOnSubmit: (data: TCreateChatForm) => void;
   contactQuantity: number;
