@@ -127,7 +127,7 @@ export const EditProfile = () => {
           </form>
         </main>
       </dialog>
-    </article>
+    </>
   );
 };
 export default EditProfile;

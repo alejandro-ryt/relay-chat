@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import Avatar from "@/components/ui/Avatar";
+import { CHAT } from "@/constants/chat";
 import { useChatStore } from "@/store/useChatStore";
 import { TChatPreviewProps } from "@/types/chat.types";
 
@@ -26,7 +27,7 @@ const ChatPreview = ({
           {title}
         </h4>
         <p className="leading-none font-light text-sm  truncate">
-          {message === "" ? "No messages" : message}
+          {message === "" ? CHAT.NO_MESSAGES : message}
         </p>
       </section>
     </button>

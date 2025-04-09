@@ -1,5 +1,6 @@
 import { THEMES } from "@/constants/themes";
 import { useThemeStore } from "@/store/useThemeStore";
+import { CHAT } from "@/constants/chat";
 
 const PREVIEW_MESSAGES = [
   { id: 1, content: "Hey! How's it going?", isSent: false },
@@ -19,7 +20,7 @@ const Settings = () => {
         <section className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold">Theme</h2>
           <div className="text-sm text-base-content/70 mb-10">
-            Choose a theme for your chat interface
+            {CHAT.THEME_SUBTITLE}
             <nav className="dropdown dropdown-hover">
               <button tabIndex={0} className="btn m-1">
                 <svg
