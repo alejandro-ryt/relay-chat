@@ -27,12 +27,15 @@ export const ChatLayout = () => {
   }, [isAuthenticated, navigate]);
 
   return (
-    <section className="relative grid grid-cols-12 grid-rows-1 h-max rounded-[1.5rem]">
+    <section className="relative grid grid-cols-12 grid-rows-1 h-full md:h-max rounded-[1.5rem]">
       {/* Sidebar */}
-      <aside className="flex flex-col w-full flex-1 col-span-1 row-span-1 items-center justify-between my-2">
+      <aside className="flex w-full h-full flex-1 order-2 md:order-1 col-span-12 md:flex-col md:col-span-1 row-span-1 items-center justify-between md:my-2">
         <EditProfile />
 
-        <div role="group" className="flex flex-col items-center w-full">
+        <div
+          role="group"
+          className="flex md:flex-col justify-center items-center w-full h-full"
+        >
           <IconButton
             shape="squircle"
             title="Chats"
@@ -61,7 +64,7 @@ export const ChatLayout = () => {
       </aside>
       {/* Sidebar */}
       {/* Dynamic Container */}
-      <section className="col-span-11 row-span-1 h-full">
+      <section className="col-span-12 md:col-span-11 row-span-1 h-full">
         <Outlet />
       </section>
       {/* Dynamic Container */}

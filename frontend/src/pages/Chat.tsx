@@ -30,7 +30,7 @@ const Chat = () => {
   }, [selectedChatId, authUser?.userId]);
 
   return (
-    <motion.section className="bg-base-100 flex flex-1 h-[calc(100dvh-3rem)] rounded-[1.5rem] m-2">
+    <motion.section className="bg-base-100 flex flex-1 h-full md:h-[calc(100dvh-3rem)] rounded-[1.5rem] m-2">
       {/* Recent Chats */}
       <RecentChats />
 
