@@ -42,7 +42,7 @@ const Chat = () => {
       {selectedChatId ? (
         <ChatBox />
       ) : (
-        <div className="flex flex-col items-center justify-center p-8 w-full">
+        <div className="flex flex-col items-center justify-center p-8 w-full h-dvh-100">
           {/* Title */}
           <h1 className="text-3xl font-semibold mb-4 text-base-content">
             Welcome {authUser?.username}! 😎
