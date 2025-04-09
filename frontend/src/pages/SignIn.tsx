@@ -25,7 +25,7 @@ const SignIn = () => {
   const { sendSignIn, isSigningIn } = useAuth();
 
   return (
-    <section className="grid min-h-[80dvh]">
+    <section className="grid h-full">
       <motion.section
         initial={{ opacity: 0 }}
         animate={{
