@@ -30,9 +30,8 @@ export type TUserSearchResponse = {
   users: TUser[];
 };
 
-// export type TUserSearch = Pick<
-//   TUser,
-//   "email" | "firstName" | "lastName" | "username" | "_id"
-// >;
+export type ContactSkeletonProps = {
+  length?: number;
+};
 
 export type TEditUserForm = z.output<typeof userEditSchema>;

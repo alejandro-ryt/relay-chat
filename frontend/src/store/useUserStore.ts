@@ -1,5 +1,5 @@
 import { TUserStore } from "@/types/user.types";
-import { createStoragePersist } from "@/utils/persistStore";
+import { createStoragePersist } from "@/utils";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

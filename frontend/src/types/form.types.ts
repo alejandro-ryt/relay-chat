@@ -1,4 +1,5 @@
-import { InputHTMLAttributes, SyntheticEvent } from "react";
+import { TCreateChatForm } from "@/schemas/create";
+import { InputHTMLAttributes } from "react";
 
 export type TInputFieldProps = {
   legend: string;
@@ -15,4 +16,9 @@ export type TPasswordCriteriaProps = {
 export type TSearchInputProps = {
   handleOnchange: (event: SyntheticEvent<HTMLInputElement, Event>) => void;
   value: string;
+};
+
+export type TCreateChat = {
+  handleOnSubmit: (data: TCreateChatForm) => void;
+  contactQuantity: number;
 };

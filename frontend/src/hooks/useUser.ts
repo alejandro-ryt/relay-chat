@@ -3,14 +3,18 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
 import { TApiError } from "@/types/api.types";
 import { TEditUserForm, TUser, TUserSearchResponse } from "@/types/user.types";
-import { getApiError } from "@/utils/errors";
-import { useState } from "react";
+import { getApiError } from "@/utils";
+import { SyntheticEvent, useState } from "react";
 import toast from "react-hot-toast";
 import DOMPurify from "dompurify";
 import { useChatStore } from "@/store/useChatStore";
 import { TJoinChat } from "@/types/chat.types";
 import { useNavigate } from "react-router";
 import { ROUTES } from "@/constants/routes";
+import useDebounce from "@/hooks/useDebounce";
+import { TCreateChatForm } from "@/schemas/create";
+import DATA from "@/constants/notFound";
+import { API } from "@/constants/api";
 
 export const useUser = () => {
   const navigate = useNavigate();
@@ -21,6 +25,7 @@ export const useUser = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [addUsers, setAddUsers] = useState<TUser[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const { setUsers } = useUserStore();
   const { authUser, authUserDetails, setAuthUserDetails } = useAuthStore();
   const { joinChat } = useChatStore();
@@ -29,6 +34,20 @@ export const useUser = () => {
     setAddUsers((prevState) =>
       prevState.filter((user) => user._id !== contactId)
     );
+  };
+
+  const handleFilterContact = (
+    event: SyntheticEvent<HTMLInputElement, Event>
+  ) => {
+    const value = (event.target as HTMLInputElement).value;
+    setSearchTerm(value);
+  };
+
+  const handleFilterSearchUser = (
+    event: SyntheticEvent<HTMLInputElement, Event>
+  ) => {
+    const value = (event.target as HTMLInputElement).value;
+    setSearchQuery(value);
   };
 
   const getUserDetails = async () => {
@@ -47,7 +66,7 @@ export const useUser = () => {
         setAuthUserDetails(responseData);
       }
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     } finally {
       setIsGetUserDetails(true);
     }
@@ -69,19 +88,13 @@ export const useUser = () => {
         const errorData: TApiError = await response.json();
         throw errorData;
       }
-      // just to test the skeleton
-      await new Promise((resolve) =>
-        setTimeout(() => {
-          resolve(true);
-        }, 1500)
-      );
       const responseData = (await response.json()) as TUserSearchResponse;
       const filterContacts = responseData.users.filter(
         (user) => user._id !== authUser?.userId
       );
       setUsers(filterContacts);
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     } finally {
       setIsSearching(false);
     }
@@ -111,10 +124,10 @@ export const useUser = () => {
       if (responseData) {
         setAuthUserDetails(responseData);
       }
-      toast.success("Profile Updated");
+      toast.success(API.PROFILE_UPDATED);
       toggleShowEditModal();
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     } finally {
       setIsUpdating(false);
     }
@@ -148,10 +161,10 @@ export const useUser = () => {
         const errorData: TApiError = await response.json();
         throw errorData;
       }
-      toast.success("Contact Removed");
+      toast.success(API.CONTACT_REMOVE);
       await getUserDetails();
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
   };
 
@@ -169,10 +182,10 @@ export const useUser = () => {
         const errorData: TApiError = await response.json();
         throw errorData;
       }
-      toast.success("Contact Blocked");
+      toast.success(API.CONTACT_BLOCK);
       await getUserDetails();
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
   };
 
@@ -190,35 +203,35 @@ export const useUser = () => {
         const errorData: TApiError = await response.json();
         throw errorData;
       }
-      toast.success("Contact Added");
+      toast.success(API.CONTACT_ADDED);
       await getUserDetails();
     } catch (error: unknown) {
-      toast.error(getApiError(error) ?? "Oops something went wrong");
-    } finally {
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
   };
 
-  const generateAvatar = (firstName: string, lastName: string) =>
-    `https://ui-avatars.com/api/?name=${firstName.at(0)}+${lastName.at(0)}`;
-
-  const startChat = (chatName: string) => {
+  const startChat = (data: TCreateChatForm) => {
+    const chatName =
+      data.chatName === "individual"
+        ? `${authUserDetails?.username}-${addUsers[0].username}`
+        : data.chatName;
     const joinData: TJoinChat =
       addUsers.length === 1
         ? {
             membersIds: addUsers.map((value) => value._id),
-            chatName: chatName,
+            chatName,
             currentUserId: authUser!.userId,
             type: "direct",
           }
         : {
             membersIds: addUsers.map((value) => value._id),
-            chatName: chatName,
+            chatName,
             currentUserId: authUser!.userId,
             type: "group",
           };
     const isJoined = joinChat(joinData);
     if (isJoined) {
-      toast.success("Chat Created");
+      toast.success(API.CHAT_CREATED);
       navigate(ROUTES.CHAT);
     }
   };
@@ -226,6 +239,8 @@ export const useUser = () => {
   const toggleShowAddModal = () => setIsShowAddModal(!isShowAddModal);
 
   const toggleShowEditModal = () => setIsShowEditModal(!isShowEditModal);
+
+  const debouncedSearchContactTerm = useDebounce(searchTerm, 300);
 
   return {
     addStartChat,
@@ -239,8 +254,11 @@ export const useUser = () => {
     deleteContact,
     setSearchQuery,
     blockContact,
-    generateAvatar,
     startChat,
+    handleFilterContact,
+    handleFilterSearchUser,
+    debouncedSearchContactTerm,
+    searchTerm,
     searchQuery,
     addUsers,
     isGetUserDetails,
