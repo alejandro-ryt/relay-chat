@@ -12,26 +12,26 @@ const Chat = () => {
   const { getChatsByUserId } = useChat();
   const { authUser } = useAuthStore();
 
-  useEffect(() => {
-    const fetchSelectedChatPreviewData = async () => {
-      setSelectedChatData();
-      if (authUser?.userId) {
-        try {
-          const chats = await getChatsByUserId(authUser.userId);
-          setSelectedChatPreviewData(authUser.userId, chats);
-        } catch (error) {
-          console.error("Error fetching chats:", error);
-          setSelectedChatPreviewData(authUser.userId, []);
-        }
+  const fetchSelectedChatPreviewData = async () => {
+    setSelectedChatData();
+    if (authUser?.userId) {
+      try {
+        const chats = await getChatsByUserId(authUser.userId);
+        setSelectedChatPreviewData(authUser.userId, chats);
+      } catch (error) {
+        console.error("Error fetching chats:", error);
+        setSelectedChatPreviewData(authUser.userId, []);
       }
-    };
+    }
+  };
 
+  useEffect(() => {
     fetchSelectedChatPreviewData();
   }, [selectedChatId, authUser?.userId]);
 
-  useEffect(() => {
-    setSelectedChatData();
-  }, []);
+  //   useEffect(() => {
+  //     setSelectedChatData();
+  //   }, []);
 
   return (
     <motion.section className="bg-base-100 flex flex-1 h-[calc(100dvh-3rem)] rounded-[1.5rem] m-2">

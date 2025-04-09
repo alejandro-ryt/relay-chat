@@ -25,7 +25,7 @@ const SignUp = () => {
   const { sendSignUp, isSigningUp } = useAuth();
 
   return (
-    <section className="grid min-h-[75dvh]">
+    <section className="grid h-full">
       <motion.section
         initial={{ opacity: 0 }}
         animate={{
@@ -37,7 +37,7 @@ const SignUp = () => {
           transition: { duration: 0.3, ease: "easeIn" },
         }}
         layout
-        className="grid flex-1 bg-base-100 h-full place-items-center shadow-2xl rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4"
+        className="grid flex-1 bg-base-100 place-items-center shadow-2xl rounded-[1.5rem] grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 m-4"
       >
         <figure className="bg-[#f9f7f4] rounded-[1.5rem] size-full">
           <img
