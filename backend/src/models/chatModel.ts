@@ -11,8 +11,7 @@ const chatSchema = new Schema<IChatDocument>(
     },
     name: { type: String, required: true },
     type: { type: String, enum: ["direct", "group"], required: true },
-    members: [{ type: Schema.Types.ObjectId, ref: "User", required: true }],
-    messages: [{ type: Schema.Types.ObjectId, ref: "Message", required: true }],
+    members: [{ type: Schema.Types.ObjectId, ref: "User", required: true }], // Find a better way
   },
   { timestamps: true }
 );

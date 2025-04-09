@@ -34,3 +34,20 @@ export interface IChatService {
   clearPendingChatInvites(userId: string): Promise<void>;
   handleDisconnect(userId: string, user: Partial<IUser>): Promise<IUser | null>;
 }
+
+export interface IChatRepository {
+  getPendingChatInvitesByUserId(userId: string): Promise<IPendingInvites[]>;
+  findChatsByUserId(userId: string): Promise<IChatDocument[] | []>;
+  findByChatName(chatName: string): Promise<IChatDocument | null>;
+  findByChatId(id: Types.ObjectId): Promise<IChatDocument | null>;
+  findByChatNamePopulated(chatName: string): Promise<IChat | null>;
+  saveChat(chat: IChatDocument): Promise<IChatDocument>;
+  updateChat(chat: IChatDocument): Promise<IChatDocument>;
+  saveChatInvitation(userId: string, chatName: string): Promise<void>;
+  clearPendingChatInvites(userId: string): Promise<void>;
+  saveMessage(
+    chatId: string,
+    message: string,
+    userId: string
+  ): Promise<IMessageDocument>;
+}

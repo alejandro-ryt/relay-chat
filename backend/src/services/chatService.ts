@@ -7,8 +7,11 @@ import { IMessageDocument } from "@/interfaces/message";
 import { Types } from "mongoose";
 import { IPendingInvites } from "@/interfaces/pendingChatInvites";
 import PendingChatInvites from "@/models/pendingChatInvites";
+import { ERROR } from "@/constants/relayChat";
+import { StatusCodes } from "http-status-codes";
+import ChatRepository from "@/repositories/chats";
 
-const userService = new UserService();
+const chatRepository = new ChatRepository();
 
 class ChatService implements IChatService {
   // Get pending chat invites by user id
@@ -23,14 +26,30 @@ class ChatService implements IChatService {
   // Get all chats with last message by user id
   public async findChatsByUserId(userId: string) {
     // Return the populated type directly
-    return await Chat.find({ members: new Types.ObjectId(userId) })
-      .populate("members", "id firstName lastName username email")
-      .populate({
-        path: "messages",
-        select: "message author createdAt",
-        options: { sort: { createdAt: -1 }, limit: 1 }, // Get the most recent message
-      })
-      .exec();
+    if (!userId) {
+      throw new ErrorHandler(ERROR.ERROR_ID_REQUIRED, StatusCodes.BAD_REQUEST);
+    }
+        const chats = await .findChatsByUserId(userId);
+    
+        const formattedChats = chats.map((chat) => {
+          // Cast to IMessage[]
+          const messages = chat.messages as unknown as IMessage[];
+          // Get last message
+          const lastMessage = messages[0];
+          return {
+            id: chat._id,
+            chatName: chat.name,
+            chatPic: chat.chatPic,
+            lastMessage: lastMessage
+              ? {
+                  message: lastMessage.message,
+                  author: lastMessage.author,
+                  timestamp: lastMessage.createdAt,
+                }
+              : null,
+            timestamp: chat.createdAt.toLocaleDateString(),
+          };
+        });
   }
 
   // Find chat by name

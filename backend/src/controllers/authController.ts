@@ -1,18 +1,12 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
 import * as cookie from "cookie";
 import dotenv from "dotenv";
 import { StatusCodes } from "http-status-codes";
 import mongoose, { Types } from "mongoose";
-import { isPasswordValid } from "@/utils/protectPassword";
 import UserService from "@/services/userService";
 import { ERROR } from "@/constants/relayChat";
 import { IUser } from "@/interfaces/user";
 import { ErrorHandler } from "@/utils/errorHandler";
-import {
-  validateEmailFormat,
-  validatePasswordFormat,
-} from "@/utils/inputValidations";
 
 dotenv.config();
 
@@ -28,8 +22,8 @@ export const signUp = async (
   try {
     const { profilePic, firstName, lastName, username, email, password } =
       req.body;
-
-    const newUser: IUser = {
+    // Validate if the each field was provided
+    const createdUser = await userService.createUser({
       profilePic,
       firstName,
       lastName,
@@ -38,9 +32,7 @@ export const signUp = async (
       password,
       socketId: null,
       contacts: [],
-    };
-
-    const createdUser = await userService.createUser(newUser);
+    } as IUser);
     res.status(StatusCodes.CREATED).json(createdUser);
   } catch (error: unknown) {
     // Check if it's a Mongoose validation error
@@ -73,51 +65,11 @@ export const signIn = async (
 ): Promise<void> => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      throw new ErrorHandler(
-        ERROR.ERROR_EMAIL_PASSWORD_MISSING,
-        StatusCodes.BAD_REQUEST
-      );
-    }
-
-    if (!validateEmailFormat(email)) {
-      throw new ErrorHandler(ERROR.ERROR_EMAIL_FORMAT, StatusCodes.BAD_REQUEST);
-    }
-
-    if (!validatePasswordFormat(password)) {
-      throw new ErrorHandler(
-        ERROR.ERROR_PASSWORD_FORMAT,
-        StatusCodes.BAD_REQUEST
-      );
-    }
-
-    const user = await userService.getUserByEmail(email);
-    if (!user) {
-      throw new ErrorHandler(ERROR.ERROR_USER_NOT_EXIST, StatusCodes.NOT_FOUND);
-    }
-
-    // Check if password match
-    const isPasswordAuth = isPasswordValid(password, user.password);
-    if (!isPasswordAuth) {
-      throw new ErrorHandler(
-        ERROR.ERROR_WRONG_CREDENTIALS,
-        StatusCodes.UNAUTHORIZED
-      );
-    }
-
-    // Generate JWT token
-    if (!JWT_SECRET) {
-      throw new ErrorHandler(
-        ERROR.ERROR_INVALID_JWT_KE,
-        StatusCodes.BAD_REQUEST
-      );
-    }
-
-    const token = jwt.sign({ userId: user._id.toString() }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
+    const { userId, username, token } = await userService.signIn(
+      email,
+      password,
+      JWT_SECRET
+    );
     // Set cookie with Bearer token
     res.setHeader(
       "Set-Cookie",
@@ -128,10 +80,7 @@ export const signIn = async (
         sameSite: "strict",
       })
     );
-
-    res
-      .status(StatusCodes.OK)
-      .json({ userId: user.id, username: user.username });
+    res.status(StatusCodes.OK).json({ userId, username });
   } catch (error) {
     console.log("Error sign in", error);
     // Check if it's a Mongoose validation error
