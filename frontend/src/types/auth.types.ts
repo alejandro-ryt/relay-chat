@@ -2,6 +2,8 @@ import { signUpSchema } from "@/schemas/signUp";
 import { signInSchema } from "@/schemas/signIn";
 import { z } from "zod";
 import { TUser, TUserContact } from "@/types/user.types";
+import { RouteProps } from "react-router";
+import { JSX } from "react";
 
 export type TSignUpForm = z.output<typeof signUpSchema>;
 export type TSignUpFormData = Omit<
@@ -9,6 +11,9 @@ export type TSignUpFormData = Omit<
   "agreement" | "confirmPassword"
 >;
 export type TSignInForm = z.output<typeof signInSchema>;
+export type RouteConfig = RouteProps & {
+  element: JSX.Element;
+};
 export type TAuthStore = {
   authUser: TAuthUser | null;
   authUserDetails: TUser | null;

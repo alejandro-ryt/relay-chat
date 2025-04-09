@@ -1,28 +1,28 @@
-import { ChatLayout } from "@/layout/ChatLayout";
 import Layout from "@/layout/Layout";
-import Chat from "@/pages/Chat";
-import { Contact } from "@/pages/Contact";
 import NotFound from "@/pages/NotFound";
-import Settings from "@/pages/Settings";
 import SignIn from "@/pages/SignIn";
-import SignUp from "@/pages/SignUp";
 import { useThemeStore } from "@/store/useThemeStore";
 import { Route, Routes } from "react-router";
+import { Protected } from "@/components/ui/Protected";
+import { PROTECTED_ROUTES, PUBLIC_ROUTES } from "@/constants/routesConfig";
+import { ROUTES } from "@/constants/routes";
 
 const App = () => {
-  const { theme } = useThemeStore();
+  const theme = useThemeStore().theme;
 
   return (
     <div data-theme={theme}>
       <Routes>
-        <Route element={<Layout />} path="/">
+        <Route element={<Layout />} path={ROUTES.SIGN_IN}>
           <Route index element={<SignIn />} />
-          <Route element={<ChatLayout />}>
-            <Route path="chat" element={<Chat />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="setting" element={<Settings />} />
+          <Route element={<Protected />}>
+            {PROTECTED_ROUTES.map((route) => (
+              <Route path={route.path} element={route.element} />
+            ))}
           </Route>
-          <Route path="sign-up" element={<SignUp />} />
+          {PUBLIC_ROUTES.map((route) => (
+            <Route path={route.path} element={route.element} />
+          ))}
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
