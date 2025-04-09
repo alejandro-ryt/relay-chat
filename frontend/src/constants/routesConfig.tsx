@@ -4,9 +4,10 @@ import Settings from "@/pages/Settings";
 import Chat from "@/pages/Chat";
 import SignIn from "@/pages/SignIn";
 import SignUp from "@/pages/SignUp";
-import { RouteConfig } from "@/types/auth.types";
+import { TRouteConfig } from "@/types/auth.types";
+import NotFound from "@/pages/NotFound";
 
-export const PROTECTED_ROUTES: RouteConfig[] = [
+export const PROTECTED_ROUTES: TRouteConfig[] = [
   {
     path: ROUTES.CHAT,
     element: <Chat />,
@@ -21,7 +22,7 @@ export const PROTECTED_ROUTES: RouteConfig[] = [
   },
 ];
 
-export const PUBLIC_ROUTES: RouteConfig[] = [
+export const PUBLIC_ROUTES: TRouteConfig[] = [
   {
     path: ROUTES.SIGN_IN,
     element: <SignIn />,
@@ -29,5 +30,9 @@ export const PUBLIC_ROUTES: RouteConfig[] = [
   {
     path: ROUTES.SIGN_UP,
     element: <SignUp />,
+  },
+  {
+    path: ROUTES.NOT_FOUND,
+    element: <NotFound />,
   },
 ];

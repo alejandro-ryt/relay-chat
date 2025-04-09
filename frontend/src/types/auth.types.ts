@@ -11,7 +11,7 @@ export type TSignUpFormData = Omit<
   "agreement" | "confirmPassword"
 >;
 export type TSignInForm = z.output<typeof signInSchema>;
-export type RouteConfig = RouteProps & {
+export type TRouteConfig = RouteProps & {
   element: JSX.Element;
 };
 export type TAuthStore = {

@@ -1,5 +1,4 @@
 import Layout from "@/layout/Layout";
-import NotFound from "@/pages/NotFound";
 import SignIn from "@/pages/SignIn";
 import { useThemeStore } from "@/store/useThemeStore";
 import { Route, Routes } from "react-router";
@@ -23,7 +22,6 @@ const App = () => {
           {PUBLIC_ROUTES.map((route) => (
             <Route path={route.path} element={route.element} />
           ))}
-          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </div>
