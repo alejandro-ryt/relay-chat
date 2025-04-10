@@ -93,4 +93,5 @@ export type TChatActions = {
   joinChat: (data: TJoinChat) => boolean;
   resetData: () => void;
   filterChats: (searchTerm: string) => TPreviewChat[] | null;
+  setupNotificationListener: () => void;
 };
