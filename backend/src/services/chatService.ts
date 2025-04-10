@@ -150,7 +150,7 @@ class ChatService implements IChatService {
 
     return await Message.findById(savedMessage._id).populate(
       "author",
-      "username"
+      "username profilePic"
     );
   }
 
