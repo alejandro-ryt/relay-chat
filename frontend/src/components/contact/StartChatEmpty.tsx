@@ -9,7 +9,9 @@ export default () => (
       role="group"
       className="size-full flex flex-col items-center justify-center"
     >
-      <h2 className="text-5xl font-bold">{CONTACT_DATA.START_CHAT}</h2>
+      <h2 className="text-3xl md:text-5xl py-5 font-bold">
+        {CONTACT_DATA.START_CHAT}
+      </h2>
       <p className="py-6">{CONTACT_DATA.START_CHAT_NEW}</p>
     </div>
   </section>

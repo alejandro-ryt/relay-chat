@@ -38,14 +38,14 @@ const Chat = () => {
       {selectedChatId ? (
         <ChatBox />
       ) : (
-        <div className="flex flex-col items-center justify-center p-8 w-full">
+        <div className="flex flex-col items-center justify-center p4 md:p-8 w-full">
           {/* Title */}
-          <h1 className="text-3xl font-semibold mb-4 text-base-content">
+          <h1 className="text-3xl font-semibold mb-4 text-center text-base-content">
             Welcome {authUser?.username}! 😎
           </h1>
 
           {/* Description */}
-          <p className="text-center text-sm text-base-content mb-8">
+          <p className="text-center text-sm text-base-content p-2">
             Chat with your friends, family, or anyone you want!
           </p>
         </div>

@@ -3,8 +3,8 @@ import SadIcon from "@/components/ui/icons/SadIcon";
 
 export const EmptyContact = () => {
   return (
-    <section className="bg-base-200 flex flex-1 flex-col items-center justify-center">
-      <h2 className="text-5xl text-center font-bold">
+    <section className="bg-base-200 flex flex-1 rounded-2xl m-2 flex-col items-center justify-center">
+      <h2 className="text-3xl md:text-5xl text-center font-bold">
         {CONTACT_DATA.EMPTY_CONTACTS}
       </h2>
       <p className="py-6">{CONTACT_DATA.ADD_CONTACTS}</p>

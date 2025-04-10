@@ -106,5 +106,11 @@ export const useAuth = () => {
     }
   };
 
-  return { sendSignUp, sendSignIn, logout, isSigningIn, isSigningUp };
+  return {
+    sendSignUp,
+    sendSignIn,
+    logout,
+    isSigningIn,
+    isSigningUp,
+  };
 };

@@ -64,7 +64,7 @@ export const ChatLayout = () => {
       </aside>
       {/* Sidebar */}
       {/* Dynamic Container */}
-      <section className="col-span-12 md:col-span-11 row-span-1 h-full">
+      <section className="col-span-12 md:order-2 md:col-span-11 row-span-1 h-full">
         <Outlet />
       </section>
       {/* Dynamic Container */}
