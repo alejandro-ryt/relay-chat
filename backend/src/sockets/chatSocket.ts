@@ -53,9 +53,21 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
   // Handle 'sendMessage' event
   socket.on(
     "sendMessage",
-    async (message: string, chatName: string, userId: string) => {
+    async (
+      message: string,
+      chatName: string,
+      userId: string,
+      membersIds: string[]
+    ) => {
       try {
-        await chatController.sendMessage(io, socket, message, chatName, userId);
+        await chatController.sendMessage(
+          io,
+          socket,
+          message,
+          chatName,
+          userId,
+          membersIds
+        );
       } catch (error: unknown) {
         // Handle errors by emitting the error message to the client
         if (error instanceof ErrorHandler) {

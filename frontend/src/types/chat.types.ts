@@ -76,7 +76,6 @@ export type TChatState = {
   selectedChatData: TChat | null;
   selectedChatPreviewData: TPreviewChat | null;
   chatPreviewArray: TPreviewChat[] | null;
-  notification: string | null;
 };
 
 export type TChatActions = {
@@ -94,5 +93,5 @@ export type TChatActions = {
   joinChat: (data: TJoinChat) => boolean;
   resetData: () => void;
   filterChats: (searchTerm: string) => TPreviewChat[] | null;
-  getNotification: () => void;
+  setupNotificationListener: () => void;
 };

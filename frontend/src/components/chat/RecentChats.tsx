@@ -28,7 +28,7 @@ const RecentChats = () => {
     if (selectedChatId === null) {
       setSelectedChatId(chatsArray?.[0]?.id || null);
     }
-  }, [chatsArray]);
+  }, [chatsArray?.length]);
 
   useEffect(() => {
     const filtered = filterChats(searchTerm);

@@ -6,8 +6,8 @@ import {
   TChatState,
   TPreviewChat,
 } from "@/types/chat.types";
-import toast from "react-hot-toast";
 import { create } from "zustand";
+import toast from "react-hot-toast";
 
 export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   chatInfoSidebar: false,
@@ -16,7 +16,6 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   selectedChatData: null,
   selectedChatPreviewData: null,
   chatPreviewArray: [],
-  notification: null,
 
   // Set Chat id
   setSelectedChatId: (selectedChatId: string | null) => {
@@ -95,12 +94,19 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
 
   // Send Messsage
   sendMessage: (message: string, userId) => {
+    let membersIds: string[] = [];
+
+    get().selectedChatData?.members.forEach((member) => {
+      console.log(member.username);
+      member._id !== userId ? membersIds.push(member._id) : null;
+    });
     if (socket) {
       socket.emit(
         "sendMessage",
         message,
         get().selectedChatPreviewData?.chatName,
-        userId
+        userId,
+        membersIds
       ); // Emit event to server to send the message
 
       get().setSelectedChatData(); // Update chat data after sending the message
@@ -113,10 +119,7 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   getMessage: () => {
     try {
       if (socket) {
-        get().getNotification(); // Get notifications
         socket.on("sendMessage", (msg: TChatMessage) => {
-          console.log("msg", msg);
-
           const existingMessage = get().selectedChatData?.messages.find(
             (message) => message._id === msg._id
           );
@@ -175,16 +178,14 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
       return chat.chatName.toLowerCase().includes(searchTerm.toLowerCase());
     });
   },
-  // Get Notification
-  getNotification: () => {
+  setupNotificationListener: () => {
     if (socket) {
-      socket.on("notification", (message) => {
-        if (message && message.username && message.message) {
-          toast.success(`${message.username} : ${message.message}`);
-        } // Show notification using toast
+      socket.off("notification");
+      socket.on("notification", (data) => {
+        if (data?.author) {
+          toast.success(`${data.author?.username} send you a new message`);
+        }
       });
-    } else {
-      console.error("Socket is null. Unable to get notifications.");
     }
   },
 }));

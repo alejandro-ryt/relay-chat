@@ -5,14 +5,11 @@ import { useChatStore } from "@/store/useChatStore";
 import { TChatMember } from "@/types/chat.types";
 
 const ChatHistory = () => {
-  const {
-    selectedChatData,
-    chatPreviewArray,
-    selectedChatId,
-    getMessage,
-    notification,
-    getNotification,
-  } = useChatStore();
+  const setupNotificationListener = useChatStore(
+    (state) => state.setupNotificationListener
+  );
+  const { selectedChatData, chatPreviewArray, selectedChatId, getMessage } =
+    useChatStore();
   const { authUser } = useAuthStore();
 
   const getMemberInfo = (userId: string): TChatMember | undefined => {
@@ -24,16 +21,14 @@ const ChatHistory = () => {
   };
 
   useEffect(() => {
+    setupNotificationListener();
+  }, [setupNotificationListener]);
+
+  useEffect(() => {
     if (selectedChatData) {
       getMessage(); // Get messages from socket
     }
   }, [selectedChatData]);
-
-  useEffect(() => {
-    if (notification) {
-      getNotification(); // Clear notification after showing it
-    }
-  }, [notification]);
 
   return (
     <section

@@ -208,7 +208,8 @@ export const sendMessage = async (
   socket: Socket,
   message: string,
   chatName: string,
-  userId: string
+  userId: string,
+  membersIds: string[]
 ): Promise<void> => {
   try {
     // Find the chat (room)
@@ -228,60 +229,46 @@ export const sendMessage = async (
 
     // Save message to DB
     const newMessage = await chatService.saveMessage(message, userId);
+    if (!newMessage) {
+      throw new ErrorHandler("Message not created", StatusCodes.BAD_REQUEST);
+    }
     // Inject message to chats
     await chatService.addMessageToChat(chat, newMessage.id);
     // Emit message to the room
     io.to(chatName).emit("sendMessage", {
-      author: newMessage.author,
+      author: newMessage.author._id,
       _id: newMessage.id,
       message: newMessage.message,
       createdAt: newMessage.createdAt,
     });
 
     // Emit notification of a new message
-    const sockets = io.of("/").sockets.keys();
-    console.log("sockets", sockets);
+    for (const memberUserId of membersIds) {
+      try {
+        const userSocketId =
+          await userService.getUserSocketIdByUserId(memberUserId);
+        if (!userSocketId) {
+          console.warn(`Socket ID not found for user ${memberUserId}`);
+          continue;
+        }
 
-    // return all Socket instances in the "room1" room
-    // const sockets = await myNamespace.in(chatName).fetchSockets();
-    // console.log("sockets", sockets);
+        const memberSocketInstance = io.of("/").sockets.get(userSocketId);
+        if (!memberSocketInstance) {
+          console.warn(`Socket instance not found for user ${memberUserId}`);
+          continue;
+        }
 
-    for (const socketId in sockets) {
-      console.log("socketId", socketId);
-      const memberSocketInstance = io.of("/").sockets.get(socketId);
-      if (!memberSocketInstance) {
-        throw new ErrorHandler("no instances", 400);
+        memberSocketInstance.emit("notification", {
+          author: newMessage.author,
+          message: newMessage.message,
+        });
+      } catch (innerError) {
+        console.error(
+          `Error sending notification to user ${memberUserId}:`,
+          innerError
+        );
       }
-      memberSocketInstance.emit("notification", {
-        username: newMessage.author,
-        message: newMessage.message,
-      });
     }
-    //   console.log(socket.id);
-    //   socket.emit("notification", {
-    //     username: newMessage.author,
-    //     message: newMessage.message,
-    //   });
-    // console.log(socket.handshake);
-    // console.log(socket.rooms);
-    // console.log(socket.data);
-
-    // socket.emit("hello");
-    // socket.join("room1");
-    // socket.leave("room2");
-    // socket.disconnect();
-    // }
-    // let sockets = await io.sockets.;
-    // console.log("sockets before filter", sockets);
-    // sockets = sockets.filter((s) => s.id !== socket.id);
-    // console.log("sockets", sockets);
-
-    // for (const socket of sockets) {
-    //   socket.emit("notification", {
-    //     username: newMessage.author,
-    //     message: newMessage.message,
-    //   });
-    // }
   } catch (error) {
     console.error("Error joining room:", error);
     // Handle errors by emitting the error message to the client
