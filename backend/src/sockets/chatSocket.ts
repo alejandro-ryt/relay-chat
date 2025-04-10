@@ -57,7 +57,11 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
       message: string,
       chatName: string,
       userId: string,
+<<<<<<< Updated upstream
       membersIds: string[]
+=======
+      messageId?: string
+>>>>>>> Stashed changes
     ) => {
       try {
         await chatController.sendMessage(
