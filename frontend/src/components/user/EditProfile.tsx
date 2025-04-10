@@ -31,7 +31,7 @@ export const EditProfile = () => {
 
   return (
     <>
-      <header className="dropdown dropdown-start h-14 m-2">
+      <header className="dropdown dropdown-top md:dropdown-start md:h-14 md:m-2">
         <div
           tabIndex={0}
           role="button"

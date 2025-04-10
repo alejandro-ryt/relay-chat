@@ -139,23 +139,38 @@ class ChatService implements IChatService {
   public async saveMessage(
     message: string,
     userId: string,
-    messageId: string
+    messageId?: string
   ): Promise<IMessageDocument | null> {
-    const filter = messageId ? { _id: messageId } : {};
-    const update = {
-      author: userId,
+    if (messageId) {
+      const filter = messageId ? { _id: messageId } : {};
+      const update = {
+        author: userId,
+        message,
+        createdAt: new Date(),
+      };
+      const options = {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true,
+      };
+
+      return await Message.findOneAndUpdate(filter, update, options)
+        .populate("author", "username profilePic")
+        .exec();
+    }
+
+    const newMessage = new Message({
+      author: new Types.ObjectId(userId),
       message,
       createdAt: new Date(),
-    };
-    const options = {
-      new: true,
-      upsert: true,
-      setDefaultsOnInsert: true,
-    };
+    });
 
-    return await Message.findOneAndUpdate(filter, update, options)
-      .populate("author", "username profilePic")
-      .exec();
+    const savedMessage = await newMessage.save();
+
+    return await Message.findById(savedMessage._id).populate(
+      "author",
+      "username profilePic"
+    );
   }
 
   // Add the message reference (ID) to the messages array in the Chat model

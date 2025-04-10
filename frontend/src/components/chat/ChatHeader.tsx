@@ -28,7 +28,7 @@ const ChatHeader = () => {
           }}
           transition={{ duration: 0.2 }}
         >
-          <section className="flex flex-row justify-center items-center h-10 mr-1">
+          <section className="flex flex-row justify-center items-center h-10 md:mr-1">
             <IconButton
               shape="round"
               title="Contacts"

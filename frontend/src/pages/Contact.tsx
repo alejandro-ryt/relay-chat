@@ -34,7 +34,7 @@ const Contact = () => {
   return (
     <section className="grid col-span-2 grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 p-2 h-full">
       <section className="bg-base-100 rounded-[1.5rem] flex flex-col px-2 py-2 h-full">
-        <header className="grid md:grid-cols-2 justify-center gap-4 items-center">
+        <header className="grid grid-cols-1 p-2 md:grid-cols-2 justify-center gap-4 items-center">
           <SearchInput
             value={searchTerm}
             handleOnchange={handleFilterContact}
