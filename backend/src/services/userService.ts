@@ -117,6 +117,7 @@ export default class UserService implements IUserService {
   }
 
   async getUserBySocketId(socketId: string): Promise<IUserDocument | null> {
+    console.log("getUserBySocketId --> socketId", socketId);
     return await User.findOne({ socketId }).exec();
   }
 

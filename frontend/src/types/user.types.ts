@@ -23,4 +23,15 @@ export type TUserStore = {
   setUsers: (data: TUser[]) => void;
 };
 
+export type TUserSearchResponse = {
+  page: number;
+  totalCount: number;
+  totalPages: number;
+  users: TUser[];
+};
+
+export type ContactSkeletonProps = {
+  length?: number;
+};
+
 export type TEditUserForm = z.output<typeof userEditSchema>;

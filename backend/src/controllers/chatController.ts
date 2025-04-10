@@ -128,8 +128,10 @@ export const joinChat = async (
   membersId: string[]
 ): Promise<void> => {
   try {
+    console.log("joinChat --> currentUserId", currentUserId);
     // Find the user in the database using the userId
     const user = await userService.getUserById(currentUserId);
+    console.log("joinChat --> user", user);
     // If the user doesn't exist, throw a custom error
     if (!user) {
       throw new ErrorHandler(

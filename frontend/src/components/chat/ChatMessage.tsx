@@ -1,6 +1,6 @@
+import clsx from "clsx";
 import Avatar from "@/components/ui/Avatar";
 import { TChatMessageProps } from "@/types/chat.types";
-import clsx from "clsx";
 
 const ChatMessage = ({ type, pic, name, time, message }: TChatMessageProps) => {
   const typeClass = clsx(
@@ -10,7 +10,7 @@ const ChatMessage = ({ type, pic, name, time, message }: TChatMessageProps) => {
 
   const colorClass = clsx(
     "chat-bubble shadow-sm rounded-[0.8rem]",
-    type === "received" ? "bg-base-200" : "bg-primary text-primary-content"
+    type === "received" ? "bg-primary text-primary-content" : "bg-base-200"
   );
 
   return (

@@ -1,8 +1,8 @@
 import { REGEX } from "@/constants/regex";
 import clsx from "clsx";
-import { CheckCircleSuccessIcon } from "@/components/ui/icons/CheckCircleSuccessIcon";
-import { CircleErrorIcon } from "@/components/ui/icons/CircleErrorIcon";
-import { passwordMatch } from "@/utils/security";
+import CheckCircleSuccessIcon from "@/components/ui/icons/CheckCircleSuccessIcon";
+import CircleErrorIcon from "@/components/ui/icons/CircleErrorIcon";
+import { passwordMatch } from "@/utils";
 import { motion } from "motion/react";
 import SIGN_UP_DATA from "@/constants/signUp";
 import { TPasswordCriteriaProps } from "@/types/form.types";

@@ -4,7 +4,7 @@ const Avatar = ({ pic, sizeClass }: TAvatarProps) => {
   return pic ? (
     <article className="avatar">
       <figure className={`mask bg-base-content mask-squircle ${sizeClass}`}>
-        <img loading="lazy" src={pic} />
+        <img className="object-contain" loading="lazy" src={pic} />
       </figure>
     </article>
   ) : (
