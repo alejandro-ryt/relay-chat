@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as authController from "@/controllers/authController";
+import { authenticateUser } from "@/middlewares/authMiddleware";
 
 const router = Router();
 
@@ -9,7 +10,6 @@ router.post("/sign-up", authController.signUp);
 // POST Sign In
 router.post("/sign-in", authController.signIn);
 
-//
-router.post("/logout", authController.logOut);
+router.post("/logout", authenticateUser, authController.logOut);
 
 export default router;
