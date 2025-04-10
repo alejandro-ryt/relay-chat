@@ -25,9 +25,6 @@ const io = new Server(server, { cors: corsOptions });
 
 app.use(cors(corsOptions));
 
-// Connect to mongo
-connectDB();
-
 // Middleware to parse JSON
 app.use(express.json());
 app.use(errorMiddleware);
@@ -41,5 +38,7 @@ io.on("connection", (socket) => {
 });
 
 server.listen(PORT, () => {
+  // Connect to mongo
+  connectDB();
   console.log(`Server running on http://localhost:${PORT}`);
 });
