@@ -41,7 +41,7 @@ export const Contact = () => {
           />
           <AddContact />
         </header>
-        {contacts && contacts.length === 0 ? (
+        {contacts && contacts.length > 0 ? (
           <ul className="list bg-base-100 rounded-box shadow-md mt-2">
             <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">
               {CONTACT_DATA.ALL_CONTACTS}

@@ -5,6 +5,9 @@ import { useChatStore } from "@/store/useChatStore";
 import { TChatMember } from "@/types/chat.types";
 
 const ChatHistory = () => {
+  const setupNotificationListener = useChatStore(
+    (state) => state.setupNotificationListener
+  );
   const { selectedChatData, chatPreviewArray, selectedChatId, getMessage } =
     useChatStore();
   const { authUser } = useAuthStore();
@@ -16,6 +19,10 @@ const ChatHistory = () => {
 
     return memberData;
   };
+
+  useEffect(() => {
+    setupNotificationListener();
+  }, [setupNotificationListener]);
 
   useEffect(() => {
     if (selectedChatData) {
