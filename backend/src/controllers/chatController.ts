@@ -1,3 +1,7 @@
+/**
+ * Refactor in progress
+ */
+
 import { NextFunction, Request, Response } from "express";
 import { Server, Socket } from "socket.io";
 import { StatusCodes } from "http-status-codes";
@@ -7,9 +11,11 @@ import { ERROR } from "@/constants/relayChat";
 import { ErrorHandler } from "@/utils/errorHandler";
 import { IMessage } from "@/interfaces/message";
 import { Types } from "mongoose";
+import ChatRepository from "@/repositories/chats";
 
 const chatService = new ChatService();
 const userService = new UserService();
+const chatRepository = new ChatRepository();
 
 /**
  * HTTP methods
@@ -33,32 +39,9 @@ export const getChatsByUserId = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    if (!req.params.id) {
-      throw new ErrorHandler(ERROR.ERROR_ID_REQUIRED, StatusCodes.BAD_REQUEST);
-    }
-    const chats = await chatService.findChatsByUserId(req.params.id);
-
-    const formattedChats = chats.map((chat) => {
-      // Cast to IMessage[]
-      const messages = chat.messages as unknown as IMessage[];
-      // Get last message
-      const lastMessage = messages[0];
-      return {
-        id: chat._id,
-        chatName: chat.name,
-        chatPic: chat.chatPic,
-        lastMessage: lastMessage
-          ? {
-              message: lastMessage.message,
-              author: lastMessage.author,
-              timestamp: lastMessage.createdAt,
-            }
-          : null,
-        timestamp: chat.createdAt.toLocaleDateString(),
-      };
-    });
-
-    res.status(StatusCodes.OK).json(formattedChats);
+    const { id } = req.params;
+    const chats = await chatRepository.findChatsByUserId(id);
+    res.status(StatusCodes.OK).json(chats);
   } catch (error) {
     console.log("Error getting chat by userID", error);
     if (error instanceof ErrorHandler) {
@@ -220,7 +203,8 @@ export const sendMessage = async (
   socket: Socket,
   message: string,
   chatName: string,
-  userId: string
+  userId: string,
+  membersId: string[]
 ): Promise<void> => {
   try {
     // Find the chat (room)

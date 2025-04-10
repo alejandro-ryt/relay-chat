@@ -13,10 +13,28 @@ export interface IChat {
   updatedAt: Date;
 }
 
+export interface FormattedChat {
+  id: string;
+  chatName: string;
+  chatPic: string;
+  lastMessage: {
+    message: string;
+    createdAt: string; // or Date, depending on how you're handling it
+    author: {
+      _id: string;
+      firstName: string;
+      lastName: string;
+      username: string;
+      email: string;
+    };
+  } | null;
+  timestamp: string; // ISO string or Date
+}
+
 export interface IChatDocument extends IChat, Document {}
 
 export interface IChatService {
-  findChatsByUserId(userId: string): Promise<IChat[] | []>;
+  findChatsByUserId(userId: string): Promise<FormattedChat[] | []>;
   findByChatNamePopulated(chatName: string): Promise<IChat | null>;
   findByChatName(chatName: string): Promise<IChatDocument | null>;
   saveChat(
@@ -37,7 +55,7 @@ export interface IChatService {
 
 export interface IChatRepository {
   getPendingChatInvitesByUserId(userId: string): Promise<IPendingInvites[]>;
-  findChatsByUserId(userId: string): Promise<IChatDocument[] | []>;
+  findChatsByUserId(userId: string): Promise<FormattedChat[] | []>;
   findByChatName(chatName: string): Promise<IChatDocument | null>;
   findByChatId(id: Types.ObjectId): Promise<IChatDocument | null>;
   findByChatNamePopulated(chatName: string): Promise<IChat | null>;
