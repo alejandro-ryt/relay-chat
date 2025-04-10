@@ -207,7 +207,8 @@ export const sendMessage = async (
   message: string,
   chatName: string,
   userId: string,
-  membersIds: string[]
+  membersIds: string[],
+  messageId?: string
 ): Promise<void> => {
   try {
     // Find the chat (room)
@@ -226,7 +227,11 @@ export const sendMessage = async (
     }
 
     // Save message to DB
-    const newMessage = await chatService.saveMessage(message, userId);
+    const newMessage = await chatService.saveMessage(
+      message,
+      userId,
+      messageId
+    );
     if (!newMessage) {
       throw new ErrorHandler("Message not created", StatusCodes.BAD_REQUEST);
     }

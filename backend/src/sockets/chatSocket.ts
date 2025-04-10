@@ -57,7 +57,8 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
       message: string,
       chatName: string,
       userId: string,
-      membersIds: string[]
+      membersIds: string[],
+      messageId?: string
     ) => {
       try {
         await chatController.sendMessage(
