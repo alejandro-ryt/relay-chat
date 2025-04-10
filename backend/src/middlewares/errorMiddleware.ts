@@ -3,21 +3,21 @@ import { ErrorHandler } from "@/utils/errorHandler";
 import { ERROR } from "@/constants/relayChat";
 
 export const errorMiddleware = (
-    err: Error | ErrorHandler,
-    req: Request,
-    res: Response,
-    next: NextFunction
+  err: Error | ErrorHandler,
+  req: Request,
+  res: Response,
+  next: NextFunction
 ): void => {
-    let statusCode = 500;
-    let message = ERROR.INTERNAL_SERVICE_ERROR as string;
+  let statusCode = 500;
+  let message = ERROR.INTERNAL_SERVICE_ERROR as string;
 
-    if (err instanceof ErrorHandler) {
-        statusCode = err.statusCode;
-        message = err.message as string
-    }
+  if (err instanceof ErrorHandler) {
+    statusCode = err.statusCode;
+    message = err.message as string;
+  }
 
-    res.status(statusCode).json({
-        success: false,
-        error: message
-    });
+  res.status(statusCode).json({
+    success: false,
+    error: message,
+  });
 };

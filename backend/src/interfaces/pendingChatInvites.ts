@@ -2,7 +2,7 @@ import { Document, Types } from "mongoose";
 
 export interface IPendingInvites {
   userId: Types.ObjectId;
-  chatName: string;
+  chatId: Types.ObjectId;
 }
 
 export interface IPendingInvitesDocument extends IPendingInvites, Document {}

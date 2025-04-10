@@ -1,4 +1,8 @@
-import { Request, Response } from "express";
+/**
+ * Refactor in progress
+ */
+
+import { NextFunction, Request, Response } from "express";
 import { Server, Socket } from "socket.io";
 import { StatusCodes } from "http-status-codes";
 import ChatService from "@/services/chatService";
@@ -7,9 +11,11 @@ import { ERROR } from "@/constants/relayChat";
 import { ErrorHandler } from "@/utils/errorHandler";
 import { IMessage } from "@/interfaces/message";
 import { Types } from "mongoose";
+import ChatRepository from "@/repositories/chats";
 
 const chatService = new ChatService();
 const userService = new UserService();
+const chatRepository = new ChatRepository();
 
 /**
  * HTTP methods
@@ -29,43 +35,23 @@ const userService = new UserService();
  */
 export const getChatsByUserId = async (
   req: Request,
-  res: Response
+  res: Response,
+  next: NextFunction
 ): Promise<void> => {
   try {
-    if (!req.params.id) {
-      throw new ErrorHandler(ERROR.ERROR_ID_REQUIRED, StatusCodes.BAD_REQUEST);
-    }
-    const chats = await chatService.findChatsByUserId(req.params.id);
-
-    const formattedChats = chats.map((chat) => {
-      // Cast to IMessage[]
-      const messages = chat.messages as unknown as IMessage[];
-      // Get last message
-      const lastMessage = messages[0];
-      return {
-        id: chat._id,
-        chatName: chat.name,
-        chatPic: chat.chatPic,
-        lastMessage: lastMessage
-          ? {
-              message: lastMessage.message,
-              author: lastMessage.author,
-              timestamp: lastMessage.createdAt,
-            }
-          : null,
-        timestamp: chat.createdAt.toLocaleDateString(),
-      };
-    });
-
-    res.status(StatusCodes.OK).json(formattedChats);
+    const { id } = req.params;
+    const chats = await chatRepository.findChatsByUserId(id);
+    res.status(StatusCodes.OK).json(chats);
   } catch (error) {
     console.log("Error getting chat by userID", error);
     if (error instanceof ErrorHandler) {
-      throw new ErrorHandler(error.message, error.statusCode);
+      return next(error);
     }
-    throw new ErrorHandler(
-      ERROR.INTERNAL_SERVICE_ERROR,
-      StatusCodes.SERVICE_UNAVAILABLE
+    return next(
+      new ErrorHandler(
+        ERROR.INTERNAL_SERVICE_ERROR,
+        StatusCodes.SERVICE_UNAVAILABLE
+      )
     );
   }
 };
@@ -83,27 +69,46 @@ export const lookUpForPendingInvites = async (
   socket: Socket,
   userId: string
 ) => {
-  const invitations = await chatService.getPendingChatInvitesByUserId(userId);
+  try {
+    const invitations = await chatService.getPendingChatInvitesByUserId(userId);
 
-  if (!invitations.length) {
-    return;
-  }
-
-  invitations.forEach(async (invite) => {
-    const chat = await chatService.findByChatName(invite.chatName);
-    if (!chat) {
-      throw new ErrorHandler(ERROR.ERROR_CHAT_NOT_FOUND, StatusCodes.NOT_FOUND);
+    if (!invitations.length) {
+      return;
     }
-    socket.join(chat.name); // Join the room for the user
-    socket.emit(
-      "notification",
-      `You were invited to join the chat: ${chat.name}`
-    );
-    console.log(`${userId} joined the room ${chat.name}`);
-  });
 
-  // After the user has joined the rooms, clear the invitations
-  await chatService.clearPendingChatInvites(userId);
+    invitations.forEach(async (invite) => {
+      const chat = await chatService.findByChatId(invite.chatId);
+      if (!chat) {
+        throw new ErrorHandler(
+          ERROR.ERROR_CHAT_NOT_FOUND,
+          StatusCodes.NOT_FOUND
+        );
+      }
+      socket.join(chat.name); // Join the room for the user
+      socket.emit(
+        "notification",
+        `You were invited to join the chat: ${chat.name}`
+      );
+      console.log(`${userId} joined the room ${chat.name}`);
+    });
+
+    // After the user has joined the rooms, clear the invitations
+    await chatService.clearPendingChatInvites(userId);
+  } catch (error) {
+    // Handle errors by looking up chat pending invites
+    if (error instanceof ErrorHandler) {
+      socket.emit("error", {
+        message: error.message,
+        statusCode: error.statusCode,
+      });
+      return;
+    }
+    // General error handling if something else goes wrong
+    socket.emit("error", {
+      message: ERROR.INTERNAL_SERVICE_ERROR,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+    });
+  }
 };
 
 /**
@@ -135,14 +140,11 @@ export const joinChat = async (
       );
     }
 
-    console.log("joinChat --> membersId", membersId);
-
     // Find or create the chat (room) in the database
     await chatService.saveChat(chatName, type, [currentUserId, ...membersId]);
 
     // Get chat by name (Populated)
     const chat = await chatService.findByChatNamePopulated(chatName);
-    console.log("joinChat --> chat", chat);
     // If the chat doesn't exist, throw a custom error
     if (!chat) {
       throw new ErrorHandler(ERROR.ERROR_CHAT_NOT_FOUND, StatusCodes.NOT_FOUND);
@@ -152,15 +154,12 @@ export const joinChat = async (
     membersId.forEach(async (userId) => {
       if (chat.members.includes(new Types.ObjectId(userId))) return;
       // Here we emit the event to the individual user socket
-
       const userSocketId = await userService.getUserSocketIdByUserId(userId);
-      console.log("joinChat --> userSocketId", userSocketId);
       if (!userSocketId) {
         await chatService.saveChatInvitation(userId, chatName);
         return;
       }
       const memberSocketInstance = io.of("/").sockets.get(userSocketId);
-      console.log("joinChat --> memberSocketInstance", memberSocketInstance);
 
       if (!memberSocketInstance) {
         throw new ErrorHandler(
@@ -206,7 +205,8 @@ export const sendMessage = async (
   socket: Socket,
   message: string,
   chatName: string,
-  userId: string
+  userId: string,
+  membersId: string[]
 ): Promise<void> => {
   try {
     // Find the chat (room)

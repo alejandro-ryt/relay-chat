@@ -12,6 +12,7 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
    */
   socket.on("initiateSocket", async (userId: string) => {
     await assignSocketIdByUserId(userId, socket);
+    console.log(`User connected: ${socket.id}`);
   });
 
   // Handle 'joinChat' event
@@ -75,7 +76,7 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
   );
 
   // Handle 'disconnect' event
-  socket.on("disconnect", (socketCliente) => {
+  socket.on("disconnect", () => {
     try {
       chatController.handleDisconnect(socket);
     } catch (error: unknown) {
