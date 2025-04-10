@@ -28,7 +28,7 @@ export interface IChatService {
     chatId: string,
     message: string,
     userId: string
-  ): Promise<IMessageDocument>;
+  ): Promise<IMessageDocument | null>;
   getPendingChatInvitesByUserId(userId: string): Promise<IPendingInvites[]>;
   saveChatInvitation(userId: string, chatName: string): Promise<void>;
   clearPendingChatInvites(userId: string): Promise<void>;
