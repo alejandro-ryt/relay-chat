@@ -11,7 +11,7 @@ import { useUser } from "@/hooks/useUser";
 import { useAuthStore } from "@/store/useAuthStore";
 import { generateAvatar } from "@/utils";
 
-export const Contact = () => {
+const Contact = () => {
   const { authUserDetails, filterContacts } = useAuthStore();
   const {
     addUsers,
@@ -216,3 +216,4 @@ export const Contact = () => {
     </section>
   );
 };
+export default Contact;

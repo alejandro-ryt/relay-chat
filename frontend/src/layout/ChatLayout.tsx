@@ -7,24 +7,17 @@ import SettingIcon from "@/components/ui/icons/SettingIcon";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/useAuth";
 import { useUser } from "@/hooks/useUser";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router";
+import { FC, PropsWithChildren, useEffect } from "react";
+import { useNavigate } from "react-router";
 
-export const ChatLayout = () => {
+export const ChatLayout: FC<PropsWithChildren> = ({ children }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const { getUserDetails } = useUser();
-  const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate(ROUTES.SIGN_IN, { replace: true });
-      return;
-    }
-
     getUserDetails();
-  }, [isAuthenticated, navigate]);
+  }, []);
 
   return (
     <section className="relative grid grid-cols-12 grid-rows-1 h-full md:h-max rounded-[1.5rem]">
@@ -64,9 +57,7 @@ export const ChatLayout = () => {
       </aside>
       {/* Sidebar */}
       {/* Dynamic Container */}
-      <section className="col-span-12 md:order-2 md:col-span-11 row-span-1 h-full">
-        <Outlet />
-      </section>
+      <section className="col-span-12 md:order-2 md:col-span-11 row-span-1 h-full">{children}</section>
       {/* Dynamic Container */}
     </section>
   );
