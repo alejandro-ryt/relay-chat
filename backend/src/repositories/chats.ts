@@ -1,6 +1,11 @@
 import Chat from "@/models/chatModel";
 import Message from "@/models/messageModel";
-import { IChat, IChatDocument, IChatRepository } from "@/interfaces/chat";
+import {
+  FormattedChat,
+  IChat,
+  IChatDocument,
+  IChatRepository,
+} from "@/interfaces/chat";
 import { IMessageDocument } from "@/interfaces/message";
 import { Types } from "mongoose";
 import { IPendingInvites } from "@/interfaces/pendingChatInvites";
@@ -17,16 +22,68 @@ class ChatRepository implements IChatRepository {
   }
 
   // Get all chats with last message by user id
-  public async findChatsByUserId(userId: string): Promise<IChatDocument[]> {
-    // Return the populated type directly
-    return await Chat.find({ members: new Types.ObjectId(userId) })
-      .populate("members", "id firstName lastName username email")
-      .populate({
-        path: "messages",
-        select: "message author createdAt",
-        options: { sort: { createdAt: -1 }, limit: 1 }, // Get the most recent message
-      })
-      .exec();
+  public async findChatsByUserId(userId: string): Promise<FormattedChat[]> {
+    const objectId = new Types.ObjectId(userId);
+
+    const formattedChats: FormattedChat[] = await Chat.aggregate([
+      { $match: { members: objectId } },
+
+      {
+        $lookup: {
+          from: "messages",
+          let: { chatId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$chatId", "$$chatId"] },
+              },
+            },
+            { $sort: { createdAt: -1 } },
+            { $limit: 1 },
+            {
+              $lookup: {
+                from: "users",
+                localField: "author",
+                foreignField: "_id",
+                as: "author",
+              },
+            },
+            { $unwind: { path: "$author", preserveNullAndEmptyArrays: true } },
+            {
+              $project: {
+                _id: 0,
+                message: 1,
+                createdAt: 1,
+                author: {
+                  _id: "$author._id",
+                  firstName: "$author.firstName",
+                  lastName: "$author.lastName",
+                  username: "$author.username",
+                  email: "$author.email",
+                },
+              },
+            },
+          ],
+          as: "lastMessage",
+        },
+      },
+
+      // Reshape to final format
+      {
+        $project: {
+          _id: 0,
+          id: "$_id",
+          chatName: "$name",
+          chatPic: 1,
+          lastMessage: { $arrayElemAt: ["$lastMessage", 0] },
+          timestamp: "$createdAt", // Format it later in frontend or service
+        },
+      },
+
+      { $sort: { timestamp: -1 } },
+    ]);
+
+    return formattedChats;
   }
 
   // Find chat by name
