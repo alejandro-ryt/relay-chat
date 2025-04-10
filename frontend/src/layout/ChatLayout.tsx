@@ -9,14 +9,17 @@ import { useAuth } from "@/hooks/useAuth";
 import { useUser } from "@/hooks/useUser";
 import { FC, PropsWithChildren, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { useChatStore } from "@/store/useChatStore";
 
 export const ChatLayout: FC<PropsWithChildren> = ({ children }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const { getUserDetails } = useUser();
+  const { resetData } = useChatStore();
 
   useEffect(() => {
     getUserDetails();
+    resetData();
   }, []);
 
   return (
@@ -57,7 +60,9 @@ export const ChatLayout: FC<PropsWithChildren> = ({ children }) => {
       </aside>
       {/* Sidebar */}
       {/* Dynamic Container */}
-      <section className="col-span-12 md:order-2 md:col-span-11 row-span-1 h-full">{children}</section>
+      <section className="col-span-12 md:order-2 md:col-span-11 row-span-1 h-full">
+        {children}
+      </section>
       {/* Dynamic Container */}
     </section>
   );
