@@ -15,13 +15,13 @@ const Settings = () => {
   const { theme, setTheme } = useThemeStore();
 
   return (
-    <section className="w-full mx-5 p-4">
+    <section className="w-full md:mx-5 p-4">
       <article>
         <section className="flex flex-col gap-1">
           <h2 className="text-lg font-semibold">Theme</h2>
           <div className="text-sm text-base-content/70 mb-10">
             {CHAT.THEME_SUBTITLE}
-            <nav className="dropdown dropdown-hover">
+            <nav className="dropdown dropdown-left md:dropdown-hover">
               <button tabIndex={0} className="btn m-1">
                 <svg
                   width="12px"

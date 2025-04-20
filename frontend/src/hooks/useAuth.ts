@@ -29,7 +29,7 @@ export const useAuth = () => {
   const sendSignUp = async (values: TSignUpForm) => {
     try {
       setIsSigningUp(true);
-      const sanitizeData: TSignUpFormData = {
+      const sanitizeData: TSignUpFormData & { profilePic: string } = {
         email: DOMPurify.sanitize(values.email),
         firstName: DOMPurify.sanitize(values.firstName),
         lastName: DOMPurify.sanitize(values.lastName),
@@ -45,6 +45,7 @@ export const useAuth = () => {
           body: JSON.stringify(sanitizeData),
         }
       );
+      console.log("response", await response.json());
       if (!response.ok) {
         const errorData: TApiError = await response.json();
         throw errorData;
@@ -106,5 +107,11 @@ export const useAuth = () => {
     }
   };
 
-  return { sendSignUp, sendSignIn, logout, isSigningIn, isSigningUp };
+  return {
+    sendSignUp,
+    sendSignIn,
+    logout,
+    isSigningIn,
+    isSigningUp,
+  };
 };

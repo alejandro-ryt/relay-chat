@@ -41,6 +41,7 @@ export const useAuthStore = create<TAuthStore>()(
         socket?.disconnect();
         set({ authUser: null, isAuthenticated: false });
         set({ authUserDetails: null });
+        localStorage.removeItem("auth-store");
       },
     }),
     {

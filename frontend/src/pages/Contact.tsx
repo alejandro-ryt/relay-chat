@@ -11,7 +11,7 @@ import { useUser } from "@/hooks/useUser";
 import { useAuthStore } from "@/store/useAuthStore";
 import { generateAvatar } from "@/utils";
 
-export const Contact = () => {
+const Contact = () => {
   const { authUserDetails, filterContacts } = useAuthStore();
   const {
     addUsers,
@@ -34,14 +34,14 @@ export const Contact = () => {
   return (
     <section className="grid col-span-2 grid-cols-1 xl:grid-cols-2 grid-rows-1 gap-2 p-2 h-full">
       <section className="bg-base-100 rounded-[1.5rem] flex flex-col px-2 py-2 h-full">
-        <header className="grid md:grid-cols-2 justify-center gap-4 items-center">
+        <header className="grid grid-cols-1 p-2 md:grid-cols-2 justify-center gap-4 items-center">
           <SearchInput
             value={searchTerm}
             handleOnchange={handleFilterContact}
           />
           <AddContact />
         </header>
-        {contacts && contacts.length === 0 ? (
+        {contacts && contacts.length > 0 ? (
           <ul className="list bg-base-100 rounded-box shadow-md mt-2">
             <li className="p-4 pb-2 text-xs opacity-60 tracking-wide">
               {CONTACT_DATA.ALL_CONTACTS}
@@ -216,3 +216,4 @@ export const Contact = () => {
     </section>
   );
 };
+export default Contact;

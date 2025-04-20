@@ -65,12 +65,6 @@ const SignIn = () => {
                 {...register("password")}
               />
             </section>
-            <NavLink
-              to={ROUTES.SIGN_IN}
-              className={"link-primary hover:underline"}
-            >
-              {SIGN_IN_DATA.FORGOT}
-            </NavLink>
             <button
               type="submit"
               disabled={isSigningIn}

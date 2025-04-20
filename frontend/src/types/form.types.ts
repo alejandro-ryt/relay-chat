@@ -1,5 +1,5 @@
 import { TCreateChatForm } from "@/schemas/create";
-import { InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, SyntheticEvent } from "react";
 
 export type TInputFieldProps = {
   legend: string;
