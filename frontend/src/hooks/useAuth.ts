@@ -43,6 +43,7 @@ export const useAuth = () => {
           headers: { "Content-Type": "application/json" },
           method: "POST",
           body: JSON.stringify(sanitizeData),
+          credentials: "include"
         }
       );
       console.log("response", await response.json());
@@ -72,6 +73,7 @@ export const useAuth = () => {
           headers: { "Content-Type": "application/json" },
           method: "POST",
           body: JSON.stringify(sanitizeData),
+          credentials: "include"
         }
       );
       if (!response.ok) {
@@ -93,7 +95,7 @@ export const useAuth = () => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}${END_POINT.LOGOUT}`,
-        { method: "POST" }
+        { method: "POST", credentials: "include" }
       );
       if (!response.ok) {
         const errorData: TApiError = await response.json();

@@ -1,9 +1,6 @@
 import { Server, Socket } from "socket.io";
 import * as chatController from "@/controllers/chatController";
 import { assignSocketIdByUserId } from "@/controllers/userController";
-import { ErrorHandler } from "@/utils/errorHandler";
-import { ERROR } from "@/constants/relayChat";
-import { StatusCodes } from "http-status-codes";
 
 export const handleSocketEvents = (io: Server, socket: Socket) => {
   /**
@@ -24,8 +21,7 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
       currentUserId: string,
       membersIds: string[]
     ) => {
-      try {
-        await chatController.joinChat(
+      await chatController.joinChat(
           io,
           socket,
           chatName,
@@ -33,21 +29,6 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
           currentUserId,
           membersIds
         );
-      } catch (error: unknown) {
-        // Handle errors by emitting the error message to the client
-        if (error instanceof ErrorHandler) {
-          socket.emit("error", {
-            message: error.message,
-            statusCode: error.statusCode,
-          });
-          return;
-        }
-        // General error handling if something else goes wrong
-        socket.emit("error", {
-          message: ERROR.INTERNAL_SERVICE_ERROR,
-          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        });
-      }
     }
   );
 
@@ -61,51 +42,20 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
       membersIds: string[],
       messageId?: string
     ) => {
-      try {
-        await chatController.sendMessage(
-          io,
-          socket,
-          message,
-          chatName,
-          userId,
-          membersIds
-        );
-      } catch (error: unknown) {
-        // Handle errors by emitting the error message to the client
-        if (error instanceof ErrorHandler) {
-          socket.emit("error", {
-            message: error.message,
-            statusCode: error.statusCode,
-          });
-          return;
-        }
-        // General error handling if something else goes wrong
-        socket.emit("error", {
-          message: ERROR.INTERNAL_SERVICE_ERROR,
-          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-        });
-      }
+      await chatController.sendMessage(
+        io,
+        socket,
+        message,
+        chatName,
+        userId,
+        membersIds,
+        messageId
+      ); 
     }
   );
 
   // Handle 'disconnect' event
   socket.on("disconnect", () => {
-    try {
-      chatController.handleDisconnect(socket);
-    } catch (error: unknown) {
-      // Handle errors by emitting the error message to the client
-      if (error instanceof ErrorHandler) {
-        socket.emit("error", {
-          message: error.message,
-          statusCode: error.statusCode,
-        });
-        return;
-      }
-      // General error handling if something else goes wrong
-      socket.emit("error", {
-        message: ERROR.INTERNAL_SERVICE_ERROR,
-        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-      });
-    }
+    chatController.handleDisconnect(socket);
   });
 };

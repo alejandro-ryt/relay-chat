@@ -21,15 +21,7 @@ export const getUserById = async (
     res.status(StatusCodes.OK).json(user);
   } catch (error) {
     console.log("Error get user by Id", error);
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(
-      new ErrorHandler(
-        ERROR.INTERNAL_SERVICE_ERROR,
-        StatusCodes.SERVICE_UNAVAILABLE
-      )
-    );
+    next(error);
   }
 };
 
@@ -55,15 +47,7 @@ export const updateUser = async (
     res.status(StatusCodes.OK).json(result);
   } catch (error) {
     console.log("Error update user by Id", error);
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(
-      new ErrorHandler(
-        ERROR.INTERNAL_SERVICE_ERROR,
-        StatusCodes.SERVICE_UNAVAILABLE
-      )
-    );
+    next(error);
   }
 };
 
@@ -98,15 +82,7 @@ export const deleteUser = async (
     res.status(StatusCodes.OK).end();
   } catch (error) {
     console.log("Error delete user by Id", error);
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(
-      new ErrorHandler(
-        ERROR.INTERNAL_SERVICE_ERROR,
-        StatusCodes.SERVICE_UNAVAILABLE
-      )
-    );
+    next(error);
   }
 };
 
@@ -122,15 +98,7 @@ export const addContact = async (
     res.status(StatusCodes.OK).end();
   } catch (error) {
     console.log("adding contact --> error", error);
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(
-      new ErrorHandler(
-        ERROR.INTERNAL_SERVICE_ERROR,
-        StatusCodes.SERVICE_UNAVAILABLE
-      )
-    );
+    next(error);
   }
 };
 
@@ -146,15 +114,7 @@ export const removeContactController = async (
     res.status(StatusCodes.OK).end();
   } catch (error) {
     console.log("Error removing contact", error);
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(
-      new ErrorHandler(
-        ERROR.INTERNAL_SERVICE_ERROR,
-        StatusCodes.SERVICE_UNAVAILABLE
-      )
-    );
+    next(error);
   }
 };
 
@@ -170,15 +130,7 @@ export const blockContactController = async (
     res.status(StatusCodes.OK).end();
   } catch (error) {
     console.log("blocking contact --> error", error);
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(
-      new ErrorHandler(
-        ERROR.INTERNAL_SERVICE_ERROR,
-        StatusCodes.SERVICE_UNAVAILABLE
-      )
-    );
+    next(error);
   }
 };
 
@@ -203,14 +155,6 @@ export const searchUsers = async (
     });
   } catch (error) {
     console.error("Error search users", error);
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(
-      new ErrorHandler(
-        ERROR.INTERNAL_SERVICE_ERROR,
-        StatusCodes.SERVICE_UNAVAILABLE
-      )
-    );
+    next(error);
   }
 };

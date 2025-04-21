@@ -2,9 +2,10 @@ import { Types, Document } from "mongoose";
 import { IUser } from "@/interfaces/user";
 import { IMessageDocument } from "@/interfaces/message";
 import { IPendingInvites } from "./pendingChatInvites";
+import { Server, Socket } from "socket.io";
 
 export interface IChat {
-  chatPic: string;
+  chatPic?: string;
   name: string;
   type: "direct" | "group";
   members: Types.ObjectId[];
@@ -47,10 +48,18 @@ export interface IChatService {
     message: string,
     userId: string
   ): Promise<IMessageDocument | null>;
-  getPendingChatInvitesByUserId(userId: string): Promise<IPendingInvites[]>;
+  onSendMessageEvent( io: Server,
+    socket: Socket,
+    message: string,
+    chatName: string,
+    userId: string,
+    membersIds: string[],
+    messageId?: string): Promise<void>;
+  getPendingChatInvitesByUserId(userId: string, socket: Socket): Promise<void>;
+  joinAChat(socket: Socket, io: Server, currentUserId: string, chatName: string, type: "direct" | "group" , membersId: string[]): Promise<void>;
   saveChatInvitation(userId: string, chatName: string): Promise<void>;
   clearPendingChatInvites(userId: string): Promise<void>;
-  handleDisconnect(userId: string, user: Partial<IUser>): Promise<IUser | null>;
+  handleDisconnect(userId: string, user: Partial<IUser>): Promise<void>;
 }
 
 export interface IChatRepository {

@@ -5,6 +5,7 @@ export interface IMessage {
   chatId: Types.ObjectId;
   author: Types.ObjectId | { _id: Types.ObjectId; username: string };
   createdAt: Date;
+  updatedAt: Date;
   messageId?: string;
 }
 

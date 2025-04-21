@@ -6,10 +6,11 @@ import {
   IChatDocument,
   IChatRepository,
 } from "@/interfaces/chat";
-import { IMessageDocument } from "@/interfaces/message";
+import { IMessage, IMessageDocument } from "@/interfaces/message";
 import { Types } from "mongoose";
 import { IPendingInvites } from "@/interfaces/pendingChatInvites";
 import PendingChatInvites from "@/models/pendingChatInvites";
+import { TFilter, TOptions } from "@/types/chat";
 
 class ChatRepository implements IChatRepository {
   // Get pending chat invites by user id
@@ -107,7 +108,7 @@ class ChatRepository implements IChatRepository {
   }
 
   // Create a new chat
-  public async saveChat(chat: IChatDocument): Promise<IChatDocument> {
+  public async saveChat(chat: IChat): Promise<IChatDocument> {
     return await await Chat.create(chat);
   }
 
@@ -147,6 +148,20 @@ class ChatRepository implements IChatRepository {
 
     return await newMessage.save();
   }
+
+  public async updateMessage(filter: TFilter, update: Partial<IMessage>, options: TOptions): Promise<IMessageDocument | null> {
+    return await Message.findOneAndUpdate(filter, update, options)
+      .populate("author", "username profilePic")
+      .exec();
+  }
+
+  public async findMessageById(id: Types.ObjectId) {
+    return await Message.findById(id).populate(
+      "author",
+      "username profilePic"
+    );
+  }
+
 }
 
 export default ChatRepository;

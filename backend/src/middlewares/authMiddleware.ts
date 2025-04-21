@@ -18,6 +18,7 @@ export const authenticateUser = (
   next: NextFunction
 ): void => {
   try {
+    console.log("req", req);
     const token = req.cookies?.token;
 
     if (!token) {

@@ -2,11 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import * as cookie from "cookie";
 import dotenv from "dotenv";
 import { StatusCodes } from "http-status-codes";
-import mongoose, { Types } from "mongoose";
 import UserService from "@/services/userService";
-import { ERROR } from "@/constants/relayChat";
 import { IUser } from "@/interfaces/user";
-import { ErrorHandler } from "@/utils/errorHandler";
 
 dotenv.config();
 
@@ -35,25 +32,7 @@ export const signUp = async (
     } as IUser);
     res.status(StatusCodes.CREATED).json(createdUser);
   } catch (error: unknown) {
-    // Check if it's a Mongoose validation error
-    if (error instanceof mongoose.Error.ValidationError) {
-      const errorMessage = error.message;
-      // Send back the validation error message and a 400 status code
-      return next(new ErrorHandler(errorMessage, StatusCodes.BAD_REQUEST)); // Passing to next middleware
-    }
-
-    // Handle other known errors
-    if (error instanceof ErrorHandler) {
-      return next(error); // Pass the ErrorHandler to the error middleware
-    }
-
-    // Generic server error for any unexpected errors
-    return next(
-      new ErrorHandler(
-        ERROR.INTERNAL_SERVICE_ERROR,
-        StatusCodes.SERVICE_UNAVAILABLE
-      )
-    );
+    next(error);
   }
 };
 
@@ -77,35 +56,18 @@ export const signIn = async (
         httpOnly: true,
         secure: process.env.NODE_ENV === "production", // Set to true if using HTTPS
         maxAge: 3600, // 1 hour
-      })
+        sameSite: "lax",
+      }),
     );
     res.status(StatusCodes.OK).json({ userId, username });
   } catch (error) {
     console.log("Error sign in", error);
-    // Check if it's a Mongoose validation error
-    if (error instanceof mongoose.Error.ValidationError) {
-      const errorMessage = error.message;
-      // Send back the validation error message and a 400 status code
-      return next(new ErrorHandler(errorMessage, StatusCodes.BAD_REQUEST)); // Passing to next middleware
-    }
-
-    // Handle other known errors
-    if (error instanceof ErrorHandler) {
-      return next(new ErrorHandler(error.message, error.statusCode)); // Pass the ErrorHandler to the error middleware
-    }
-
-    // Generic server error for any unexpected errors
-    return next(
-      new ErrorHandler(
-        ERROR.INTERNAL_SERVICE_ERROR,
-        StatusCodes.SERVICE_UNAVAILABLE
-      )
-    );
+    next(error);
   }
 };
 
 // Log Out
-export const logOut = (req: Request, res: Response) => {
+export const logOut = (req: Request, res: Response, next: NextFunction) => {
   try {
     // Clear the cookie
     res.setHeader(
@@ -120,9 +82,6 @@ export const logOut = (req: Request, res: Response) => {
 
     res.status(StatusCodes.OK).end();
   } catch (error) {
-    throw new ErrorHandler(
-      ERROR.INTERNAL_SERVICE_ERROR,
-      StatusCodes.SERVICE_UNAVAILABLE
-    );
+    next(error);
   }
 };
