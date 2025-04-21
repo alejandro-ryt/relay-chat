@@ -72,33 +72,33 @@ export const useUser = () => {
     }
   };
 
-  const getContacts = async () => {
-    try {
-      setIsSearching(true);
-      const query =
-        searchQuery.length > 0 ? `?searchText=${searchQuery}&page=1` : "";
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}${END_POINT.SEARCH}${query}`,
-        {
-          headers: { "Content-Type": "application/json" },
-          method: "GET",
-        }
-      );
-      if (!response.ok) {
-        const errorData: TApiError = await response.json();
-        throw errorData;
-      }
-      const responseData = (await response.json()) as TUserSearchResponse;
-      const filterContacts = responseData.users.filter(
-        (user) => user._id !== authUser?.userId
-      );
-      setUsers(filterContacts);
-    } catch (error: unknown) {
-      toast.error(getApiError(error) ?? DATA.API_ERROR);
-    } finally {
-      setIsSearching(false);
-    }
-  };
+  // const getContacts = async () => {
+  //   try {
+  //     setIsSearching(true);
+  //     const query =
+  //       searchQuery.length > 0 ? `?searchText=${searchQuery}&page=1` : "";
+  //     const response = await fetch(
+  //       `${import.meta.env.VITE_BASE_URL}${END_POINT.SEARCH}${query}`,
+  //       {
+  //         headers: { "Content-Type": "application/json" },
+  //         method: "GET",
+  //       }
+  //     );
+  //     if (!response.ok) {
+  //       const errorData: TApiError = await response.json();
+  //       throw errorData;
+  //     }
+  //     const responseData = (await response.json()) as TUserSearchResponse;
+  //     const filterContacts = responseData.users.filter(
+  //       (user) => user._id !== authUser?.userId
+  //     );
+  //     setUsers(filterContacts);
+  //   } catch (error: unknown) {
+  //     toast.error(getApiError(error) ?? DATA.API_ERROR);
+  //   } finally {
+  //     setIsSearching(false);
+  //   }
+  // };
 
   const updateProfile = async (values: TEditUserForm) => {
     try {
@@ -246,7 +246,6 @@ export const useUser = () => {
     addStartChat,
     updateProfile,
     getUserDetails,
-    getContacts,
     removeAddUser,
     toggleShowAddModal,
     toggleShowEditModal,

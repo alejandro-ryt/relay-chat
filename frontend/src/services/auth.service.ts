@@ -29,7 +29,7 @@ const signInRequest = async (values: TSignInForm) => {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(values),
-      credentials: "include",
+      //   credentials: "include",
     }
   );
   if (!response.ok) {
@@ -38,6 +38,18 @@ const signInRequest = async (values: TSignInForm) => {
   }
 
   return (await response.json()) as TAuthUser;
+};
+
+const signOutRequest = async () => {
+  const response = await fetch(
+    `${import.meta.env.VITE_BASE_URL}${END_POINT.LOGOUT}`,
+    { method: "POST" }
+  );
+  if (!response.ok) {
+    const errorData: TApiError = await response.json();
+    throw errorData;
+  }
+  return response.ok;
 };
 
 const useSignUpMutation = (): UseMutationResult<
@@ -56,4 +68,8 @@ const useSignInMutation = (): UseMutationResult<
   return useMutation({ mutationFn: signInRequest });
 };
 
-export { useSignUpMutation, useSignInMutation };
+const useSignOutMutation = (): UseMutationResult<boolean, TApiError> => {
+  return useMutation({ mutationFn: signOutRequest });
+};
+
+export { useSignUpMutation, useSignInMutation, useSignOutMutation };

@@ -9,25 +9,36 @@ import AddContactIcon from "../ui/icons/AddContactIcon";
 import { CONTACT_DATA } from "@/constants/contact";
 import { BadgeOnlineOffline } from "./BadgeOnlineOffline";
 import ContactSkeleton from "./ContactSkeleton";
+import { useContactQuery } from "@/services/contact.service";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export const AddContact = () => {
   const {
     toggleShowAddModal,
     addContact,
-    getContacts,
     handleFilterSearchUser,
     searchQuery,
     isSearching,
     isShowAddModal,
   } = useUser();
-  const { users } = useUserStore();
+  const { authUser } = useAuthStore();
+  const { users, setUsers } = useUserStore();
+
   const debouncedSearchTerm = useDebounce(searchQuery, 300);
+  const { data, refetch } = useContactQuery({ searchQuery });
 
   useEffect(() => {
     if (isShowAddModal) {
-      getContacts();
+      refetch();
     }
   }, [isShowAddModal, debouncedSearchTerm]);
+
+  useEffect(() => {
+    if (data && data.users.length > 0 && authUser) {
+      console.log(data);
+      setUsers(data.users.filter((user) => user._id !== authUser.userId));
+    }
+  }, [data]);
 
   return (
     <>
