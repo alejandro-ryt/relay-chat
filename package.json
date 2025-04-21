@@ -38,9 +38,5 @@
     "globals": "^16.0.0",
     "prettier": "^3.5.3",
     "typescript-eslint": "^8.24.1"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "motion": "^12.6.3"
   }
 }
