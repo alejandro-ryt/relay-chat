@@ -12,6 +12,7 @@ export const useChat = () => {
         {
           headers: { "Content-Type": "application/json" },
           method: "GET",
+          credentials: "include",
         }
       );
 

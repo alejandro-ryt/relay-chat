@@ -103,7 +103,7 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
       socket.emit(
         "sendMessage",
         message,
-        get().selectedChatPreviewData?.chatName,
+        get().selectedChatPreviewData?.id,
         userId,
         membersIds
       ); // Emit event to server to send the message

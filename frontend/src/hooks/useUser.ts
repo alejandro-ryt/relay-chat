@@ -82,6 +82,7 @@ export const useUser = () => {
         {
           headers: { "Content-Type": "application/json" },
           method: "GET",
+          credentials: "include",
         }
       );
       if (!response.ok) {
@@ -114,6 +115,7 @@ export const useUser = () => {
           headers: { "Content-Type": "application/json" },
           method: "PUT",
           body: JSON.stringify(sanitizeData),
+          credentials: "include",
         }
       );
       if (!response.ok) {
@@ -152,7 +154,7 @@ export const useUser = () => {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}${END_POINT.REMOVE_CONTACT}/${authUser?.userId}/${contactId}`,
         {
-          credentials: "same-origin",
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           method: "DELETE",
         }
@@ -173,7 +175,7 @@ export const useUser = () => {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}${END_POINT.BLOCK_CONTACT}/${authUser?.userId}/${contactId}`,
         {
-          credentials: "same-origin",
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           method: "POST",
         }
@@ -194,7 +196,7 @@ export const useUser = () => {
       const response = await fetch(
         `${import.meta.env.VITE_BASE_URL}${END_POINT.ADD_CONTACT}/${authUser?.userId}/${contactId}`,
         {
-          credentials: "same-origin",
+          credentials: "include",
           headers: { "Content-Type": "application/json" },
           method: "POST",
         }
