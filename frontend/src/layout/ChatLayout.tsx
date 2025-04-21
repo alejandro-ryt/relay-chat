@@ -20,14 +20,15 @@ export const ChatLayout: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate();
   const { resetData } = useChatStore();
   const { logOut } = useAuthStore();
+  const { setAuthUserDetails } = useAuthStore();
   const { mutate, data } = useSignOutMutation();
-  const { authUser } = useAuthStore();
-  const { refetch } = useAuthDetailQuery(authUser!.userId);
+  const authDetailQuery = useAuthDetailQuery();
 
   useEffect(() => {
-    refetch();
-    resetData();
-  }, []);
+    if (authDetailQuery.data) {
+      setAuthUserDetails(authDetailQuery.data);
+    }
+  }, [authDetailQuery.data]);
 
   useEffect(() => {
     if (data) {

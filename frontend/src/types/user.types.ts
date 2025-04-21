@@ -30,6 +30,11 @@ export type TUserSearchResponse = {
   users: TUser[];
 };
 
+export type TAddContact = {
+  userId: string;
+  contactId: string;
+};
+
 export type ContactSkeletonProps = {
   length?: number;
 };

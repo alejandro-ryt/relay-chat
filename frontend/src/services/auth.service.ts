@@ -1,4 +1,5 @@
 import { END_POINT } from "@/constants/endpoint";
+import { useAuthStore } from "@/store/useAuthStore";
 import { TApiError } from "@/types/api.types";
 import { TAuthUser, TSignInForm, TSignUpBody } from "@/types/auth.types";
 import { TUser } from "@/types/user.types";
@@ -90,12 +91,11 @@ const useSignOutMutation = (): UseMutationResult<boolean, TApiError> => {
   return useMutation({ mutationFn: signOutRequest });
 };
 
-const useAuthDetailQuery = (
-  userId: string
-): UseQueryResult<TUser, TApiError> => {
+const useAuthDetailQuery = (): UseQueryResult<TUser, TApiError> => {
+  const { authUser } = useAuthStore();
   return useQuery({
-    queryKey: ["auth-detail", userId],
-    queryFn: () => getAuthDetails(userId),
+    queryKey: ["auth-detail", authUser!.userId],
+    queryFn: () => getAuthDetails(authUser!.userId),
   });
 };
 

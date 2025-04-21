@@ -1,8 +1,7 @@
 import { END_POINT } from "@/constants/endpoint";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useUserStore } from "@/store/useUserStore";
 import { TApiError } from "@/types/api.types";
-import { TEditUserForm, TUser, TUserSearchResponse } from "@/types/user.types";
+import { TEditUserForm, TUser } from "@/types/user.types";
 import { getApiError } from "@/utils";
 import { SyntheticEvent, useState } from "react";
 import toast from "react-hot-toast";
@@ -15,6 +14,7 @@ import useDebounce from "@/hooks/useDebounce";
 import { TCreateChatForm } from "@/schemas/create";
 import DATA from "@/constants/notFound";
 import { API } from "@/constants/api";
+import { useAuthDetailQuery } from "@/services/auth.service";
 
 export const useUser = () => {
   const navigate = useNavigate();
@@ -25,13 +25,13 @@ export const useUser = () => {
   const [addUsers, setAddUsers] = useState<TUser[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { authUser, authUserDetails, setAuthUserDetails } = useAuthStore();
+  const { refetch } = useAuthDetailQuery();
   const { joinChat } = useChatStore();
 
-  const removeAddUser = (contactId: string) => {
+  const removeAddUser = (contactId: string) =>
     setAddUsers((prevState) =>
       prevState.filter((user) => user._id !== contactId)
     );
-  };
 
   const handleFilterContact = (
     event: SyntheticEvent<HTMLInputElement, Event>
@@ -110,7 +110,7 @@ export const useUser = () => {
         throw errorData;
       }
       toast.success(API.CONTACT_REMOVE);
-      // await getUserDetails();
+      refetch();
     } catch (error: unknown) {
       toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
@@ -131,7 +131,7 @@ export const useUser = () => {
         throw errorData;
       }
       toast.success(API.CONTACT_BLOCK);
-      // await getUserDetails();
+      refetch();
     } catch (error: unknown) {
       toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
@@ -152,7 +152,7 @@ export const useUser = () => {
         throw errorData;
       }
       toast.success(API.CONTACT_ADDED);
-      // await getUserDetails();
+      refetch();
     } catch (error: unknown) {
       toast.error(getApiError(error) ?? DATA.API_ERROR);
     }

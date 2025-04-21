@@ -1,7 +1,13 @@
 import { END_POINT } from "@/constants/endpoint";
 import { TApiError } from "@/types/api.types";
-import { TUserSearchResponse } from "@/types/user.types";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { TAddContact, TUserSearchResponse } from "@/types/user.types";
+import {
+  useMutation,
+  UseMutationResult,
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from "@tanstack/react-query";
 
 const getContacts = async (searchQuery: string) => {
   const query =
@@ -21,6 +27,36 @@ const getContacts = async (searchQuery: string) => {
   return (await response.json()) as TUserSearchResponse;
 };
 
+const addContact = async ({ contactId, userId }: TAddContact) => {
+  const response = await fetch(
+    `${import.meta.env.VITE_BASE_URL}${END_POINT.ADD_CONTACT}/${userId}/${contactId}`,
+    {
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+      credentials: "include",
+    }
+  );
+  if (!response.ok) {
+    const errorData: TApiError = await response.json();
+    throw errorData;
+  }
+  return response.ok;
+};
+
+const useAddContactMutation = (): UseMutationResult<
+  boolean,
+  TApiError,
+  TAddContact
+> => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: addContact,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["contacts", "auth-detail"] });
+    },
+  });
+};
+
 const useContactQuery = (
   searchQuery: string
 ): UseQueryResult<TUserSearchResponse, TApiError> => {
@@ -30,4 +66,4 @@ const useContactQuery = (
   });
 };
 
-export { useContactQuery };
+export { useContactQuery, useAddContactMutation };

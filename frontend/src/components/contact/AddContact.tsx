@@ -1,42 +1,52 @@
 import { useUser } from "@/hooks/useUser";
 import SearchInput from "../chat/SearchInput";
-import { ErrorIcon } from "react-hot-toast";
+import toast, { ErrorIcon } from "react-hot-toast";
 import { useUserStore } from "@/store/useUserStore";
 import { useEffect } from "react";
 import useDebounce from "@/hooks/useDebounce";
-import { generateAvatar } from "@/utils";
+import { generateAvatar, getApiError } from "@/utils";
 import AddContactIcon from "../ui/icons/AddContactIcon";
 import { CONTACT_DATA } from "@/constants/contact";
 import { BadgeOnlineOffline } from "./BadgeOnlineOffline";
 import ContactSkeleton from "./ContactSkeleton";
-import { useContactQuery } from "@/services/contact.service";
+import {
+  useAddContactMutation,
+  useContactQuery,
+} from "@/services/contact.service";
 import { useAuthStore } from "@/store/useAuthStore";
+import DATA from "@/constants/notFound";
 
 export const AddContact = () => {
   const {
     toggleShowAddModal,
-    addContact,
     handleFilterSearchUser,
     searchQuery,
     isShowAddModal,
   } = useUser();
   const { authUser } = useAuthStore();
   const { users, setUsers } = useUserStore();
+  const addContact = useAddContactMutation();
 
   const debouncedSearchTerm = useDebounce(searchQuery, 300);
-  const { data, refetch, isFetching } = useContactQuery(searchQuery);
+  const contactQuery = useContactQuery(searchQuery);
 
   useEffect(() => {
     if (isShowAddModal) {
-      refetch();
+      contactQuery.refetch();
     }
   }, [isShowAddModal, debouncedSearchTerm]);
 
   useEffect(() => {
-    if (data && data.users.length > 0 && authUser) {
-      setUsers(data.users.filter((user) => user._id !== authUser.userId));
+    if (addContact.error) {
+      toast.error(getApiError(addContact.error) ?? DATA.API_ERROR);
     }
-  }, [data]);
+
+    if (contactQuery.data && contactQuery.data.users.length > 0 && authUser) {
+      setUsers(
+        contactQuery.data.users.filter((user) => user._id !== authUser.userId)
+      );
+    }
+  }, [contactQuery.data, addContact.error]);
 
   return (
     <>
@@ -77,7 +87,7 @@ export const AddContact = () => {
               value={searchQuery}
               handleOnchange={handleFilterSearchUser}
             />
-            {!isFetching ? (
+            {!contactQuery.isFetching ? (
               <>
                 {users.length > 0 ? (
                   <ul className="list bg-base-100 rounded-box shadow-md mt-2">
@@ -120,7 +130,12 @@ export const AddContact = () => {
                               </p>
                             </section>
                             <button
-                              onClick={() => addContact(user._id)}
+                              onClick={() =>
+                                addContact.mutate({
+                                  contactId: user._id,
+                                  userId: authUser!.userId,
+                                })
+                              }
                               className="btn btn-primary"
                             >
                               {CONTACT_DATA.ADD_CONTACT_BTN}
