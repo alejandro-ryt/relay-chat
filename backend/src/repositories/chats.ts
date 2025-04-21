@@ -101,8 +101,7 @@ class ChatRepository implements IChatRepository {
     chatName: string
   ): Promise<IChat | null> {
     const chat = await Chat.findOne({ name: chatName })
-      .populate("members", "id profilePic firstName lastName username email")
-      .populate("messages", "message author createdAt")
+      .populate("members", "_id profilePic firstName lastName username email")
       .exec();
     return chat;
   }
@@ -135,13 +134,25 @@ class ChatRepository implements IChatRepository {
     await PendingChatInvites.deleteMany({ userId: new Types.ObjectId(userId) });
   }
 
+  // Get all messages by Chat id
+  public async messagesByChatId(
+    chatId: Types.ObjectId
+  ): Promise<IMessageDocument[]> {
+    return await Message.find({ chatId }).populate(
+      "author",
+      "username profilePic"
+    );
+  }
+
   // Save message in DB
   public async saveMessage(
     message: string,
-    userId: string
+    userId: string,
+    chatId: string
   ): Promise<IMessageDocument> {
     const newMessage = new Message({
       author: userId,
+      chatId,
       message,
       createdAt: new Date(),
     });
@@ -149,19 +160,19 @@ class ChatRepository implements IChatRepository {
     return await newMessage.save();
   }
 
-  public async updateMessage(filter: TFilter, update: Partial<IMessage>, options: TOptions): Promise<IMessageDocument | null> {
+  public async updateMessage(
+    filter: TFilter,
+    update: Partial<IMessage>,
+    options: TOptions
+  ): Promise<IMessageDocument | null> {
     return await Message.findOneAndUpdate(filter, update, options)
       .populate("author", "username profilePic")
       .exec();
   }
 
   public async findMessageById(id: Types.ObjectId) {
-    return await Message.findById(id).populate(
-      "author",
-      "username profilePic"
-    );
+    return await Message.findById(id).populate("author", "username profilePic");
   }
-
 }
 
 export default ChatRepository;

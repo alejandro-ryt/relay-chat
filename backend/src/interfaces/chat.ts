@@ -5,11 +5,11 @@ import { IPendingInvites } from "./pendingChatInvites";
 import { Server, Socket } from "socket.io";
 
 export interface IChat {
+  _id?: Types.ObjectId;
   chatPic?: string;
   name: string;
   type: "direct" | "group";
   members: Types.ObjectId[];
-  messages: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,7 +32,9 @@ export interface FormattedChat {
   timestamp: string; // ISO string or Date
 }
 
-export interface IChatDocument extends IChat, Document {}
+export interface IChatDocument extends Omit<IChat, "_id">, Document {
+  _id: Types.ObjectId;
+}
 
 export interface IChatService {
   findChatsByUserId(userId: string): Promise<FormattedChat[] | []>;
@@ -48,15 +50,24 @@ export interface IChatService {
     message: string,
     userId: string
   ): Promise<IMessageDocument | null>;
-  onSendMessageEvent( io: Server,
+  onSendMessageEvent(
+    io: Server,
     socket: Socket,
     message: string,
     chatName: string,
     userId: string,
     membersIds: string[],
-    messageId?: string): Promise<void>;
+    messageId?: string
+  ): Promise<void>;
   getPendingChatInvitesByUserId(userId: string, socket: Socket): Promise<void>;
-  joinAChat(socket: Socket, io: Server, currentUserId: string, chatName: string, type: "direct" | "group" , membersId: string[]): Promise<void>;
+  joinAChat(
+    socket: Socket,
+    io: Server,
+    currentUserId: string,
+    chatName: string,
+    type: "direct" | "group",
+    membersId: string[]
+  ): Promise<void>;
   saveChatInvitation(userId: string, chatName: string): Promise<void>;
   clearPendingChatInvites(userId: string): Promise<void>;
   handleDisconnect(userId: string, user: Partial<IUser>): Promise<void>;

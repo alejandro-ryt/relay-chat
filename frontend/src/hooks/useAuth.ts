@@ -43,7 +43,7 @@ export const useAuth = () => {
           headers: { "Content-Type": "application/json" },
           method: "POST",
           body: JSON.stringify(sanitizeData),
-          credentials: "include"
+          credentials: "include",
         }
       );
       console.log("response", await response.json());
@@ -73,7 +73,7 @@ export const useAuth = () => {
           headers: { "Content-Type": "application/json" },
           method: "POST",
           body: JSON.stringify(sanitizeData),
-          credentials: "include"
+          credentials: "include",
         }
       );
       if (!response.ok) {

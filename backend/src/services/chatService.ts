@@ -20,8 +20,9 @@ class ChatService implements IChatService {
     userId: string,
     socket: Socket
   ): Promise<void> {
-    const invitations = await chatRepository.getPendingChatInvitesByUserId(userId);
-    
+    const invitations =
+      await chatRepository.getPendingChatInvitesByUserId(userId);
+
     if (!invitations.length) {
       return;
     }
@@ -46,7 +47,14 @@ class ChatService implements IChatService {
     await chatRepository.clearPendingChatInvites(userId);
   }
 
-  async joinAChat(socket: Socket, io: Server, currentUserId: string, chatName: string, type: "direct" | "group", membersId: string[]): Promise<void> {
+  async joinAChat(
+    socket: Socket,
+    io: Server,
+    currentUserId: string,
+    chatName: string,
+    type: "direct" | "group",
+    membersId: string[]
+  ): Promise<void> {
     // Find the user in the database using the userId
     const user = await userRepository.getUserById(currentUserId);
     // If the user doesn't exist, throw a custom error
@@ -67,13 +75,24 @@ class ChatService implements IChatService {
       throw new ErrorHandler(ERROR.ERROR_CHAT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
+    const messages = chat._id
+      ? await this.messagesByChatId(chat._id.toString())
+      : [];
+
     // Add each user to the socket room
     membersId.forEach(async (userId) => {
       if (chat.members.includes(new Types.ObjectId(userId))) return;
       // Here we emit the event to the individual user socket
       const userSocketId = await userRepository.getUserSocketIdByUserId(userId);
       if (!userSocketId) {
-        await chatRepository.saveChatInvitation(userId, chatName);
+        if (!chat._id || (chat._id && !Types.ObjectId.isValid(chat._id))) {
+          throw new Error(`Invalid chatId: ${chat._id}`);
+        }
+
+        if (!Types.ObjectId.isValid(userId)) {
+          throw new Error(`Invalid userId: ${userId}`);
+        }
+        await chatRepository.saveChatInvitation(userId, chat._id.toString());
         return;
       }
       const memberSocketInstance = io.of("/").sockets.get(userSocketId);
@@ -89,7 +108,15 @@ class ChatService implements IChatService {
 
     socket.join(chat.name ?? chatName); // Join the room
     socket.emit("notification", `Welcome to room ${chatName}!`);
-    io.to(chatName).emit("chatData", chat);
+    io.to(chatName).emit("chatData", {
+      _id: chat._id,
+      name: chat.name,
+      type: chat.type,
+      members: chat.members,
+      createdAt: chat.createdAt,
+      updatedAt: chat.updatedAt,
+      messages,
+    });
     console.log(`${user.username} joined room ${chatName}`);
   }
 
@@ -143,30 +170,41 @@ class ChatService implements IChatService {
       // Create the chat if it doesn't exist
       const userIdsObj = userIds.map((id) => new Types.ObjectId(id));
 
-        chat = await chatRepository.saveChat({
-          name: chatName,
-          type,
-          members: userIdsObj,
-          messages: [],
-          createdAt: new Date(),
-          updatedAt: new Date()
-        });
+      chat = await chatRepository.saveChat({
+        name: chatName,
+        type,
+        members: userIdsObj,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
     }
 
     return chat;
   }
 
   async saveChatInvitation(userId: string, chatId: string): Promise<void> {
-    await chatRepository.saveChatInvitation(userId, chatId)
+    await chatRepository.saveChatInvitation(userId, chatId);
   }
 
   async clearPendingChatInvites(userId: string): Promise<void> {
     await chatRepository.clearPendingChatInvites(userId);
   }
 
-  async onSendMessageEvent(io: Server, socket: Socket, message: string, chatName: string, userId: string, membersIds: string[], messageId?: string): Promise<void> {
+  async messagesByChatId(chatId: string): Promise<IMessageDocument[]> {
+    return await chatRepository.messagesByChatId(new Types.ObjectId(chatId));
+  }
+
+  async onSendMessageEvent(
+    io: Server,
+    socket: Socket,
+    message: string,
+    chatId: string,
+    userId: string,
+    membersIds: string[],
+    messageId?: string
+  ): Promise<void> {
     // Find the chat (room)
-    const chat = await this.findByChatName(chatName);
+    const chat = await this.findByChatId(new Types.ObjectId(chatId));
     if (!chat) {
       throw new ErrorHandler(ERROR.ERROR_CHAT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
@@ -184,15 +222,15 @@ class ChatService implements IChatService {
     const newMessage = await this.saveMessage(
       message,
       userId,
+      chatId,
       messageId
     );
     if (!newMessage) {
       throw new ErrorHandler("Message not created", StatusCodes.BAD_REQUEST);
     }
-    // Inject message to chats
-    await this.addMessageToChat(chat, newMessage.id);
+
     // Emit message to the room
-    io.to(chatName).emit("sendMessage", {
+    io.to(chat.name).emit("sendMessage", {
       author: newMessage.author._id,
       _id: newMessage.id,
       message: newMessage.message,
@@ -232,12 +270,14 @@ class ChatService implements IChatService {
   public async saveMessage(
     message: string,
     userId: string,
+    chatId: string,
     messageId?: string
   ): Promise<IMessageDocument | null> {
     if (messageId) {
       const filter = messageId ? { _id: new Types.ObjectId(messageId) } : {};
       const update = {
         author: userId,
+        chatId: new Types.ObjectId(chatId),
         message,
         updatedAt: new Date(),
       };
@@ -247,31 +287,26 @@ class ChatService implements IChatService {
         setDefaultsOnInsert: true,
       };
 
-      return await chatRepository.updateMessage(filter as TFilter, update as unknown as Partial<IMessage>, options);
+      return await chatRepository.updateMessage(
+        filter as TFilter,
+        update as unknown as Partial<IMessage>,
+        options
+      );
     }
 
-    const savedMessage = await chatRepository.saveMessage(message, userId);
+    const savedMessage = await chatRepository.saveMessage(
+      message,
+      userId,
+      chatId
+    );
 
-    return await chatRepository.findMessageById(savedMessage._id as Types.ObjectId);
-  }
-
-  // Add the message reference (ID) to the messages array in the Chat model
-  public async addMessageToChat(
-    chat: IChatDocument,
-    messageId: string
-  ): Promise<void> {
-    // Push the new message ID into the messages array
-    const messageObjId = new Types.ObjectId(messageId);
-    chat.messages.push(messageObjId);
-
-    // Save the updated Chat document
-    await chatRepository.updateChat(chat);
+    return await chatRepository.findMessageById(
+      savedMessage._id as Types.ObjectId
+    );
   }
 
   // Service to handle user disconnecting
-  public async handleDisconnect(
-    socketId: string,
-  ): Promise<void> {
+  public async handleDisconnect(socketId: string): Promise<void> {
     const user = await userService.getUserBySocketId(socketId);
     // If the user doesn't exist, throw a custom error
     if (!user) {

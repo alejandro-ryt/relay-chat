@@ -18,9 +18,7 @@ export const authenticateUser = (
   next: NextFunction
 ): void => {
   try {
-    console.log("req", req);
     const token = req.cookies?.token;
-
     if (!token) {
       return next(
         new ErrorHandler(
@@ -32,10 +30,7 @@ export const authenticateUser = (
 
     if (!JWT_SECRET) {
       return next(
-        new ErrorHandler(
-          "Authentication token is missing",
-          StatusCodes.UNAUTHORIZED
-        )
+        new ErrorHandler("Secret key is missing", StatusCodes.UNAUTHORIZED)
       );
     }
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;

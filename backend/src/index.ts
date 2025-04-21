@@ -10,6 +10,7 @@ import { errorMiddleware } from "@/middlewares/errorMiddleware";
 import { handleSocketEvents } from "@/sockets/chatSocket";
 const app: Express = express();
 const server = createServer(app);
+app.use(cookieParser());
 
 dotenv.config();
 const PORT: number = Number(process.env.PORT) ?? 3001;
@@ -17,8 +18,7 @@ const PORT: number = Number(process.env.PORT) ?? 3001;
 // Define a CORS options object
 const corsOptions = {
   origin: "http://localhost:5173", // Allow requests from your client origin
-  methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
-  headers: ["Content-Type", "Authorization"], // Specify allowed headers
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
 
@@ -27,13 +27,12 @@ const io = new Server(server, { cors: corsOptions });
 
 app.use(cors(corsOptions));
 
-app.use(cookieParser());
-
 // Middleware to parse JSON
 app.use(express.json());
-app.use(errorMiddleware);
 
 app.use("/api", routes);
+
+app.use(errorMiddleware);
 
 // Setup socket events
 io.on("connection", (socket) => {

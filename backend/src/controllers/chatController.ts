@@ -75,12 +75,31 @@ export const joinChat = async (
   membersId: string[]
 ): Promise<void> => {
   try {
-    await chatService.joinAChat(socket, io, currentUserId, chatName, type, membersId);
+    await chatService.joinAChat(
+      socket,
+      io,
+      currentUserId,
+      chatName,
+      type,
+      membersId
+    );
   } catch (error) {
     const normalizedError = normalizeSocketError(error);
 
     console.error("Error joining room:", normalizedError);
 
+    socket.emit("error", {
+      message: normalizedError.message,
+      statusCode: normalizedError.statusCode,
+    });
+  }
+};
+
+export const getMessagesByChatId = async (chatId: string, socket: Socket) => {
+  try {
+    return await chatService.messagesByChatId(chatId);
+  } catch (error) {
+    const normalizedError = normalizeSocketError(error);
     socket.emit("error", {
       message: normalizedError.message,
       statusCode: normalizedError.statusCode,
@@ -100,13 +119,22 @@ export const sendMessage = async (
   io: Server,
   socket: Socket,
   message: string,
-  chatName: string,
+  chatId: string,
   userId: string,
   membersIds: string[],
   messageId?: string
 ): Promise<void> => {
   try {
-    await chatService.onSendMessageEvent(io, socket, message, chatName, userId, membersIds, messageId);
+    console.log("chatId", chatId);
+    await chatService.onSendMessageEvent(
+      io,
+      socket,
+      message,
+      chatId,
+      userId,
+      membersIds,
+      messageId
+    );
   } catch (error) {
     const normalizedError = normalizeSocketError(error);
 

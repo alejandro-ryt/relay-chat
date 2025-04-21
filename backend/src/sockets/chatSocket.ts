@@ -22,13 +22,13 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
       membersIds: string[]
     ) => {
       await chatController.joinChat(
-          io,
-          socket,
-          chatName,
-          type,
-          currentUserId,
-          membersIds
-        );
+        io,
+        socket,
+        chatName,
+        type,
+        currentUserId,
+        membersIds
+      );
     }
   );
 
@@ -37,7 +37,7 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
     "sendMessage",
     async (
       message: string,
-      chatName: string,
+      chatId: string,
       userId: string,
       membersIds: string[],
       messageId?: string
@@ -46,11 +46,11 @@ export const handleSocketEvents = (io: Server, socket: Socket) => {
         io,
         socket,
         message,
-        chatName,
+        chatId,
         userId,
         membersIds,
         messageId
-      ); 
+      );
     }
   );
 

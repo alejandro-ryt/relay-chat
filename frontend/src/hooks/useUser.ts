@@ -82,7 +82,7 @@ export const useUser = () => {
         {
           headers: { "Content-Type": "application/json" },
           method: "GET",
-          credentials: "include"
+          credentials: "include",
         }
       );
       if (!response.ok) {
@@ -115,7 +115,7 @@ export const useUser = () => {
           headers: { "Content-Type": "application/json" },
           method: "PUT",
           body: JSON.stringify(sanitizeData),
-          credentials: "include"
+          credentials: "include",
         }
       );
       if (!response.ok) {
