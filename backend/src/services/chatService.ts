@@ -194,6 +194,13 @@ class ChatService implements IChatService {
     return await chatRepository.messagesByChatId(new Types.ObjectId(chatId));
   }
 
+  async deleteMessageById(id: string): Promise<void> {
+    if (!id) {
+      throw new ErrorHandler(ERROR.ERROR_ID_REQUIRED, StatusCodes.BAD_REQUEST);
+    }
+    await chatRepository.deleteMessage(new Types.ObjectId(id));
+  }
+
   async onSendMessageEvent(
     io: Server,
     socket: Socket,

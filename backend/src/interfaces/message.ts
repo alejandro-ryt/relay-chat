@@ -6,6 +6,7 @@ export interface IMessage {
   author: Types.ObjectId | { _id: Types.ObjectId; username: string };
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date | null;
   messageId?: string;
 }
 
