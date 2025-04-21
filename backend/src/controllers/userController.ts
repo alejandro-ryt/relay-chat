@@ -6,7 +6,6 @@ import { IUser } from "@/interfaces/user";
 import { ErrorHandler } from "@/utils/errorHandler";
 import { Socket } from "socket.io";
 import { lookUpForPendingInvites } from "./chatController";
-import { Types } from "mongoose";
 
 const userService = new UserService();
 
@@ -17,19 +16,12 @@ export const getUserById = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    if (!req.params.id) {
-      throw new ErrorHandler(ERROR.ERROR_ID_REQUIRED, StatusCodes.BAD_REQUEST);
-    }
-    const user = await userService.getUserById(req.params.id);
-    if (!user) {
-      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
+    const { id } = req.params;
+    const user = await userService.getUserById(id);
     res.status(StatusCodes.OK).json(user);
   } catch (error) {
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(new ErrorHandler(ERROR.INTERNAL_SERVICE_ERROR, StatusCodes.SERVICE_UNAVAILABLE));
+    console.log("Error get user by Id", error);
+    next(error);
   }
 };
 
@@ -40,37 +32,22 @@ export const updateUser = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    if (!req.params.id) {
-      throw new ErrorHandler(ERROR.ERROR_ID_REQUIRED, StatusCodes.BAD_REQUEST);
-    }
-    const currentUser = await userService.getUserById(req.params.id);
-    if (!currentUser) {
-      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
+    const { id } = req.params;
     const { profilePic, firstName, lastName, username, email, password } =
       req.body;
-    const updatedUser: Partial<IUser> = {
+    // Call Validate id from params and data from req.body
+    const result = await userService.updateUser(id, {
       profilePic,
       firstName,
       lastName,
       username,
       email,
       password,
-    };
-
-    const result = await userService.updateUser(new Types.ObjectId(req.params.id), updatedUser);
-    if (!result) {
-      throw new ErrorHandler(
-        ERROR.ERROR_UPDATING_USER,
-        StatusCodes.BAD_REQUEST
-      );
-    }
+    } as Partial<IUser>);
     res.status(StatusCodes.OK).json(result);
   } catch (error) {
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(new ErrorHandler(ERROR.INTERNAL_SERVICE_ERROR, StatusCodes.SERVICE_UNAVAILABLE));
+    console.log("Error update user by Id", error);
+    next(error);
   }
 };
 
@@ -79,28 +56,10 @@ export const assignSocketIdByUserId = async (
   socket: Socket
 ) => {
   try {
-    // Check if userId was provided
-    if (!userId) {
-      throw new ErrorHandler(ERROR.ERROR_ID_REQUIRED, StatusCodes.BAD_REQUEST);
-    }
-    const currentUser = await userService.getUserById(userId);
-    // Check if user was found
-    if (!currentUser) {
-      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
-
-    const updatedUser = await userService.updateUser(new Types.ObjectId(userId), {
-      socketId: socket.id,
-    });
-    if (!updatedUser) {
-      throw new ErrorHandler(
-        ERROR.ERROR_UPDATING_USER,
-        StatusCodes.BAD_REQUEST
-      );
-    }
-
-    if (updatedUser.socketId) lookUpForPendingInvites(socket, userId);
+    await userService.assignSocketToUser(userId, socket.id);
+    lookUpForPendingInvites(socket, userId);
   } catch (error) {
+    console.log("Error assigning socket by user Id", error);
     if (error instanceof ErrorHandler) {
       throw new ErrorHandler(error.message, error.statusCode);
     }
@@ -118,165 +77,84 @@ export const deleteUser = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    if (!req.params.id) {
-      throw new ErrorHandler(ERROR.ERROR_ID_REQUIRED, StatusCodes.BAD_REQUEST);
-    }
-    const result = await userService.deleteUser(req.params.id);
-    if (!result) {
-      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
-    res.status(StatusCodes.OK).json({ message: "User deleted" });
+    const { id } = req.params;
+    await userService.deleteUser(id);
+    res.status(StatusCodes.OK).end();
   } catch (error) {
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(new ErrorHandler(ERROR.INTERNAL_SERVICE_ERROR, StatusCodes.SERVICE_UNAVAILABLE));
+    console.log("Error delete user by Id", error);
+    next(error);
   }
 };
 
 // Add Contact
-export const addContact = async (req: Request, res: Response, next: NextFunction) => {
+export const addContact = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { userId, contactId } = req.params;
-    if (!userId || !contactId) {
-      throw new ErrorHandler(
-        `${ERROR.ERROR_ID_REQUIRED}: ${!userId ? "user ID" : "contact ID"}`,
-        StatusCodes.BAD_REQUEST
-      );
-    }
-    const user = await userService.getUserById(userId);
-    const contact = await userService.getUserById(contactId);
-
-    if (!user) {
-      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
-
-    if (!contact) {
-      throw new ErrorHandler(ERROR.CONTACT_NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
-
-    // Check if contact is already added
-    const existingContact = user.contacts?.find(
-      (userContact) => userContact?.contact._id.toString() === contact._id.toString()
-    );
-
-    if (existingContact) {
-      throw new ErrorHandler(
-        ERROR.ERROR_CONTACT_ALREADY_ADDED,
-        StatusCodes.BAD_REQUEST
-      );
-    }
-    await userService.addContact(user, contact);
+    await userService.addContact(userId, contactId);
     res.status(StatusCodes.OK).end();
   } catch (error) {
     console.log("adding contact --> error", error);
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(new ErrorHandler(ERROR.INTERNAL_SERVICE_ERROR, StatusCodes.SERVICE_UNAVAILABLE));
+    next(error);
   }
 };
 
 // Remove Contact
-export const removeContactController = async (req: Request, res: Response, next: NextFunction) => {
+export const removeContactController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { userId, contactId } = req.params;
-    if (!userId || !contactId) {
-      throw new ErrorHandler(
-        `${ERROR.ERROR_ID_REQUIRED}: ${!userId ? "user ID" : "contact ID"}`,
-        StatusCodes.BAD_REQUEST
-      );
-    }
-    const user = await userService.getUserById(userId);
-    const contact = await userService.getUserById(contactId);
-
-    if (!user) {
-      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
-
-    if (!contact) {
-      throw new ErrorHandler(ERROR.CONTACT_NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
-    await userService.removeContact(user, contact);
-
+    await userService.removeContact(userId, contactId);
     res.status(StatusCodes.OK).end();
   } catch (error) {
     console.log("Error removing contact", error);
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(new ErrorHandler(ERROR.INTERNAL_SERVICE_ERROR, StatusCodes.SERVICE_UNAVAILABLE));
+    next(error);
   }
 };
 
 // Block Contact
-export const blockContactController = async (req: Request, res: Response, next: NextFunction) => {
+export const blockContactController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { userId, contactId } = req.params;
-    if (!userId || !contactId) {
-      throw new ErrorHandler(
-        `${ERROR.ERROR_ID_REQUIRED}: ${!userId ? "user ID" : "contact ID"}`,
-        StatusCodes.BAD_REQUEST
-      );
-    }
-    const user = await userService.getUserById(userId);
-    const contact = await userService.getUserById(contactId);
-
-    if (!user) {
-      throw new ErrorHandler(ERROR.USER_NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
-
-    if (!contact) {
-      throw new ErrorHandler(ERROR.CONTACT_NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
-    await userService.blockContact(user, contact);
+    await userService.blockContact(userId, contactId);
     res.status(StatusCodes.OK).end();
   } catch (error) {
     console.log("blocking contact --> error", error);
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(new ErrorHandler(ERROR.INTERNAL_SERVICE_ERROR, StatusCodes.SERVICE_UNAVAILABLE));
+    next(error);
   }
 };
 
 // Search users
-export const searchUsers = async (req: Request, res: Response, next: NextFunction) => {
+export const searchUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { searchText, page = 1, limit = 10 } = req.query;
-
-    // If searchText is provided and is a string, build a query to filter users
-    let searchQuery = {};
-    if (searchText && typeof searchText === "string") {
-      searchQuery = {
-        $or: [
-          { username: { $regex: new RegExp(searchText, "i") } },
-          { firstName: { $regex: new RegExp(searchText, "i") } },
-          { lastName: { $regex: new RegExp(searchText, "i") } },
-        ],
-      };
-    }
-
-    // Pagination options
-    const skip = (Number(page) - 1) * Number(limit);
-
     const { users, totalCount } = await userService.searchUsersByQuery(
-      searchQuery,
-      skip,
+      searchText as string,
+      Number(page),
       Number(limit)
     );
-
     res.status(StatusCodes.OK).json({
       totalCount,
       page: Number(page),
-      totalPages: Math.ceil(totalCount / Number(limit)),
+      totalPages: Math.ceil((totalCount as number) / Number(limit)),
       users,
     });
   } catch (error) {
     console.error("Error search users", error);
-    if (error instanceof ErrorHandler) {
-      return next(error);
-    }
-    return next(new ErrorHandler(ERROR.INTERNAL_SERVICE_ERROR, StatusCodes.SERVICE_UNAVAILABLE));
+    next(error);
   }
 };

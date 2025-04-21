@@ -8,7 +8,12 @@ const pendingChatSchema = new Schema<IPendingInvitesDocument>(
       ref: "User",
       required: true,
     },
-    chatName: { type: String, required: true, unique: true },
+    chatId: {
+      type: Schema.Types.ObjectId,
+      ref: "Chat",
+      required: true,
+      unique: true,
+    },
   },
   { timestamps: true }
 );

@@ -1,18 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
 import * as cookie from "cookie";
 import dotenv from "dotenv";
 import { StatusCodes } from "http-status-codes";
-import mongoose, { Types } from "mongoose";
-import { isPasswordValid } from "@/utils/protectPassword";
 import UserService from "@/services/userService";
-import { ERROR } from "@/constants/relayChat";
 import { IUser } from "@/interfaces/user";
-import { ErrorHandler } from "@/utils/errorHandler";
-import {
-  validateEmailFormat,
-  validatePasswordFormat,
-} from "@/utils/inputValidations";
 
 dotenv.config();
 
@@ -28,8 +19,8 @@ export const signUp = async (
   try {
     const { profilePic, firstName, lastName, username, email, password } =
       req.body;
-
-    const newUser: IUser = {
+    // Validate if the each field was provided
+    const createdUser = await userService.createUser({
       profilePic,
       firstName,
       lastName,
@@ -38,30 +29,10 @@ export const signUp = async (
       password,
       socketId: null,
       contacts: [],
-    };
-
-    const createdUser = await userService.createUser(newUser);
+    } as IUser);
     res.status(StatusCodes.CREATED).json(createdUser);
   } catch (error: unknown) {
-    // Check if it's a Mongoose validation error
-    if (error instanceof mongoose.Error.ValidationError) {
-      const errorMessage = error.message;
-      // Send back the validation error message and a 400 status code
-      return next(new ErrorHandler(errorMessage, StatusCodes.BAD_REQUEST)); // Passing to next middleware
-    }
-
-    // Handle other known errors
-    if (error instanceof ErrorHandler) {
-      return next(error); // Pass the ErrorHandler to the error middleware
-    }
-
-    // Generic server error for any unexpected errors
-    return next(
-      new ErrorHandler(
-        ERROR.INTERNAL_SERVICE_ERROR,
-        StatusCodes.SERVICE_UNAVAILABLE
-      )
-    );
+    next(error);
   }
 };
 
@@ -73,89 +44,29 @@ export const signIn = async (
 ): Promise<void> => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      throw new ErrorHandler(
-        ERROR.ERROR_EMAIL_PASSWORD_MISSING,
-        StatusCodes.BAD_REQUEST
-      );
-    }
-
-    if (!validateEmailFormat(email)) {
-      throw new ErrorHandler(ERROR.ERROR_EMAIL_FORMAT, StatusCodes.BAD_REQUEST);
-    }
-
-    if (!validatePasswordFormat(password)) {
-      throw new ErrorHandler(
-        ERROR.ERROR_PASSWORD_FORMAT,
-        StatusCodes.BAD_REQUEST
-      );
-    }
-
-    const user = await userService.getUserByEmail(email);
-    if (!user) {
-      throw new ErrorHandler(ERROR.ERROR_USER_NOT_EXIST, StatusCodes.NOT_FOUND);
-    }
-
-    // Check if password match
-    const isPasswordAuth = isPasswordValid(password, user.password);
-    if (!isPasswordAuth) {
-      throw new ErrorHandler(
-        ERROR.ERROR_WRONG_CREDENTIALS,
-        StatusCodes.UNAUTHORIZED
-      );
-    }
-
-    // Generate JWT token
-    if (!JWT_SECRET) {
-      throw new ErrorHandler(
-        ERROR.ERROR_INVALID_JWT_KE,
-        StatusCodes.BAD_REQUEST
-      );
-    }
-
-    const token = jwt.sign({ userId: user._id.toString() }, JWT_SECRET, {
-      expiresIn: "1h",
-    });
-
+    const { userId, username, token } = await userService.signIn(
+      email,
+      password,
+      JWT_SECRET
+    );
     // Set cookie with Bearer token
-    res.setHeader(
-      "Set-Cookie",
-      cookie.serialize("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Set to true if using HTTPS
-        maxAge: 3600, // 1 hour
-      })
-    );
     res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      })
       .status(StatusCodes.OK)
-      .json({ userId: user.id, username: user.username });
+      .json({ userId, username });
   } catch (error) {
-    console.log("Error sign in", error)
-    // Check if it's a Mongoose validation error
-    if (error instanceof mongoose.Error.ValidationError) {
-      const errorMessage = error.message;
-      // Send back the validation error message and a 400 status code
-      return next(new ErrorHandler(errorMessage, StatusCodes.BAD_REQUEST)); // Passing to next middleware
-    }
-
-    // Handle other known errors
-    if (error instanceof ErrorHandler) {
-      return next(new ErrorHandler(error.message, error.statusCode)); // Pass the ErrorHandler to the error middleware
-    }
-
-    // Generic server error for any unexpected errors
-    return next(
-      new ErrorHandler(
-        ERROR.INTERNAL_SERVICE_ERROR,
-        StatusCodes.SERVICE_UNAVAILABLE
-      )
-    );
+    console.log("Error sign in", error);
+    next(error);
   }
 };
 
 // Log Out
-export const logOut = (req: Request, res: Response) => {
+export const logOut = (req: Request, res: Response, next: NextFunction) => {
   try {
     // Clear the cookie
     res.setHeader(
@@ -170,9 +81,6 @@ export const logOut = (req: Request, res: Response) => {
 
     res.status(StatusCodes.OK).end();
   } catch (error) {
-    throw new ErrorHandler(
-      ERROR.INTERNAL_SERVICE_ERROR,
-      StatusCodes.SERVICE_UNAVAILABLE
-    );
+    next(error);
   }
 };
