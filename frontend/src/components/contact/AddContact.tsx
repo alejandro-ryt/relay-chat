@@ -2,7 +2,7 @@ import { useUser } from "@/hooks/useUser";
 import SearchInput from "../chat/SearchInput";
 import { ErrorIcon } from "react-hot-toast";
 import { useUserStore } from "@/store/useUserStore";
-import { SyntheticEvent, useEffect } from "react";
+import { useEffect } from "react";
 import useDebounce from "@/hooks/useDebounce";
 import { generateAvatar } from "@/utils";
 import AddContactIcon from "../ui/icons/AddContactIcon";
@@ -18,14 +18,13 @@ export const AddContact = () => {
     addContact,
     handleFilterSearchUser,
     searchQuery,
-    isSearching,
     isShowAddModal,
   } = useUser();
   const { authUser } = useAuthStore();
   const { users, setUsers } = useUserStore();
 
   const debouncedSearchTerm = useDebounce(searchQuery, 300);
-  const { data, refetch } = useContactQuery({ searchQuery });
+  const { data, refetch, isFetching } = useContactQuery(searchQuery);
 
   useEffect(() => {
     if (isShowAddModal) {
@@ -35,7 +34,6 @@ export const AddContact = () => {
 
   useEffect(() => {
     if (data && data.users.length > 0 && authUser) {
-      console.log(data);
       setUsers(data.users.filter((user) => user._id !== authUser.userId));
     }
   }, [data]);
@@ -79,7 +77,7 @@ export const AddContact = () => {
               value={searchQuery}
               handleOnchange={handleFilterSearchUser}
             />
-            {!isSearching ? (
+            {!isFetching ? (
               <>
                 {users.length > 0 ? (
                   <ul className="list bg-base-100 rounded-box shadow-md mt-2">

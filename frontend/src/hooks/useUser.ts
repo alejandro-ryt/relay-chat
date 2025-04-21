@@ -20,13 +20,10 @@ export const useUser = () => {
   const navigate = useNavigate();
   const [isShowAddModal, setIsShowAddModal] = useState(false);
   const [isShowEditModal, setIsShowEditModal] = useState(false);
-  const [isGetUserDetails, setIsGetUserDetails] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [addUsers, setAddUsers] = useState<TUser[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const { setUsers } = useUserStore();
   const { authUser, authUserDetails, setAuthUserDetails } = useAuthStore();
   const { joinChat } = useChatStore();
 
@@ -49,56 +46,6 @@ export const useUser = () => {
     const value = (event.target as HTMLInputElement).value;
     setSearchQuery(value);
   };
-
-  const getUserDetails = async () => {
-    try {
-      setIsGetUserDetails(true);
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}${END_POINT.USER}/${authUser?.userId}`,
-        { method: "GET" }
-      );
-      if (!response.ok) {
-        const errorData: TApiError = await response.json();
-        throw errorData;
-      }
-      const responseData = (await response.json()) as TUser;
-      if (responseData) {
-        setAuthUserDetails(responseData);
-      }
-    } catch (error: unknown) {
-      toast.error(getApiError(error) ?? DATA.API_ERROR);
-    } finally {
-      setIsGetUserDetails(true);
-    }
-  };
-
-  // const getContacts = async () => {
-  //   try {
-  //     setIsSearching(true);
-  //     const query =
-  //       searchQuery.length > 0 ? `?searchText=${searchQuery}&page=1` : "";
-  //     const response = await fetch(
-  //       `${import.meta.env.VITE_BASE_URL}${END_POINT.SEARCH}${query}`,
-  //       {
-  //         headers: { "Content-Type": "application/json" },
-  //         method: "GET",
-  //       }
-  //     );
-  //     if (!response.ok) {
-  //       const errorData: TApiError = await response.json();
-  //       throw errorData;
-  //     }
-  //     const responseData = (await response.json()) as TUserSearchResponse;
-  //     const filterContacts = responseData.users.filter(
-  //       (user) => user._id !== authUser?.userId
-  //     );
-  //     setUsers(filterContacts);
-  //   } catch (error: unknown) {
-  //     toast.error(getApiError(error) ?? DATA.API_ERROR);
-  //   } finally {
-  //     setIsSearching(false);
-  //   }
-  // };
 
   const updateProfile = async (values: TEditUserForm) => {
     try {
@@ -163,7 +110,7 @@ export const useUser = () => {
         throw errorData;
       }
       toast.success(API.CONTACT_REMOVE);
-      await getUserDetails();
+      // await getUserDetails();
     } catch (error: unknown) {
       toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
@@ -184,7 +131,7 @@ export const useUser = () => {
         throw errorData;
       }
       toast.success(API.CONTACT_BLOCK);
-      await getUserDetails();
+      // await getUserDetails();
     } catch (error: unknown) {
       toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
@@ -205,7 +152,7 @@ export const useUser = () => {
         throw errorData;
       }
       toast.success(API.CONTACT_ADDED);
-      await getUserDetails();
+      // await getUserDetails();
     } catch (error: unknown) {
       toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
@@ -246,7 +193,6 @@ export const useUser = () => {
   return {
     addStartChat,
     updateProfile,
-    getUserDetails,
     removeAddUser,
     toggleShowAddModal,
     toggleShowEditModal,
@@ -261,10 +207,8 @@ export const useUser = () => {
     searchTerm,
     searchQuery,
     addUsers,
-    isGetUserDetails,
     isShowAddModal,
     isShowEditModal,
     isUpdating,
-    isSearching,
   };
 };

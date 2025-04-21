@@ -5,24 +5,27 @@ import FriendsIcon from "@/components/ui/icons/FriendsIcon";
 import LogoutIcon from "@/components/ui/icons/LogoutIcon";
 import SettingIcon from "@/components/ui/icons/SettingIcon";
 import { ROUTES } from "@/constants/routes";
-import { useUser } from "@/hooks/useUser";
 import { FC, PropsWithChildren, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useChatStore } from "@/store/useChatStore";
-import { useSignOutMutation } from "@/services/auth.service";
+import {
+  useAuthDetailQuery,
+  useSignOutMutation,
+} from "@/services/auth.service";
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
 import { API } from "@/constants/api";
 
 export const ChatLayout: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate();
-  const { getUserDetails } = useUser();
   const { resetData } = useChatStore();
   const { logOut } = useAuthStore();
   const { mutate, data } = useSignOutMutation();
+  const { authUser } = useAuthStore();
+  const { refetch } = useAuthDetailQuery(authUser!.userId);
 
   useEffect(() => {
-    getUserDetails();
+    refetch();
     resetData();
   }, []);
 

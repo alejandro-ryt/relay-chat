@@ -1,9 +1,9 @@
 import { END_POINT } from "@/constants/endpoint";
 import { TApiError } from "@/types/api.types";
-import { TContactSearch, TUserSearchResponse } from "@/types/user.types";
+import { TUserSearchResponse } from "@/types/user.types";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
-const getContacts = async ({ searchQuery }: TContactSearch) => {
+const getContacts = async (searchQuery: string) => {
   const query =
     searchQuery.length > 0 ? `?searchText=${searchQuery}&page=1` : "";
   const response = await fetch(
@@ -11,7 +11,7 @@ const getContacts = async ({ searchQuery }: TContactSearch) => {
     {
       headers: { "Content-Type": "application/json" },
       method: "GET",
-      //   credentials: "include",
+      credentials: "include",
     }
   );
   if (!response.ok) {
@@ -21,12 +21,12 @@ const getContacts = async ({ searchQuery }: TContactSearch) => {
   return (await response.json()) as TUserSearchResponse;
 };
 
-const useContactQuery = ({
-  searchQuery,
-}: TContactSearch): UseQueryResult<TUserSearchResponse, TApiError> => {
+const useContactQuery = (
+  searchQuery: string
+): UseQueryResult<TUserSearchResponse, TApiError> => {
   return useQuery({
     queryKey: ["contacts", searchQuery],
-    queryFn: () => getContacts({ searchQuery }),
+    queryFn: () => getContacts(searchQuery),
   });
 };
 
