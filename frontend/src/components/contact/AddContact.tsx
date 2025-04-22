@@ -15,6 +15,7 @@ import {
 } from "@/services/contact.service";
 import { useAuthStore } from "@/store/useAuthStore";
 import DATA from "@/constants/notFound";
+import { API } from "@/constants/api";
 
 export const AddContact = () => {
   const {
@@ -41,12 +42,16 @@ export const AddContact = () => {
       toast.error(getApiError(addContact.error) ?? DATA.API_ERROR);
     }
 
+    if (addContact.data) {
+      toast.success(API.CONTACT_ADDED);
+    }
+
     if (contactQuery.data && contactQuery.data.users.length > 0 && authUser) {
       setUsers(
         contactQuery.data.users.filter((user) => user._id !== authUser.userId)
       );
     }
-  }, [contactQuery.data, addContact.error]);
+  }, [contactQuery.data, addContact.error, addContact.data]);
 
   return (
     <>

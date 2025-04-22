@@ -27,6 +27,15 @@ const getContacts = async (searchQuery: string) => {
   return (await response.json()) as TUserSearchResponse;
 };
 
+const useContactQuery = (
+  searchQuery: string
+): UseQueryResult<TUserSearchResponse, TApiError> => {
+  return useQuery({
+    queryKey: ["contacts", searchQuery],
+    queryFn: () => getContacts(searchQuery),
+  });
+};
+
 const addContact = async ({ contactId, userId }: TAddContact) => {
   const response = await fetch(
     `${import.meta.env.VITE_BASE_URL}${END_POINT.ADD_CONTACT}/${userId}/${contactId}`,
@@ -52,18 +61,74 @@ const useAddContactMutation = (): UseMutationResult<
   return useMutation({
     mutationFn: addContact,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["contacts", "auth-detail"] });
+      queryClient.invalidateQueries({ queryKey: ["auth-detail"] });
     },
   });
 };
 
-const useContactQuery = (
-  searchQuery: string
-): UseQueryResult<TUserSearchResponse, TApiError> => {
-  return useQuery({
-    queryKey: ["contacts", searchQuery],
-    queryFn: () => getContacts(searchQuery),
+const deleteContact = async ({ contactId, userId }: TAddContact) => {
+  const response = await fetch(
+    `${import.meta.env.VITE_BASE_URL}${END_POINT.REMOVE_CONTACT}/${userId}/${contactId}`,
+    {
+      headers: { "Content-Type": "application/json" },
+      method: "DELETE",
+      credentials: "include",
+    }
+  );
+  if (!response.ok) {
+    const errorData: TApiError = await response.json();
+    throw errorData;
+  }
+  return response.ok;
+};
+
+const useDeleteContactMutation = (): UseMutationResult<
+  boolean,
+  TApiError,
+  TAddContact
+> => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteContact,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["auth-detail"] });
+    },
   });
 };
 
-export { useContactQuery, useAddContactMutation };
+const blockContact = async ({ contactId, userId }: TAddContact) => {
+  const response = await fetch(
+    `${import.meta.env.VITE_BASE_URL}${END_POINT.BLOCK_CONTACT}/${userId}/${contactId}`,
+    {
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+      credentials: "include",
+    }
+  );
+  if (!response.ok) {
+    const errorData: TApiError = await response.json();
+    throw errorData;
+  }
+  return response.ok;
+};
+
+const useBlockContactMutation = (): UseMutationResult<
+  boolean,
+  TApiError,
+  TAddContact
+> => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: blockContact,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["auth-detail"] });
+    },
+  });
+};
+
+export {
+  useContactQuery,
+  useAddContactMutation,
+  useDeleteContactMutation,
+  useBlockContactMutation,
+};

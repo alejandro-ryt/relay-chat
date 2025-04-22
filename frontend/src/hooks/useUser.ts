@@ -14,7 +14,6 @@ import useDebounce from "@/hooks/useDebounce";
 import { TCreateChatForm } from "@/schemas/create";
 import DATA from "@/constants/notFound";
 import { API } from "@/constants/api";
-import { useAuthDetailQuery } from "@/services/auth.service";
 
 export const useUser = () => {
   const navigate = useNavigate();
@@ -25,7 +24,6 @@ export const useUser = () => {
   const [addUsers, setAddUsers] = useState<TUser[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { authUser, authUserDetails, setAuthUserDetails } = useAuthStore();
-  const { refetch } = useAuthDetailQuery();
   const { joinChat } = useChatStore();
 
   const removeAddUser = (contactId: string) =>
@@ -95,69 +93,6 @@ export const useUser = () => {
     }
   };
 
-  const deleteContact = async (contactId: string) => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}${END_POINT.REMOVE_CONTACT}/${authUser?.userId}/${contactId}`,
-        {
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          method: "DELETE",
-        }
-      );
-      if (!response.ok) {
-        const errorData: TApiError = await response.json();
-        throw errorData;
-      }
-      toast.success(API.CONTACT_REMOVE);
-      refetch();
-    } catch (error: unknown) {
-      toast.error(getApiError(error) ?? DATA.API_ERROR);
-    }
-  };
-
-  const blockContact = async (contactId: string) => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}${END_POINT.BLOCK_CONTACT}/${authUser?.userId}/${contactId}`,
-        {
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          method: "POST",
-        }
-      );
-      if (!response.ok) {
-        const errorData: TApiError = await response.json();
-        throw errorData;
-      }
-      toast.success(API.CONTACT_BLOCK);
-      refetch();
-    } catch (error: unknown) {
-      toast.error(getApiError(error) ?? DATA.API_ERROR);
-    }
-  };
-
-  const addContact = async (contactId: string) => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}${END_POINT.ADD_CONTACT}/${authUser?.userId}/${contactId}`,
-        {
-          credentials: "include",
-          headers: { "Content-Type": "application/json" },
-          method: "POST",
-        }
-      );
-      if (!response.ok) {
-        const errorData: TApiError = await response.json();
-        throw errorData;
-      }
-      toast.success(API.CONTACT_ADDED);
-      refetch();
-    } catch (error: unknown) {
-      toast.error(getApiError(error) ?? DATA.API_ERROR);
-    }
-  };
-
   const startChat = (data: TCreateChatForm) => {
     const chatName =
       data.chatName === "individual"
@@ -196,10 +131,7 @@ export const useUser = () => {
     removeAddUser,
     toggleShowAddModal,
     toggleShowEditModal,
-    addContact,
-    deleteContact,
     setSearchQuery,
-    blockContact,
     startChat,
     handleFilterContact,
     handleFilterSearchUser,
