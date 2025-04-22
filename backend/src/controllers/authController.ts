@@ -69,15 +69,12 @@ export const signIn = async (
 export const logOut = (req: Request, res: Response, next: NextFunction) => {
   try {
     // Clear the cookie
-    res.setHeader(
-      "Set-Cookie",
-      cookie.serialize("token", "", {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        maxAge: 0, // Expire immediately
-        sameSite: "strict",
-      })
-    );
+    res.cookie("token", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 0, // Expire immediately
+      sameSite: "strict",
+    });
 
     res.status(StatusCodes.OK).end();
   } catch (error) {

@@ -144,6 +144,10 @@ class ChatRepository implements IChatRepository {
     );
   }
 
+  public async deleteMessage(id: Types.ObjectId): Promise<void> {
+    await Message.updateOne({ _id: id }, { $set: { deletedAt: new Date() } });
+  }
+
   // Save message in DB
   public async saveMessage(
     message: string,
