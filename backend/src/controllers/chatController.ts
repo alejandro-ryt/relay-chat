@@ -147,6 +147,22 @@ export const sendMessage = async (
   }
 };
 
+export const deleteMessageById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
+    await chatService.deleteMessageById(id);
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Message deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 /**
  *
  * @param socket Socket

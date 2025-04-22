@@ -16,6 +16,7 @@ const messageSchema = new Schema<IMessageDocument>(
       required: true,
       unique: true,
     },
+    deletedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
