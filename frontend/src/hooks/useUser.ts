@@ -1,29 +1,23 @@
-import { END_POINT } from "@/constants/endpoint";
 import { useAuthStore } from "@/store/useAuthStore";
-import { TApiError } from "@/types/api.types";
-import { TEditUserForm, TUser } from "@/types/user.types";
-import { getApiError } from "@/utils";
+import { TUser } from "@/types/user.types";
 import { SyntheticEvent, useState } from "react";
 import toast from "react-hot-toast";
-import DOMPurify from "dompurify";
 import { useChatStore } from "@/store/useChatStore";
 import { TJoinChat } from "@/types/chat.types";
 import { useNavigate } from "react-router";
 import { ROUTES } from "@/constants/routes";
 import useDebounce from "@/hooks/useDebounce";
 import { TCreateChatForm } from "@/schemas/create";
-import DATA from "@/constants/notFound";
 import { API } from "@/constants/api";
 
 export const useUser = () => {
   const navigate = useNavigate();
   const [isShowAddModal, setIsShowAddModal] = useState(false);
   const [isShowEditModal, setIsShowEditModal] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [addUsers, setAddUsers] = useState<TUser[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const { authUser, authUserDetails, setAuthUserDetails } = useAuthStore();
+  const { authUser, authUserDetails } = useAuthStore();
   const { joinChat } = useChatStore();
 
   const removeAddUser = (contactId: string) =>
@@ -43,40 +37,6 @@ export const useUser = () => {
   ) => {
     const value = (event.target as HTMLInputElement).value;
     setSearchQuery(value);
-  };
-
-  const updateProfile = async (values: TEditUserForm) => {
-    try {
-      setIsUpdating(true);
-      const sanitizeData: TEditUserForm = {
-        firstName: DOMPurify.sanitize(values.firstName),
-        lastName: DOMPurify.sanitize(values.lastName),
-        profilePic: DOMPurify.sanitize(values.profilePic),
-      };
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}${END_POINT.USER_UPDATE}/${authUser?.userId}`,
-        {
-          headers: { "Content-Type": "application/json" },
-          method: "PUT",
-          body: JSON.stringify(sanitizeData),
-          credentials: "include",
-        }
-      );
-      if (!response.ok) {
-        const errorData: TApiError = await response.json();
-        throw errorData;
-      }
-      const responseData = await response.json();
-      if (responseData) {
-        setAuthUserDetails(responseData);
-      }
-      toast.success(API.PROFILE_UPDATED);
-      toggleShowEditModal();
-    } catch (error: unknown) {
-      toast.error(getApiError(error) ?? DATA.API_ERROR);
-    } finally {
-      setIsUpdating(false);
-    }
   };
 
   const addStartChat = (contactId: string) => {
@@ -127,7 +87,6 @@ export const useUser = () => {
 
   return {
     addStartChat,
-    updateProfile,
     removeAddUser,
     toggleShowAddModal,
     toggleShowEditModal,
@@ -141,6 +100,5 @@ export const useUser = () => {
     addUsers,
     isShowAddModal,
     isShowEditModal,
-    isUpdating,
   };
 };
