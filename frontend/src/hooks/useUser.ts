@@ -12,13 +12,13 @@ import { API } from "@/constants/api";
 
 export const useUser = () => {
   const navigate = useNavigate();
+  const { authUser, authUserDetails } = useAuthStore();
+  const { joinChat } = useChatStore();
   const [isShowAddModal, setIsShowAddModal] = useState(false);
   const [isShowEditModal, setIsShowEditModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [addUsers, setAddUsers] = useState<TUser[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const { authUser, authUserDetails } = useAuthStore();
-  const { joinChat } = useChatStore();
 
   const removeAddUser = (contactId: string) =>
     setAddUsers((prevState) =>
@@ -75,7 +75,7 @@ export const useUser = () => {
     const isJoined = joinChat(joinData);
     if (isJoined) {
       toast.success(API.CHAT_CREATED);
-      navigate(ROUTES.CHAT);
+      navigate(`/${ROUTES.CHAT}`);
     }
   };
 

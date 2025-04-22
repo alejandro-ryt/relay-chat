@@ -1,4 +1,5 @@
 import { END_POINT } from "@/constants/endpoint";
+import { QUERY_KEY } from "@/constants/fetchQuery";
 import { useAuthStore } from "@/store/useAuthStore";
 import { TApiError } from "@/types/api.types";
 import { TAuthUser, TSignInForm, TSignUpBody } from "@/types/auth.types";
@@ -120,7 +121,7 @@ const getAuthDetails = async (userId: string) => {
 const useAuthDetailQuery = (): UseQueryResult<TUser, TApiError> => {
   const { authUser } = useAuthStore();
   return useQuery({
-    queryKey: ["auth-detail", authUser!.userId],
+    queryKey: [QUERY_KEY.AUTH_DETAIL, authUser!.userId],
     queryFn: () => getAuthDetails(authUser!.userId),
   });
 };

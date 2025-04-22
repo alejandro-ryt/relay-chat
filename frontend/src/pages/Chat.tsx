@@ -2,35 +2,29 @@ import { useEffect } from "react";
 import { motion } from "motion/react";
 import ChatBox from "@/components/chat/ChatBox";
 import RecentChats from "@/components/chat/RecentChats";
-import { useChat } from "@/hooks/useChat";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useChatStore } from "@/store/useChatStore";
+import { useGetChatQuery } from "@/services/chat.service";
 
 const Chat = () => {
   const { selectedChatId, setSelectedChatData, setSelectedChatPreviewData } =
     useChatStore();
-  const { getChatsByUserId } = useChat();
   const { authUser } = useAuthStore();
-
-  const fetchSelectedChatPreviewData = async () => {
-    try {
-      if (authUser?.userId) {
-        const chats = await getChatsByUserId(authUser.userId);
-        setSelectedChatPreviewData(authUser.userId, chats);
-      }
-    } catch (error) {
-      console.error("Error fetching chats:", error);
-      setSelectedChatPreviewData(authUser?.userId || "", []);
-    }
-  };
+  const { data, refetch } = useGetChatQuery(authUser!.userId);
 
   useEffect(() => {
+    if (data) {
+      setSelectedChatPreviewData(authUser!.userId, data);
+    }
+  }, [data, selectedChatId]);
+
+  useEffect(() => {
+    refetch();
     setSelectedChatData();
-    fetchSelectedChatPreviewData();
-  }, [selectedChatId, authUser?.userId]);
+  }, [selectedChatId]);
 
   return (
-    <motion.section className="bg-base-100 flex flex-1 h-full md:h-[calc(100dvh-3rem)] rounded-[1.5rem] m-2">
+    <motion.section className="bg-base-100 flex flex-1 h-full md:h-[calc(100dvh-4rem)] rounded-[1.5rem] m-2">
       {/* Recent Chats */}
       <RecentChats />
 

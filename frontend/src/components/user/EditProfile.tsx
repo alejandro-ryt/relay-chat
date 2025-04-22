@@ -23,12 +23,13 @@ export const EditProfile = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<TEditUserForm>({
     resolver: zodResolver(userEditSchema),
     defaultValues: {
-      profilePic: authUserDetails?.profilePic,
-      firstName: authUserDetails?.firstName,
-      lastName: authUserDetails?.lastName,
+      profilePic: "",
+      firstName: "",
+      lastName: "",
     },
   });
 
@@ -51,6 +52,14 @@ export const EditProfile = () => {
   };
 
   useEffect(() => {
+    if (isShowEditModal && authUserDetails) {
+      setValue("firstName", authUserDetails.firstName);
+      setValue("lastName", authUserDetails.lastName);
+      setValue("profilePic", authUserDetails.profilePic);
+    }
+  }, [isShowEditModal]);
+
+  useEffect(() => {
     if (error) {
       toast.error(getApiError(error) ?? DATA.API_ERROR);
     }
@@ -64,7 +73,7 @@ export const EditProfile = () => {
 
   return (
     <>
-      <header className="dropdown dropdown-top md:dropdown-start md:h-14 md:m-2">
+      <header className="dropdown dropdown-top md:dropdown-bottom md:h-14 md:m-2">
         <div
           tabIndex={0}
           role="button"

@@ -1,4 +1,5 @@
 import { END_POINT } from "@/constants/endpoint";
+import { QUERY_KEY } from "@/constants/fetchQuery";
 import { TApiError } from "@/types/api.types";
 import { TAddContact, TUserSearchResponse } from "@/types/user.types";
 import {
@@ -31,7 +32,7 @@ const useContactQuery = (
   searchQuery: string
 ): UseQueryResult<TUserSearchResponse, TApiError> => {
   return useQuery({
-    queryKey: ["contacts", searchQuery],
+    queryKey: [QUERY_KEY.CONTACTS, searchQuery],
     queryFn: () => getContacts(searchQuery),
   });
 };
@@ -61,7 +62,7 @@ const useAddContactMutation = (): UseMutationResult<
   return useMutation({
     mutationFn: addContact,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth-detail"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.AUTH_DETAIL] });
     },
   });
 };
@@ -91,7 +92,7 @@ const useDeleteContactMutation = (): UseMutationResult<
   return useMutation({
     mutationFn: deleteContact,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth-detail"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.AUTH_DETAIL] });
     },
   });
 };
@@ -121,7 +122,7 @@ const useBlockContactMutation = (): UseMutationResult<
   return useMutation({
     mutationFn: blockContact,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["auth-detail"] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.AUTH_DETAIL] });
     },
   });
 };
