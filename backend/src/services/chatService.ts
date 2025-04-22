@@ -81,29 +81,41 @@ class ChatService implements IChatService {
 
     // Add each user to the socket room
     membersId.forEach(async (userId) => {
-      if (chat.members.includes(new Types.ObjectId(userId))) return;
-      // Here we emit the event to the individual user socket
-      const userSocketId = await userRepository.getUserSocketIdByUserId(userId);
-      if (!userSocketId) {
-        if (!chat._id || (chat._id && !Types.ObjectId.isValid(chat._id))) {
-          throw new Error(`Invalid chatId: ${chat._id}`);
+      try {
+        if (chat.members.includes(new Types.ObjectId(userId))) return;
+
+        // Get the user's socket ID
+        const userSocketId =
+          await userRepository.getUserSocketIdByUserId(userId);
+        if (!userSocketId) {
+          console.warn(`Socket ID not found for user ${userId}`);
+          if (!chat._id || !Types.ObjectId.isValid(chat._id)) {
+            console.error(`Invalid chatId: ${chat._id}`);
+            return;
+          }
+
+          if (!Types.ObjectId.isValid(userId)) {
+            console.error(`Invalid userId: ${userId}`);
+            return;
+          }
+
+          // Save the chat invitation for the user
+          await chatRepository.saveChatInvitation(userId, chat._id.toString());
+          return;
         }
 
-        if (!Types.ObjectId.isValid(userId)) {
-          throw new Error(`Invalid userId: ${userId}`);
+        // Get the socket instance
+        const memberSocketInstance = io.of("/").sockets.get(userSocketId);
+        if (!memberSocketInstance) {
+          console.warn(`Socket instance not found for user ${userId}`);
+          return;
         }
-        await chatRepository.saveChatInvitation(userId, chat._id.toString());
-        return;
-      }
-      const memberSocketInstance = io.of("/").sockets.get(userSocketId);
 
-      if (!memberSocketInstance) {
-        throw new ErrorHandler(
-          ERROR.ERROR_SOCKET_INSTANCE_NOT_FOUND,
-          StatusCodes.NOT_FOUND
-        );
+        // Add the user to the chat room
+        memberSocketInstance.join(chatName);
+      } catch (error) {
+        console.error(`Error processing user ${userId}:`, error);
       }
-      memberSocketInstance.join(chatName); // Add other users/members to the chat
     });
 
     socket.join(chat.name ?? chatName); // Join the room
