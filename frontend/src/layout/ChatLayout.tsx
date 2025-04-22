@@ -5,22 +5,38 @@ import FriendsIcon from "@/components/ui/icons/FriendsIcon";
 import LogoutIcon from "@/components/ui/icons/LogoutIcon";
 import SettingIcon from "@/components/ui/icons/SettingIcon";
 import { ROUTES } from "@/constants/routes";
-import { useAuth } from "@/hooks/useAuth";
-import { useUser } from "@/hooks/useUser";
 import { FC, PropsWithChildren, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useChatStore } from "@/store/useChatStore";
+import {
+  useAuthDetailQuery,
+  useSignOutMutation,
+} from "@/services/auth.service";
+import { useAuthStore } from "@/store/useAuthStore";
+import toast from "react-hot-toast";
+import { API } from "@/constants/api";
 
 export const ChatLayout: FC<PropsWithChildren> = ({ children }) => {
-  const { logout } = useAuth();
   const navigate = useNavigate();
-  const { getUserDetails } = useUser();
   const { resetData } = useChatStore();
+  const { logOut } = useAuthStore();
+  const { setAuthUserDetails } = useAuthStore();
+  const { mutate, data } = useSignOutMutation();
+  const authDetailQuery = useAuthDetailQuery();
 
   useEffect(() => {
-    getUserDetails();
-    resetData();
-  }, []);
+    if (authDetailQuery.data) {
+      setAuthUserDetails(authDetailQuery.data);
+    }
+  }, [authDetailQuery.data]);
+
+  useEffect(() => {
+    if (data) {
+      resetData();
+      logOut();
+      toast.success(API.LOGOUT);
+    }
+  }, [data]);
 
   return (
     <section className="relative grid grid-cols-12 grid-rows-1 h-full md:h-max rounded-[1.5rem]">
@@ -55,7 +71,7 @@ export const ChatLayout: FC<PropsWithChildren> = ({ children }) => {
           shape="squircle"
           title="Logout"
           icon={<LogoutIcon />}
-          action={logout}
+          action={mutate}
         />
       </aside>
       {/* Sidebar */}

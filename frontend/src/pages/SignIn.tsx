@@ -3,14 +3,21 @@ import SignInIcon from "@/components/ui/icons/SignInIcon";
 import CreateIcon from "@/components/ui/icons/CreateIcon";
 import { ROUTES } from "@/constants/routes";
 import SIGN_IN_DATA from "@/constants/signIn";
-import { useAuth } from "@/hooks/useAuth";
 import { initialSignInForm, signInSchema } from "@/schemas/signIn";
 import { TSignInForm } from "@/types/auth.types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { NavLink } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { motion } from "motion/react";
 import chatPeople from "@/assets/chat-people.png";
+import { useSignInMutation } from "@/services/auth.service";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+import { getApiError } from "@/utils";
+import DOMPurify from "dompurify";
+import DATA from "@/constants/notFound";
+import { API } from "@/constants/api";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const SignIn = () => {
   const {
@@ -21,8 +28,29 @@ const SignIn = () => {
     resolver: zodResolver(signInSchema),
     defaultValues: initialSignInForm,
   });
+  const navigate = useNavigate();
+  const { authenticate } = useAuthStore();
+  const { mutate, error, data, isPending } = useSignInMutation();
 
-  const { sendSignIn, isSigningIn } = useAuth();
+  const sendSignIn = async (values: TSignInForm) => {
+    const sanitizeData: TSignInForm = {
+      email: DOMPurify.sanitize(values.email),
+      password: DOMPurify.sanitize(values.password),
+    };
+    mutate(sanitizeData);
+  };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
+    }
+
+    if (data) {
+      authenticate(data);
+      toast.success(`${API.WELCOME} ${data.username}`);
+      navigate(ROUTES.CHAT);
+    }
+  }, [data, error]);
 
   return (
     <section className="grid h-full">
@@ -67,10 +95,10 @@ const SignIn = () => {
             </section>
             <button
               type="submit"
-              disabled={isSigningIn}
+              disabled={isPending}
               className="btn btn-primary mb-4"
             >
-              {isSigningIn ? (
+              {isPending ? (
                 <span className="loading loading-spinner"></span>
               ) : (
                 <SignInIcon />
