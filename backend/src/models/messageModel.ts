@@ -8,13 +8,11 @@ const messageSchema = new Schema<IMessageDocument>(
       type: Schema.Types.ObjectId,
       ref: "Chat",
       required: true,
-      unique: true,
     },
     author: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
     },
   },
   { timestamps: true }
