@@ -108,7 +108,7 @@ class ChatRepository implements IChatRepository {
 
   // Create a new chat
   public async saveChat(chat: IChat): Promise<IChatDocument> {
-    return await await Chat.create(chat);
+    return await Chat.create(chat);
   }
 
   // Update an existing chat

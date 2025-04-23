@@ -34,11 +34,17 @@ export type TIconButtonProps = {
 };
 
 export type TChatMessage = {
-  _id: string;
-  author: string;
-  username: string;
-  message: string;
+  author: {
+    profilePic: string;
+    username: string;
+    _id: string;
+  };
+  chatId: string;
   createdAt: Date;
+  deletedAt: Date | null;
+  message: string;
+  updatedAt: Date | null;
+  _id: string;
 };
 
 export type TChatMember = {
@@ -74,6 +80,7 @@ export type TChatState = {
   recentChatsSidebar: boolean;
   selectedChatId: string | null;
   selectedChatData: TChat | null;
+  selectedChatMembersIds: string[];
   selectedChatPreviewData: TPreviewChat | null;
   chatPreviewArray: TPreviewChat[] | null;
 };
@@ -82,6 +89,7 @@ export type TChatActions = {
   setChatInfoSidebar: (chatInfoSidebar: boolean) => void;
   setRecentChatsSidebar: (recentChatsSidebar: boolean) => void;
   setSelectedChatId: (selectedId: string | null) => void;
+  setSelectedChatMembersIds: (membersIds: string[]) => void;
   setSelectedChatData: () => void;
   setSelectedChatPreviewData: (
     userId: string,

@@ -19,7 +19,7 @@ import { API } from "@/constants/api";
 export const ChatLayout: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate();
   const { resetData } = useChatStore();
-  const { logOut } = useAuthStore();
+  const { logOut, authUser } = useAuthStore();
   const { setAuthUserDetails } = useAuthStore();
   const { mutate, data } = useSignOutMutation();
   const authDetailQuery = useAuthDetailQuery();
@@ -71,7 +71,7 @@ export const ChatLayout: FC<PropsWithChildren> = ({ children }) => {
           shape="squircle"
           title="Logout"
           icon={<LogoutIcon />}
-          action={mutate}
+          action={() => mutate({ userId: authUser!.userId })}
         />
       </aside>
       {/* Sidebar */}

@@ -42,3 +42,5 @@ export type ContactSkeletonProps = {
 export type TEditUserForm = z.output<typeof userEditSchema>;
 
 export type TEditUserFormBody = TEditUserForm & { userId: string };
+
+export type TLogoutUser = { userId: string };

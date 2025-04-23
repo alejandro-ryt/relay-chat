@@ -14,6 +14,7 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   recentChatsSidebar: true,
   selectedChatId: null,
   selectedChatData: null,
+  selectedChatMembersIds: [],
   selectedChatPreviewData: null,
   chatPreviewArray: [],
 
@@ -35,6 +36,15 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   setRecentChatsSidebar: (recentChatsSidebar: boolean) => {
     set({
       recentChatsSidebar,
+    });
+  },
+
+  //Set Chat Members Ids
+  setSelectedChatMembersIds: (membersIds: string[]) => {
+    console.log("setSelectedChatMembersIds", membersIds);
+
+    set({
+      selectedChatMembersIds: membersIds,
     });
   },
 
@@ -73,20 +83,13 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
 
   // Connect to chat
   connectToChat: (userId: string) => {
-    let membersIds: string[] = [];
-
-    get().selectedChatData?.members.forEach((member) => {
-      member._id !== userId ? membersIds.push(member._id) : null;
-    });
-
     if (socket && userId) {
-      socket.emit(
-        "joinChat",
-        get().selectedChatPreviewData?.chatName,
-        "group",
-        userId,
-        membersIds
-      ); // Emit event to server to join the room
+      get().joinChat({
+        chatName: get().selectedChatPreviewData?.chatName || "",
+        type: get().selectedChatMembersIds.length > 1 ? "group" : "direct",
+        currentUserId: userId,
+        membersIds: get().selectedChatMembersIds,
+      });
     } else {
       console.error("Socket is null. Unable to join chat.");
     }
@@ -94,18 +97,13 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
 
   // Send Messsage
   sendMessage: (message: string, userId) => {
-    let membersIds: string[] = [];
-
-    get().selectedChatData?.members.forEach((member) => {
-      member._id !== userId ? membersIds.push(member._id) : null;
-    });
     if (socket) {
       socket.emit(
         "sendMessage",
         message,
         get().selectedChatPreviewData?.id,
         userId,
-        membersIds
+        get().selectedChatMembersIds
       ); // Emit event to server to send the message
 
       get().setSelectedChatData(); // Update chat data after sending the message
@@ -139,6 +137,8 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   },
 
   joinChat: (data) => {
+    console.log("joinChat", data);
+
     try {
       if (socket) {
         socket.emit(
@@ -165,6 +165,7 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
       selectedChatData: null,
       selectedChatPreviewData: null,
       chatPreviewArray: [],
+      selectedChatMembersIds: [],
     });
   },
   // Filtered Chats

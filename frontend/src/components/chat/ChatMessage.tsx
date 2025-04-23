@@ -4,7 +4,7 @@ import { TChatMessageProps } from "@/types/chat.types";
 
 const ChatMessage = ({ type, pic, name, time, message }: TChatMessageProps) => {
   const typeClass = clsx(
-    "chat",
+    "chat dropdown dropdown-bottom",
     type === "received" ? "chat-start" : "chat-end"
   );
 
@@ -14,16 +14,30 @@ const ChatMessage = ({ type, pic, name, time, message }: TChatMessageProps) => {
   );
 
   return (
-    <div className={typeClass}>
+    <article className={typeClass}>
       <div className="chat-image avatar">
         <Avatar pic={pic} sizeClass="w-10" />
       </div>
-      <div className="chat-header">
+      <section className="chat-header">
         {name}
         <time className="text-xs opacity-50">{time}</time>
-      </div>
-      <div className={colorClass}>{message}</div>
-    </div>
+      </section>
+      <button className={colorClass} tabIndex={0}>
+        {message}
+      </button>
+
+      <ul
+        tabIndex={0}
+        className="dropdown-content menu bg-base-200 rounded-box z-1 p-2 shadow-sm"
+      >
+        <li>
+          <button>Edit message</button>
+        </li>
+        <li>
+          <button>Delete message</button>
+        </li>
+      </ul>
+    </article>
   );
 };
 

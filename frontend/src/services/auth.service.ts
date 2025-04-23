@@ -3,7 +3,7 @@ import { QUERY_KEY } from "@/constants/fetchQuery";
 import { useAuthStore } from "@/store/useAuthStore";
 import { TApiError } from "@/types/api.types";
 import { TAuthUser, TSignInForm, TSignUpBody } from "@/types/auth.types";
-import { TEditUserFormBody, TUser } from "@/types/user.types";
+import { TEditUserFormBody, TLogoutUser, TUser } from "@/types/user.types";
 import {
   UseMutationResult,
   UseQueryResult,
@@ -64,9 +64,9 @@ const useSignInMutation = (): UseMutationResult<
   return useMutation({ mutationFn: signInRequest });
 };
 
-const signOutRequest = async () => {
+const signOutRequest = async ({ userId }: TLogoutUser) => {
   const response = await fetch(
-    `${import.meta.env.VITE_BASE_URL}${END_POINT.LOGOUT}`,
+    `${import.meta.env.VITE_BASE_URL}${END_POINT.LOGOUT}/${userId}`,
     { method: "POST", credentials: "include" }
   );
   if (!response.ok) {
@@ -76,7 +76,11 @@ const signOutRequest = async () => {
   return response.ok;
 };
 
-const useSignOutMutation = (): UseMutationResult<boolean, TApiError> => {
+const useSignOutMutation = (): UseMutationResult<
+  boolean,
+  TApiError,
+  TLogoutUser
+> => {
   return useMutation({ mutationFn: signOutRequest });
 };
 

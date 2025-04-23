@@ -66,14 +66,23 @@ export const signIn = async (
 };
 
 // Log Out
-export const logOut = (req: Request, res: Response, next: NextFunction) => {
+export const logOut = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
+    const { id } = req.params;
     // Clear the cookie
     res.cookie("token", "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 0, // Expire immediately
       sameSite: "strict",
+    });
+
+    await userService.updateUser(id, {
+      socketId: null,
     });
 
     res.status(StatusCodes.OK).end();

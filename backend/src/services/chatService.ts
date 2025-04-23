@@ -250,10 +250,13 @@ class ChatService implements IChatService {
 
     // Emit message to the room
     io.to(chat.name).emit("sendMessage", {
-      author: newMessage.author._id,
       _id: newMessage.id,
       message: newMessage.message,
+      chatId: newMessage.chatId,
+      author: newMessage.author,
       createdAt: newMessage.createdAt,
+      updatedAt: newMessage.updatedAt,
+      deletedAt: newMessage.deletedAt,
     });
 
     // Emit notification of a new message

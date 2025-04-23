@@ -1,9 +1,18 @@
+import { useEffect } from "react";
 import { motion } from "motion/react";
 import ContactCard from "@/components/chat/ContactCard";
 import { useChatStore } from "@/store/useChatStore";
 
 const ChatSidebar = () => {
-  const { selectedChatData, chatInfoSidebar } = useChatStore();
+  const { selectedChatData, chatInfoSidebar, setSelectedChatMembersIds } =
+    useChatStore();
+
+  useEffect(() => {
+    if (selectedChatData) {
+      const membersIds = selectedChatData.members.map((member) => member._id);
+      setSelectedChatMembersIds(membersIds); // Set the members IDs in the store
+    }
+  }, [selectedChatData]);
 
   return (
     <motion.section
