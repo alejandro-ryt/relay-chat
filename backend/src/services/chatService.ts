@@ -214,7 +214,6 @@ class ChatService implements IChatService {
 
   async onSendMessageEvent(
     io: Server,
-    socket: Socket,
     message: string,
     chatId: string,
     userId: string,
@@ -302,6 +301,7 @@ class ChatService implements IChatService {
         message,
         updatedAt: new Date(),
       };
+
       const options = {
         new: true,
         upsert: true,

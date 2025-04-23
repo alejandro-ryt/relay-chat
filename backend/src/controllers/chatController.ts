@@ -128,7 +128,6 @@ export const sendMessage = async (
     console.log("chatId", chatId);
     await chatService.onSendMessageEvent(
       io,
-      socket,
       message,
       chatId,
       userId,

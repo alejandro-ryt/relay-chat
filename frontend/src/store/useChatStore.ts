@@ -5,6 +5,7 @@ import {
   TChatMessage,
   TChatState,
   TPreviewChat,
+  TChatMessageProps,
 } from "@/types/chat.types";
 import { create } from "zustand";
 import toast from "react-hot-toast";
@@ -12,6 +13,8 @@ import toast from "react-hot-toast";
 export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   chatInfoSidebar: false,
   recentChatsSidebar: true,
+  isMessageEdited: false,
+  messageToEdit: null,
   selectedChatId: null,
   selectedChatData: null,
   selectedChatPreviewData: null,
@@ -28,6 +31,18 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   setChatInfoSidebar: (chatInfoSidebar: boolean) => {
     set({
       chatInfoSidebar,
+    });
+  },
+
+  setIsMessageEdited: (isMessageEdited: boolean) => {
+    set({
+      isMessageEdited,
+    });
+  },
+
+  setMessageToEdit: (messageToEdit: TChatMessageProps) => {
+    set({
+      messageToEdit,
     });
   },
 
@@ -89,14 +104,15 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   },
 
   // Send Messsage
-  sendMessage: (message: string, userId) => {
+  sendMessage: (message: string, userId: string, messageId?: string) => {
     if (socket) {
       socket.emit(
         "sendMessage",
         message,
         get().selectedChatPreviewData?.id,
         userId,
-        get().selectedChatPreviewData?.chatMembers
+        get().selectedChatPreviewData?.chatMembers,
+        messageId
       ); // Emit event to server to send the message
 
       get().setSelectedChatData(userId); // Update chat data after sending the message

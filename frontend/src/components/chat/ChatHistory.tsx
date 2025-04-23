@@ -57,6 +57,7 @@ const ChatHistory = () => {
         return (
           <ChatMessage
             key={message._id}
+            id={message._id}
             type={messageType}
             name={getMemberInfo(message.author._id)?.username || ""}
             pic={getMemberInfo(message.author._id)?.profilePic || ""}
@@ -65,6 +66,8 @@ const ChatHistory = () => {
               minute: "2-digit",
             })}
             message={message.message}
+            deletedAt={message.deletedAt}
+            updatedAt={message.updatedAt}
           />
         );
       })}

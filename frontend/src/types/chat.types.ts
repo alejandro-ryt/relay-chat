@@ -6,11 +6,14 @@ export type TAvatarProps = {
 };
 
 export type TChatMessageProps = {
+  id: string;
   type: "received" | "sent";
   pic: string;
   name: string;
   time: string;
   message: string;
+  deletedAt: Date | null;
+  updatedAt: Date | null;
 };
 
 export type TChatPreviewProps = {
@@ -79,6 +82,8 @@ export type TJoinChat = {
 export type TChatState = {
   chatInfoSidebar: boolean;
   recentChatsSidebar: boolean;
+  isMessageEdited: boolean;
+  messageToEdit: TChatMessageProps | null;
   selectedChatId: string | null;
   selectedChatData: TChat | null;
   selectedChatPreviewData: TPreviewChat | null;
@@ -88,11 +93,13 @@ export type TChatState = {
 export type TChatActions = {
   setChatInfoSidebar: (chatInfoSidebar: boolean) => void;
   setRecentChatsSidebar: (recentChatsSidebar: boolean) => void;
+  setIsMessageEdited: (isMessageEdited: boolean) => void;
+  setMessageToEdit: (messageToEdit: TChatMessageProps) => void;
   setSelectedChatId: (selectedId: string | null) => void;
   setSelectedChatData: (userId: string) => void;
   setSelectedChatPreviewData: (data: TPreviewChat[] | null) => void;
   connectToChat: (userId: string) => void;
-  sendMessage: (message: string, userId: string) => void;
+  sendMessage: (message: string, userId: string, messageId?: string) => void;
   getMessage: () => void;
   joinChat: (data: TJoinChat) => boolean;
   resetData: () => void;

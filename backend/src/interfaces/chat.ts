@@ -53,7 +53,6 @@ export interface IChatService {
   ): Promise<IMessageDocument | null>;
   onSendMessageEvent(
     io: Server,
-    socket: Socket,
     message: string,
     chatName: string,
     userId: string,
