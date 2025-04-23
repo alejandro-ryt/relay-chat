@@ -8,9 +8,11 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { errorMiddleware } from "@/middlewares/errorMiddleware";
 import { handleSocketEvents } from "@/sockets/chatSocket";
+import { setupSwagger } from "@/swagger/swagger";
 const app: Express = express();
 const server = createServer(app);
 app.use(cookieParser());
+setupSwagger(app);
 
 dotenv.config();
 const PORT: number = Number(process.env.PORT) ?? 3001;
@@ -44,4 +46,5 @@ server.listen(PORT, () => {
   // Connect to mongo
   connectDB();
   console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Swagger docs at http://localhost:${PORT}/api-docs`);
 });
