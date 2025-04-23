@@ -1,6 +1,9 @@
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { Express } from "express";
+import { config } from "dotenv";
+
+config(); // Load environment variables from .env file
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -13,7 +16,8 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: "http://localhost:3001",
+        url: `http://localhost:${process.env.PORT ?? 3001}`,
+        description: "Development server",
       },
     ],
   },
