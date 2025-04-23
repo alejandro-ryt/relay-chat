@@ -30,8 +30,15 @@ export type TUserSearchResponse = {
   users: TUser[];
 };
 
+export type TAddContact = {
+  userId: string;
+  contactId: string;
+};
+
 export type ContactSkeletonProps = {
   length?: number;
 };
 
 export type TEditUserForm = z.output<typeof userEditSchema>;
+
+export type TEditUserFormBody = TEditUserForm & { userId: string };

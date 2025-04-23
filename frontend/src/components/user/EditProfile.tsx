@@ -7,31 +7,73 @@ import UserIcon from "@/components/ui/icons/UserIcon";
 import { useUser } from "@/hooks/useUser";
 import { USER } from "@/constants/user";
 import { TEditUserForm } from "@/types/user.types";
-import { ErrorIcon } from "react-hot-toast";
+import toast, { ErrorIcon } from "react-hot-toast";
 import { useAuthStore } from "@/store/useAuthStore";
 import Avatar from "@/components/ui/Avatar";
+import DOMPurify from "dompurify";
+import { useUpdateProfileMutation } from "@/services/auth.service";
+import { useEffect } from "react";
+import { API } from "@/constants/api";
+import { getApiError } from "@/utils";
+import DATA from "@/constants/notFound";
 
 export const EditProfile = () => {
-  const { authUserDetails } = useAuthStore();
+  const { authUserDetails, setAuthUserDetails } = useAuthStore();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<TEditUserForm>({
     resolver: zodResolver(userEditSchema),
     defaultValues: {
-      profilePic: authUserDetails?.profilePic,
-      firstName: authUserDetails?.firstName,
-      lastName: authUserDetails?.lastName,
+      profilePic: "",
+      firstName: "",
+      lastName: "",
     },
   });
 
-  const { toggleShowEditModal, updateProfile, isUpdating, isShowEditModal } =
-    useUser();
+  const { toggleShowEditModal, isShowEditModal } = useUser();
+
+  const { mutate, isPending, data, error } = useUpdateProfileMutation();
+
+  const updateProfile = async (values: TEditUserForm) => {
+    const sanitizeData: TEditUserForm = {
+      firstName: DOMPurify.sanitize(values.firstName),
+      lastName: DOMPurify.sanitize(values.lastName),
+      profilePic: DOMPurify.sanitize(values.profilePic),
+    };
+    mutate({
+      firstName: sanitizeData.firstName,
+      lastName: sanitizeData.lastName,
+      profilePic: sanitizeData.profilePic,
+      userId: authUserDetails!._id,
+    });
+  };
+
+  useEffect(() => {
+    if (isShowEditModal && authUserDetails) {
+      setValue("firstName", authUserDetails.firstName);
+      setValue("lastName", authUserDetails.lastName);
+      setValue("profilePic", authUserDetails.profilePic);
+    }
+  }, [isShowEditModal]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(getApiError(error) ?? DATA.API_ERROR);
+    }
+
+    if (data) {
+      setAuthUserDetails(data);
+      toast.success(API.PROFILE_UPDATED);
+      toggleShowEditModal();
+    }
+  }, [data, error]);
 
   return (
     <>
-      <header className="dropdown dropdown-top md:dropdown-start md:h-14 md:m-2">
+      <header className="dropdown dropdown-top md:dropdown-bottom md:h-14 md:m-2">
         <div
           tabIndex={0}
           role="button"
@@ -110,11 +152,11 @@ export const EditProfile = () => {
               />
             </section>
             <button
-              disabled={isUpdating}
+              disabled={isPending}
               aria-label={USER.UPDATE_BTN}
               className="btn btn-block btn-primary"
             >
-              {isUpdating ? (
+              {isPending ? (
                 <span
                   className="loading loading-spinner"
                   aria-busy="true"

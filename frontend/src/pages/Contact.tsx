@@ -9,22 +9,50 @@ import StartChatEmpty from "@/components/contact/StartChatEmpty";
 import { CONTACT_DATA } from "@/constants/contact";
 import { useUser } from "@/hooks/useUser";
 import { useAuthStore } from "@/store/useAuthStore";
-import { generateAvatar } from "@/utils";
+import { generateAvatar, getApiError } from "@/utils";
+import {
+  useBlockContactMutation,
+  useDeleteContactMutation,
+} from "@/services/contact.service";
+import toast from "react-hot-toast";
+import { API } from "@/constants/api";
+import DATA from "@/constants/notFound";
 
 const Contact = () => {
-  const { authUserDetails, filterContacts } = useAuthStore();
+  const { authUserDetails, filterContacts, authUser } = useAuthStore();
   const {
     addUsers,
     searchTerm,
     debouncedSearchContactTerm,
     addStartChat,
     removeAddUser,
-    deleteContact,
-    blockContact,
     startChat,
     handleFilterContact,
   } = useUser();
   const [contacts, setContacts] = useState(authUserDetails?.contacts);
+  const deleteContact = useDeleteContactMutation();
+  const blockContact = useBlockContactMutation();
+
+  useEffect(() => {
+    if (deleteContact.error || blockContact.error) {
+      toast.error(
+        getApiError(
+          deleteContact.error ? deleteContact.error : blockContact.error
+        ) ?? DATA.API_ERROR
+      );
+    }
+
+    if (deleteContact.data || blockContact.data) {
+      toast.success(
+        deleteContact.data ? API.CONTACT_REMOVE : API.CONTACT_BLOCK
+      );
+    }
+  }, [
+    deleteContact.data,
+    blockContact.data,
+    deleteContact.error,
+    blockContact.error,
+  ]);
 
   useEffect(() => {
     const filtered = filterContacts(searchTerm);
@@ -104,7 +132,12 @@ const Contact = () => {
                       <button
                         type="button"
                         disabled={user.isBlocked}
-                        onClick={() => blockContact(user.contact._id)}
+                        onClick={() =>
+                          blockContact.mutate({
+                            contactId: user.contact._id,
+                            userId: authUser!.userId,
+                          })
+                        }
                         className="btn btn-circle btn-ghost"
                       >
                         <svg
@@ -124,7 +157,12 @@ const Contact = () => {
                       </button>
                       <button
                         type="button"
-                        onClick={() => deleteContact(user.contact._id)}
+                        onClick={() =>
+                          deleteContact.mutate({
+                            contactId: user.contact._id,
+                            userId: authUser!.userId,
+                          })
+                        }
                         className="btn btn-circle btn-ghost"
                       >
                         <svg

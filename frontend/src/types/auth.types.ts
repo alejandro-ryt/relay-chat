@@ -10,6 +10,7 @@ export type TSignUpFormData = Omit<
   TSignUpForm,
   "agreement" | "confirmPassword"
 >;
+export type TSignUpBody = TSignUpFormData & { profilePic: string };
 export type TSignInForm = z.output<typeof signInSchema>;
 export type TRouteConfig = RouteProps & {
   element: JSX.Element;
