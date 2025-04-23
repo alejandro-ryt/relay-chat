@@ -75,6 +75,7 @@ class ChatRepository implements IChatRepository {
           _id: 0,
           id: "$_id",
           chatName: "$name",
+          chatMembers: "$members",
           chatPic: 1,
           lastMessage: { $arrayElemAt: ["$lastMessage", 0] },
           timestamp: "$createdAt", // Format it later in frontend or service

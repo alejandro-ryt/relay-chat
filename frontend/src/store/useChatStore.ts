@@ -14,7 +14,6 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   recentChatsSidebar: true,
   selectedChatId: null,
   selectedChatData: null,
-  selectedChatMembersIds: [],
   selectedChatPreviewData: null,
   chatPreviewArray: [],
 
@@ -39,28 +38,24 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
     });
   },
 
-  //Set Chat Members Ids
-  setSelectedChatMembersIds: (membersIds: string[]) => {
-    console.log("setSelectedChatMembersIds", membersIds);
-
-    set({
-      selectedChatMembersIds: membersIds,
-    });
-  },
-
   // Set Chat Data
-  setSelectedChatData: () => {
+  setSelectedChatData: (userId: string) => {
     if (socket) {
       socket.on("chatData", (chatData: TChat) => {
         set({
           selectedChatData: chatData,
         });
       });
+
+      // Connect to chat after setting the preview data
+      if (get().selectedChatPreviewData) {
+        get().connectToChat(userId);
+      }
     }
   },
 
   // Set Chat Data
-  setSelectedChatPreviewData: (userId: string, data: TPreviewChat[] | null) => {
+  setSelectedChatPreviewData: (data: TPreviewChat[] | null) => {
     const found = data?.find(
       (foundChat) => foundChat.id === get().selectedChatId
     );
@@ -74,11 +69,6 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
     set({
       selectedChatPreviewData: found,
     });
-
-    // Connect to chat after setting the preview data
-    if (found) {
-      get().connectToChat(userId);
-    }
   },
 
   // Connect to chat
@@ -86,9 +76,12 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
     if (socket && userId) {
       get().joinChat({
         chatName: get().selectedChatPreviewData?.chatName || "",
-        type: get().selectedChatMembersIds.length > 1 ? "group" : "direct",
+        type:
+          (get().selectedChatPreviewData?.chatMembers ?? []).length > 1
+            ? "group"
+            : "direct",
         currentUserId: userId,
-        membersIds: get().selectedChatMembersIds,
+        membersIds: get().selectedChatPreviewData?.chatMembers || [],
       });
     } else {
       console.error("Socket is null. Unable to join chat.");
@@ -103,10 +96,10 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
         message,
         get().selectedChatPreviewData?.id,
         userId,
-        get().selectedChatMembersIds
+        get().selectedChatPreviewData?.chatMembers
       ); // Emit event to server to send the message
 
-      get().setSelectedChatData(); // Update chat data after sending the message
+      get().setSelectedChatData(userId); // Update chat data after sending the message
     } else {
       console.error("Socket is null. Unable to send message.");
     }
@@ -137,8 +130,6 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   },
 
   joinChat: (data) => {
-    console.log("joinChat", data);
-
     try {
       if (socket) {
         socket.emit(
@@ -161,12 +152,15 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   // Reset Data
   resetData: () => {
     set({
+      chatInfoSidebar: false,
+      recentChatsSidebar: true,
       selectedChatId: null,
       selectedChatData: null,
       selectedChatPreviewData: null,
       chatPreviewArray: [],
-      selectedChatMembersIds: [],
     });
+
+    socket.off("chatData"); // Remove the chatData event listener
   },
   // Filtered Chats
   filterChats: (searchTerm) => {
@@ -184,6 +178,16 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
       socket.on("notification", (data) => {
         if (data?.author) {
           toast.success(`${data.author?.username} send you a new message`);
+        }
+      });
+    }
+  },
+  setupErrorListener: () => {
+    if (socket) {
+      socket.off("error");
+      socket.on("error", (error) => {
+        if (error) {
+          toast.success(`${error}, Please try again.`);
         }
       });
     }

@@ -18,6 +18,7 @@ export interface FormattedChat {
   id: string;
   chatName: string;
   chatPic: string;
+  chatMembers: string[];
   lastMessage: {
     message: string;
     createdAt: string; // or Date, depending on how you're handling it

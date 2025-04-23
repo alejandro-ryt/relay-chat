@@ -63,6 +63,7 @@ export type TChat = {
 export type TPreviewChat = {
   id: string;
   chatName: string;
+  chatMembers: string[];
   chatPic: string;
   lastMessage: TChatMessage;
   timestamp: Date;
@@ -80,7 +81,6 @@ export type TChatState = {
   recentChatsSidebar: boolean;
   selectedChatId: string | null;
   selectedChatData: TChat | null;
-  selectedChatMembersIds: string[];
   selectedChatPreviewData: TPreviewChat | null;
   chatPreviewArray: TPreviewChat[] | null;
 };
@@ -89,12 +89,8 @@ export type TChatActions = {
   setChatInfoSidebar: (chatInfoSidebar: boolean) => void;
   setRecentChatsSidebar: (recentChatsSidebar: boolean) => void;
   setSelectedChatId: (selectedId: string | null) => void;
-  setSelectedChatMembersIds: (membersIds: string[]) => void;
-  setSelectedChatData: () => void;
-  setSelectedChatPreviewData: (
-    userId: string,
-    data: TPreviewChat[] | null
-  ) => void;
+  setSelectedChatData: (userId: string) => void;
+  setSelectedChatPreviewData: (data: TPreviewChat[] | null) => void;
   connectToChat: (userId: string) => void;
   sendMessage: (message: string, userId: string) => void;
   getMessage: () => void;
@@ -102,4 +98,5 @@ export type TChatActions = {
   resetData: () => void;
   filterChats: (searchTerm: string) => TPreviewChat[] | null;
   setupNotificationListener: () => void;
+  setupErrorListener: () => void;
 };
