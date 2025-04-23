@@ -50,21 +50,24 @@ const ChatHistory = () => {
 
         const messageType =
           authUser &&
-          authUser.username === getMemberInfo(message.author)?.username
+          authUser.username === getMemberInfo(message.author._id)?.username
             ? "sent"
             : "received";
 
         return (
           <ChatMessage
             key={message._id}
+            id={message._id}
             type={messageType}
-            name={getMemberInfo(message.author)?.username || ""}
-            pic={getMemberInfo(message.author)?.profilePic || ""}
+            name={getMemberInfo(message.author._id)?.username || ""}
+            pic={getMemberInfo(message.author._id)?.profilePic || ""}
             time={new Date(message.createdAt).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             })}
             message={message.message}
+            deletedAt={message.deletedAt}
+            updatedAt={message.updatedAt}
           />
         );
       })}

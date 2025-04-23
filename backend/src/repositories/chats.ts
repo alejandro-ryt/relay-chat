@@ -75,6 +75,7 @@ class ChatRepository implements IChatRepository {
           _id: 0,
           id: "$_id",
           chatName: "$name",
+          chatMembers: "$members",
           chatPic: 1,
           lastMessage: { $arrayElemAt: ["$lastMessage", 0] },
           timestamp: "$createdAt", // Format it later in frontend or service
@@ -108,7 +109,7 @@ class ChatRepository implements IChatRepository {
 
   // Create a new chat
   public async saveChat(chat: IChat): Promise<IChatDocument> {
-    return await await Chat.create(chat);
+    return await Chat.create(chat);
   }
 
   // Update an existing chat

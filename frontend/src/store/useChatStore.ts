@@ -5,6 +5,7 @@ import {
   TChatMessage,
   TChatState,
   TPreviewChat,
+  TChatMessageProps,
 } from "@/types/chat.types";
 import { create } from "zustand";
 import toast from "react-hot-toast";
@@ -12,6 +13,8 @@ import toast from "react-hot-toast";
 export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   chatInfoSidebar: false,
   recentChatsSidebar: true,
+  isMessageEdited: false,
+  messageToEdit: null,
   selectedChatId: null,
   selectedChatData: null,
   selectedChatPreviewData: null,
@@ -31,6 +34,18 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
     });
   },
 
+  setIsMessageEdited: (isMessageEdited: boolean) => {
+    set({
+      isMessageEdited,
+    });
+  },
+
+  setMessageToEdit: (messageToEdit: TChatMessageProps) => {
+    set({
+      messageToEdit,
+    });
+  },
+
   // Set Recent Chats Sidebar
   setRecentChatsSidebar: (recentChatsSidebar: boolean) => {
     set({
@@ -39,18 +54,23 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   },
 
   // Set Chat Data
-  setSelectedChatData: () => {
+  setSelectedChatData: (userId: string) => {
     if (socket) {
       socket.on("chatData", (chatData: TChat) => {
         set({
           selectedChatData: chatData,
         });
       });
+
+      // Connect to chat after setting the preview data
+      if (get().selectedChatPreviewData) {
+        get().connectToChat(userId);
+      }
     }
   },
 
   // Set Chat Data
-  setSelectedChatPreviewData: (userId: string, data: TPreviewChat[] | null) => {
+  setSelectedChatPreviewData: (data: TPreviewChat[] | null) => {
     const found = data?.find(
       (foundChat) => foundChat.id === get().selectedChatId
     );
@@ -64,51 +84,38 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
     set({
       selectedChatPreviewData: found,
     });
-
-    // Connect to chat after setting the preview data
-    if (found) {
-      get().connectToChat(userId);
-    }
   },
 
   // Connect to chat
   connectToChat: (userId: string) => {
-    let membersIds: string[] = [];
-
-    get().selectedChatData?.members.forEach((member) => {
-      member._id !== userId ? membersIds.push(member._id) : null;
-    });
-
     if (socket && userId) {
-      socket.emit(
-        "joinChat",
-        get().selectedChatPreviewData?.chatName,
-        "group",
-        userId,
-        membersIds
-      ); // Emit event to server to join the room
+      get().joinChat({
+        chatName: get().selectedChatPreviewData?.chatName || "",
+        type:
+          (get().selectedChatPreviewData?.chatMembers ?? []).length > 1
+            ? "group"
+            : "direct",
+        currentUserId: userId,
+        membersIds: get().selectedChatPreviewData?.chatMembers || [],
+      });
     } else {
       console.error("Socket is null. Unable to join chat.");
     }
   },
 
   // Send Messsage
-  sendMessage: (message: string, userId) => {
-    let membersIds: string[] = [];
-
-    get().selectedChatData?.members.forEach((member) => {
-      member._id !== userId ? membersIds.push(member._id) : null;
-    });
+  sendMessage: (message: string, userId: string, messageId?: string) => {
     if (socket) {
       socket.emit(
         "sendMessage",
         message,
         get().selectedChatPreviewData?.id,
         userId,
-        membersIds
+        get().selectedChatPreviewData?.chatMembers,
+        messageId
       ); // Emit event to server to send the message
 
-      get().setSelectedChatData(); // Update chat data after sending the message
+      get().setSelectedChatData(userId); // Update chat data after sending the message
     } else {
       console.error("Socket is null. Unable to send message.");
     }
@@ -161,11 +168,15 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
   // Reset Data
   resetData: () => {
     set({
+      chatInfoSidebar: false,
+      recentChatsSidebar: true,
       selectedChatId: null,
       selectedChatData: null,
       selectedChatPreviewData: null,
       chatPreviewArray: [],
     });
+
+    socket.off("chatData"); // Remove the chatData event listener
   },
   // Filtered Chats
   filterChats: (searchTerm) => {
@@ -183,6 +194,16 @@ export const useChatStore = create<TChatState & TChatActions>((set, get) => ({
       socket.on("notification", (data) => {
         if (data?.author) {
           toast.success(`${data.author?.username} send you a new message`);
+        }
+      });
+    }
+  },
+  setupErrorListener: () => {
+    if (socket) {
+      socket.off("error");
+      socket.on("error", (error) => {
+        if (error) {
+          toast.success(`${error}, Please try again.`);
         }
       });
     }

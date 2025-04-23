@@ -6,11 +6,14 @@ export type TAvatarProps = {
 };
 
 export type TChatMessageProps = {
+  id: string;
   type: "received" | "sent";
   pic: string;
   name: string;
   time: string;
   message: string;
+  deletedAt: Date | null;
+  updatedAt: Date | null;
 };
 
 export type TChatPreviewProps = {
@@ -34,11 +37,17 @@ export type TIconButtonProps = {
 };
 
 export type TChatMessage = {
-  _id: string;
-  author: string;
-  username: string;
-  message: string;
+  author: {
+    profilePic: string;
+    username: string;
+    _id: string;
+  };
+  chatId: string;
   createdAt: Date;
+  deletedAt: Date | null;
+  message: string;
+  updatedAt: Date | null;
+  _id: string;
 };
 
 export type TChatMember = {
@@ -57,6 +66,7 @@ export type TChat = {
 export type TPreviewChat = {
   id: string;
   chatName: string;
+  chatMembers: string[];
   chatPic: string;
   lastMessage: TChatMessage;
   timestamp: Date;
@@ -72,6 +82,8 @@ export type TJoinChat = {
 export type TChatState = {
   chatInfoSidebar: boolean;
   recentChatsSidebar: boolean;
+  isMessageEdited: boolean;
+  messageToEdit: TChatMessageProps | null;
   selectedChatId: string | null;
   selectedChatData: TChat | null;
   selectedChatPreviewData: TPreviewChat | null;
@@ -81,17 +93,17 @@ export type TChatState = {
 export type TChatActions = {
   setChatInfoSidebar: (chatInfoSidebar: boolean) => void;
   setRecentChatsSidebar: (recentChatsSidebar: boolean) => void;
+  setIsMessageEdited: (isMessageEdited: boolean) => void;
+  setMessageToEdit: (messageToEdit: TChatMessageProps) => void;
   setSelectedChatId: (selectedId: string | null) => void;
-  setSelectedChatData: () => void;
-  setSelectedChatPreviewData: (
-    userId: string,
-    data: TPreviewChat[] | null
-  ) => void;
+  setSelectedChatData: (userId: string) => void;
+  setSelectedChatPreviewData: (data: TPreviewChat[] | null) => void;
   connectToChat: (userId: string) => void;
-  sendMessage: (message: string, userId: string) => void;
+  sendMessage: (message: string, userId: string, messageId?: string) => void;
   getMessage: () => void;
   joinChat: (data: TJoinChat) => boolean;
   resetData: () => void;
   filterChats: (searchTerm: string) => TPreviewChat[] | null;
   setupNotificationListener: () => void;
+  setupErrorListener: () => void;
 };

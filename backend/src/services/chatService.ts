@@ -30,10 +30,8 @@ class ChatService implements IChatService {
     invitations.forEach(async (invite) => {
       const chat = await chatRepository.findByChatId(invite.chatId);
       if (!chat) {
-        throw new ErrorHandler(
-          ERROR.ERROR_CHAT_NOT_FOUND,
-          StatusCodes.NOT_FOUND
-        );
+        socket.emit("error", ERROR.ERROR_CHAT_NOT_FOUND);
+        return;
       }
       socket.join(chat.name); // Join the room for the user
       socket.emit(
@@ -72,7 +70,8 @@ class ChatService implements IChatService {
     const chat = await chatRepository.findByChatNamePopulated(chatName);
     // If the chat doesn't exist, throw a custom error
     if (!chat) {
-      throw new ErrorHandler(ERROR.ERROR_CHAT_NOT_FOUND, StatusCodes.NOT_FOUND);
+      socket.emit("error", ERROR.ERROR_CHAT_NOT_FOUND);
+      return;
     }
 
     const messages = chat._id
@@ -215,7 +214,6 @@ class ChatService implements IChatService {
 
   async onSendMessageEvent(
     io: Server,
-    socket: Socket,
     message: string,
     chatId: string,
     userId: string,
@@ -250,10 +248,13 @@ class ChatService implements IChatService {
 
     // Emit message to the room
     io.to(chat.name).emit("sendMessage", {
-      author: newMessage.author._id,
       _id: newMessage.id,
       message: newMessage.message,
+      chatId: newMessage.chatId,
+      author: newMessage.author,
       createdAt: newMessage.createdAt,
+      updatedAt: newMessage.updatedAt,
+      deletedAt: newMessage.deletedAt,
     });
 
     // Emit notification of a new message
@@ -300,6 +301,7 @@ class ChatService implements IChatService {
         message,
         updatedAt: new Date(),
       };
+
       const options = {
         new: true,
         upsert: true,

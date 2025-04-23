@@ -14,13 +14,13 @@ const Chat = () => {
 
   useEffect(() => {
     if (data) {
-      setSelectedChatPreviewData(authUser!.userId, data);
+      setSelectedChatPreviewData(data);
+      setSelectedChatData(authUser!.userId); // Fetch chat data when selectedChatId changes
     }
   }, [data, selectedChatId]);
 
   useEffect(() => {
     refetch();
-    setSelectedChatData();
   }, [selectedChatId]);
 
   return (

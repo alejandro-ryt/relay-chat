@@ -7,7 +7,6 @@ import SettingIcon from "@/components/ui/icons/SettingIcon";
 import { ROUTES } from "@/constants/routes";
 import { FC, PropsWithChildren, useEffect } from "react";
 import { useNavigate } from "react-router";
-import { useChatStore } from "@/store/useChatStore";
 import {
   useAuthDetailQuery,
   useSignOutMutation,
@@ -15,14 +14,21 @@ import {
 import { useAuthStore } from "@/store/useAuthStore";
 import toast from "react-hot-toast";
 import { API } from "@/constants/api";
+import { useQueryClient } from "@tanstack/react-query";
+import { useChatStore } from "@/store/useChatStore";
 
 export const ChatLayout: FC<PropsWithChildren> = ({ children }) => {
+  const setupErrorListener = useChatStore((state) => state.setupErrorListener);
   const navigate = useNavigate();
-  const { resetData } = useChatStore();
-  const { logOut } = useAuthStore();
+  const { logOut, authUser } = useAuthStore();
   const { setAuthUserDetails } = useAuthStore();
   const { mutate, data } = useSignOutMutation();
   const authDetailQuery = useAuthDetailQuery();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setupErrorListener();
+  }, [setupErrorListener]);
 
   useEffect(() => {
     if (authDetailQuery.data) {
@@ -32,7 +38,7 @@ export const ChatLayout: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     if (data) {
-      resetData();
+      queryClient.clear();
       logOut();
       toast.success(API.LOGOUT);
     }
@@ -71,7 +77,7 @@ export const ChatLayout: FC<PropsWithChildren> = ({ children }) => {
           shape="squircle"
           title="Logout"
           icon={<LogoutIcon />}
-          action={mutate}
+          action={() => mutate({ userId: authUser!.userId })}
         />
       </aside>
       {/* Sidebar */}

@@ -9,4 +9,5 @@ export const END_POINT = {
   REMOVE_CONTACT: "/api/contact/remove",
   BLOCK_CONTACT: "/api/contact/block-contact",
   GET_CHATS_BY_USER_ID: "/api/chat/by-user/", //:id
+  DELETE_MESSAGE: "/api/chat/delete-message/", //:id
 } as const;

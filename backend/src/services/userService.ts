@@ -51,7 +51,7 @@ export default class UserService implements IUserService {
     }
 
     // Check if password match
-    const isPasswordAuth = isPasswordValid(password, user.password);
+    const isPasswordAuth = await isPasswordValid(password, user.password);
     if (!isPasswordAuth) {
       throw new ErrorHandler(
         ERROR.ERROR_WRONG_CREDENTIALS,

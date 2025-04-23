@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { createStoragePersist } from "@/utils";
 import socket from "@/socket/socket";
+import { useChatStore } from "./useChatStore";
 
 export const useAuthStore = create<TAuthStore>()(
   persist(
@@ -41,6 +42,7 @@ export const useAuthStore = create<TAuthStore>()(
         socket?.disconnect();
         set({ authUser: null, isAuthenticated: false });
         set({ authUserDetails: null });
+        useChatStore.getState().resetData();
         localStorage.removeItem("auth-store");
       },
     }),
